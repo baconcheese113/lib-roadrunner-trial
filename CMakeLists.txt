@@ -21,9 +21,17 @@ add_custom_command(TARGET hello_roadrunner POST_BUILD
 )
 
 add_custom_target(run ALL
+    # Copy the DLL
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_SOURCE_DIR}/externals/libroadrunner/bin/roadrunner.dll
         $<TARGET_FILE_DIR:hello_roadrunner>
+
+    # Copy the SBML file
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_SOURCE_DIR}/glycolysis.xml
+        $<TARGET_FILE_DIR:hello_roadrunner>
+
+    # Run the program
     COMMAND $<TARGET_FILE:hello_roadrunner>
     DEPENDS hello_roadrunner
     WORKING_DIRECTORY $<TARGET_FILE_DIR:hello_roadrunner>

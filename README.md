@@ -7,7 +7,15 @@ Grab the latest .zip Release from https://github.com/sys-bio/roadrunner/releases
 
 ## Build and run
 
+To just use CMakeLists, manually create a `build` directory and run the following commands from the root of the project:
 ```bash
+mkdir build
 cd build
 cmake --build . --target run
+```
+
+Or to use CMakePresets.json, run the following command from root:
+
+```bash
+cmake --build --preset default
 ```
