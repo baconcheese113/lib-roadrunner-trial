@@ -42,9 +42,9 @@ add_custom_target(run ALL
         $<TARGET_FILE_DIR:hello_roadrunner>
 
     # Run program
-    COMMAND $<TARGET_FILE:hello_roadrunner>
-    DEPENDS hello_roadrunner
-    WORKING_DIRECTORY $<TARGET_FILE_DIR:hello_roadrunner>
+    # COMMAND $<TARGET_FILE:hello_roadrunner>
+    # DEPENDS hello_roadrunner
+    # WORKING_DIRECTORY $<TARGET_FILE_DIR:hello_roadrunner>
 )
 
 
