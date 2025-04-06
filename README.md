@@ -2,7 +2,7 @@
 
 ## Setup
 
-Grab the latest .zip Release from https://github.com/sys-bio/roadrunner/releases and extract it to `externals/libroadrunner`
+Grab the latest .zip **Debug** from https://github.com/sys-bio/roadrunner/releases and extract it to `externals/libroadrunner`
 
 
 ## Build and run
@@ -17,5 +17,6 @@ cmake --build . --target run
 Or to use CMakePresets.json, run the following command from root:
 
 ```bash
+cmake --preset default
 cmake --build --preset default
 ```
