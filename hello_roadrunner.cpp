@@ -30,6 +30,11 @@ int main() {
     }
 
 
+    auto str = rr::RoadRunner::getExtendedVersionInfo();
+    std::cout << "Version ptr: " << static_cast<const void*>(str.c_str()) << std::endl;
+    std::cout << "LibRoadRunner version: " << rr::RoadRunner::getExtendedVersionInfo() << std::endl;
+
+
     try {
         rr::RoadRunner rr;
         // rr.setIntegrator("rk4");
@@ -65,7 +70,7 @@ int main() {
         std::cout << "Running real-time simulation. Press 'q' to quit.\n";
 
         double t = 0.0;
-        double dt = 0.005;
+        double dt = 0.001;
 
         // Set useful output variables
         rr.setSelections({"time", "GLCi", "ATP", "ADP", "P", "NAD", "NADH", "PYR"}); // Replace with actual species IDs if needed
@@ -80,6 +85,9 @@ int main() {
                 if (ch == 'q' || ch == 'Q') {
                     std::cout << "Exiting simulation.\n";
                     break;
+                } else if (ch == 'p' || ch == 'P') {
+                    rr.oneStep(t, dt); // advance
+                    t += dt;
                 } else if (ch == '1') {
                     // rr.loadStateS(state);
                     double glci = rr.getValue("GLCi");
@@ -87,14 +95,33 @@ int main() {
                     // rr.getIntegrator()->restart(t);
                     rr.setValue("GLCi", glci + 1.0);
                     std::cout << "GLCi increased to " << (glci + 1.0) << std::endl;
+                } else if (ch == 'i' || ch == 'I') {
+                    auto reactionRates = rr.getReactionRates();
+                    auto reactionIds = rr.getReactionIds();
+                    std::cout << "Reaction rates:\n";
+                    for (size_t i = 0; i < reactionRates.size(); ++i) {
+                        std::cout << reactionIds[i] << ": " << reactionRates[i] << std::endl;
+                    }
+                } else if (ch == 'r' || ch == 'R') {
+                    // rr.loadStateS(state);
+                    rr.reset(rr::SelectionRecord::ALL); // reset all
                 }
+                auto values = rr.getSelectedValues();
+    
+                std::cout << std::fixed << std::setprecision(2); // fixed-point notation with 2 decimal places
+                std::cout << "t=" << std::setw(5) << t << " [ ";
+                for (double v : values) {
+                    std::cout << std::setw(8) << v << " ";
+                }
+                std::cout << "]" << std::endl;
+    
+                // Optional: sleep to simulate real time
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             } else {    
                 // rr.loadStateS(state);
             }
             // state = nullptr;
 
-            rr.oneStep(t, dt); // advance
-            t += dt;
 
             // Save new state for next frame
             // state = rr.saveStateS();
@@ -102,17 +129,6 @@ int main() {
             // rr.oneStep(t, dt);
             // t += dt;
 
-            auto values = rr.getSelectedValues();
-
-            std::cout << std::fixed << std::setprecision(2); // fixed-point notation with 2 decimal places
-            std::cout << "t=" << std::setw(5) << t << " [ ";
-            for (double v : values) {
-                std::cout << std::setw(8) << v << " ";
-            }
-            std::cout << "]" << std::endl;
-
-            // Optional: sleep to simulate real time
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
         // rr::SimulateOptions& opts = rr.getSimulateOptions();
