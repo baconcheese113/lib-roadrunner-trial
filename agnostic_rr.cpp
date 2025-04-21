@@ -11,6 +11,7 @@
 #include <sbml/SBMLReader.h>
 #include <sbml/SBMLDocument.h>
 #include <sbml/Model.h>
+#include <rr/rrExecutableModel.h>
 
 // Function to check if the file exists
 bool checkFileExists(const std::string& path) {
@@ -47,6 +48,12 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
     auto ids = rr.getFloatingSpeciesIds();
     auto concs = rr.getFloatingSpeciesConcentrationsV();
 
+    // Access the ExecutableModel from RoadRunner
+    auto* executableModel = rr.getModel();
+    if (!executableModel) {
+        throw std::runtime_error("No model loaded in RoadRunner.");
+    }
+
     std::cout << "Floating species concentrations:\n";
     for (size_t i = 0; i < ids.size(); ++i) {
         const std::string& id = ids[i];
@@ -54,15 +61,23 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
         double previousValue = previousValues[id];
         double diff = currentValue - previousValue;
 
-        if (diff > 0) {
-            std::cout << "\033[32m"; // Green for increase
-        } else if (diff < 0) {
-            std::cout << "\033[31m"; // Red for decrease
+        // Retrieve the compartment name for the species
+        int speciesIndex = executableModel->getFloatingSpeciesIndex(id);
+        int compartmentIndex = executableModel->getCompartmentIndexForFloatingSpecies(speciesIndex);
+        std::string compartment = executableModel->getCompartmentId(compartmentIndex);
+
+        if (std::abs(diff) >= 0.00005) {
+            if (diff > 0) {
+                std::cout << "\033[32m"; // Green for increase
+            } else {
+                std::cout << "\033[31m"; // Red for decrease
+            }
         } else {
             std::cout << "\033[0m"; // Reset color
         }
 
-        std::cout << id << ": " << currentValue << "(" << diff << ")" << "\033[0m" << std::endl; // Reset color after value
+        std::cout << id << " (" << compartment << "): " << std::fixed << std::setprecision(4) << currentValue
+                  << " (" << std::fixed << std::setprecision(4) << diff << ")\033[0m" << std::endl; // Reset color after value
         previousValues[id] = currentValue; // Update previous value
     }
 
@@ -71,16 +86,24 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
     for (const auto& id : boundaryIds) {
         double currentValue = rr.getValue(id);
         double previousValue = previousValues[id];
+        double diff = currentValue - previousValue;
 
-        if (currentValue > previousValue) {
-            std::cout << "\033[32m"; // Green for increase
-        } else if (currentValue < previousValue) {
-            std::cout << "\033[31m"; // Red for decrease
+        // Retrieve the compartment name for the boundary species
+        int speciesIndex = executableModel->getBoundarySpeciesIndex(id);
+        int compartmentIndex = executableModel->getCompartmentIndexForBoundarySpecies(speciesIndex);
+        std::string compartment = executableModel->getCompartmentId(compartmentIndex);
+
+        if (std::abs(diff) >= 0.00005) {
+            if (diff > 0) {
+                std::cout << "\033[32m"; // Green for increase
+            } else {
+                std::cout << "\033[31m"; // Red for decrease
+            }
         } else {
             std::cout << "\033[0m"; // Reset color
         }
 
-        std::cout << id << ": " << currentValue << "\033[0m" << std::endl; // Reset color after value
+        std::cout << id << " (" << compartment << "): " << std::fixed << std::setprecision(4) << currentValue << "\033[0m" << std::endl; // Reset color after value
         previousValues[id] = currentValue; // Update previous value
     }
 }
@@ -308,10 +331,11 @@ int main() {
         rr.load(cleanedPath);
         std::cout << "Cleaned model loaded successfully!" << std::endl;
 
-        std::cout << "Running real-time simulation. Press 'q' to quit.\n";
+        std::cout << "Running real-time simulation. Press 'p' to play/pause, 'q' to quit.\n";
 
         double t = 0.0;
         double dt = 0.01;
+        bool isPlaying = false; // Play/pause toggle
 
         // Dynamically set selections to include all floating species
         auto floatingSpeciesIds = rr.getFloatingSpeciesIds();
@@ -335,9 +359,7 @@ int main() {
                     std::cout << "Exiting simulation.\n";
                     break;
                 } else if (ch == 'p' || ch == 'P') {
-                    rr.oneStep(t, dt);
-                    logSpeciesWithColor(rr, previousValues);
-                    t += dt;
+                    isPlaying = !isPlaying; // Toggle play/pause
                 } else if (ch == 'r' || ch == 'R') {
                     rr.reset(rr::SelectionRecord::ALL);
                 } else if (ch == 's' || ch == 'S') {
@@ -349,16 +371,17 @@ int main() {
                     std::cin >> increment;
                     increaseSpecies(rr, speciesId, increment);
                 }
+            }
 
-                // auto values = rr.getSelectedValues();
-                // std::cout << std::fixed << std::setprecision(2);
-                // std::cout << "t=" << std::setw(5) << t << " [ ";
-                // for (double v : values) {
-                //     std::cout << std::setw(8) << v << " ";
-                // }
-                // std::cout << "]" << std::endl;
+            if (isPlaying) {
+                rr.oneStep(t, dt);
+                t += dt;
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                // Clear the console and log species concentrations
+                std::cout << "\033[2J\033[H"; // ANSI escape codes to clear screen and move cursor to top
+                logSpeciesWithColor(rr, previousValues);
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Adjust for desired update rate
             }
         }
     } catch (const std::exception& e) {
