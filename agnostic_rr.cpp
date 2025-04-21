@@ -7,6 +7,10 @@
 #include <sbml/SBMLReader.h>
 #include <sbml/SBMLDocument.h>
 #include <map> // For tracking previous values
+#include <sbml/SBMLWriter.h>
+#include <sbml/SBMLReader.h>
+#include <sbml/SBMLDocument.h>
+#include <sbml/Model.h>
 
 // Function to check if the file exists
 bool checkFileExists(const std::string& path) {
@@ -197,6 +201,82 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
     return mergedSBML.str();
 }
 
+// Function to clean up SBML content using libSBML
+std::string cleanSBML(const std::string& sbml) {
+    auto document = libsbml::readSBMLFromString(sbml.c_str());
+    if (!document || document->getNumErrors() > 0) {
+        throw std::runtime_error("Error reading SBML document.");
+    }
+
+    auto model = document->getModel();
+    if (!model) {
+        throw std::runtime_error("No model found in SBML document.");
+    }
+
+    // Remove <annotation> and <notes> from the model and its components
+    model->unsetAnnotation();
+    model->unsetNotes();
+
+    for (unsigned int i = 0; i < model->getNumCompartments(); ++i) {
+        model->getCompartment(i)->unsetAnnotation();
+        model->getCompartment(i)->unsetNotes();
+    }
+
+    for (unsigned int i = 0; i < model->getNumSpecies(); ++i) {
+        auto species = model->getSpecies(i);
+        species->unsetAnnotation();
+        species->unsetNotes();
+        species->unsetMetaId();
+        species->unsetName();
+        species->unsetSBOTerm();
+    }
+
+    for (unsigned int i = 0; i < model->getNumParameters(); ++i) {
+        auto parameter = model->getParameter(i);
+        parameter->unsetAnnotation();
+        parameter->unsetNotes();
+        parameter->unsetMetaId();
+        parameter->unsetName();
+        parameter->unsetSBOTerm();
+    }
+
+    for (unsigned int i = 0; i < model->getNumReactions(); ++i) {
+        auto reaction = model->getReaction(i);
+        reaction->unsetAnnotation();
+        reaction->unsetNotes();
+        reaction->unsetMetaId();
+        reaction->unsetName();
+        reaction->unsetSBOTerm();
+    }
+
+    for (unsigned int i = 0; i < model->getNumRules(); ++i) {
+        model->getRule(i)->unsetAnnotation();
+        model->getRule(i)->unsetNotes();
+    }
+
+    for (unsigned int i = 0; i < model->getNumInitialAssignments(); ++i) {
+        model->getInitialAssignment(i)->unsetAnnotation();
+        model->getInitialAssignment(i)->unsetNotes();
+    }
+
+    for (unsigned int i = 0; i < model->getNumEvents(); ++i) {
+        auto event = model->getEvent(i);
+        event->unsetAnnotation();
+        event->unsetNotes();
+        event->unsetMetaId();
+        event->unsetName();
+        event->unsetSBOTerm();
+    }
+
+    // Write the cleaned SBML to a string
+    libsbml::SBMLWriter writer;
+    std::stringstream cleanedSBML;
+    writer.writeSBML(document, cleanedSBML);
+
+    delete document;
+    return cleanedSBML.str();
+}
+
 int main() {
     const std::string glyPath = "glycolysis.xml";
     const std::string tcaPath = "tca_cycle.xml";
@@ -211,19 +291,22 @@ int main() {
         std::string sbml2 = loadSBMLFromFile(tcaPath);
         std::string mergedSBML = mergeSBMLModels(sbml1, sbml2);
 
-        // Save the merged SBML to a temporary file
-        const std::string mergedPath = "merged_model.xml";
-        std::ofstream mergedFile(mergedPath);
-        mergedFile << mergedSBML;
-        mergedFile.close();
+        // Clean the merged SBML
+        std::string cleanedSBML = cleanSBML(mergedSBML);
 
-        if (!validateSBML(mergedSBML)) {
+        // Save the cleaned SBML to a temporary file
+        const std::string cleanedPath = "cleaned_model.xml";
+        std::ofstream cleanedFile(cleanedPath);
+        cleanedFile << cleanedSBML;
+        cleanedFile.close();
+
+        if (!validateSBML(cleanedSBML)) {
             return 1;
         }
 
         rr::RoadRunner rr;
-        rr.load(mergedPath);
-        std::cout << "Merged model loaded successfully!" << std::endl;
+        rr.load(cleanedPath);
+        std::cout << "Cleaned model loaded successfully!" << std::endl;
 
         std::cout << "Running real-time simulation. Press 'q' to quit.\n";
 
