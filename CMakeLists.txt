@@ -10,7 +10,7 @@ link_directories(${CMAKE_SOURCE_DIR}/externals/libroadrunner/lib)
 add_definitions(-DLIBSBML_STATIC)
 
 # Create the executable
-add_executable(hello_roadrunner hello_roadrunner.cpp)
+add_executable(hello_roadrunner agnostic_rr.cpp)
 
 message(STATUS "Linking libraries from: ${CMAKE_SOURCE_DIR}/externals/libroadrunner/lib")
 
@@ -39,6 +39,11 @@ add_custom_target(run ALL
     # Copy SBML model
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_SOURCE_DIR}/glycolysis.xml
+        $<TARGET_FILE_DIR:hello_roadrunner>
+
+    # Copy SBML model
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_SOURCE_DIR}/tca_cycle.xml
         $<TARGET_FILE_DIR:hello_roadrunner>
 
     # Run program
