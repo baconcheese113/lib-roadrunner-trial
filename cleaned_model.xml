@@ -305,7 +305,7 @@
       <species id="Cit" compartment="mitochondrion" initialConcentration="0.44"/>
       <species id="OAA" compartment="mitochondrion" initialConcentration="0.005"/>
       <species id="O2" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
-      <species id="iP" compartment="mitochondrion" initialConcentration="2.44" boundaryCondition="true" constant="true"/>
+      <species id="iP" compartment="mitochondrion" initialConcentration="2.44"/>
       <species id="Pyr" compartment="mitochondrion" initialConcentration="0.154"/>
       <species id="H2O" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
     </listOfSpecies>

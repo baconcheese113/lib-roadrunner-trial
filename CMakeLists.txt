@@ -1,54 +1,49 @@
 cmake_minimum_required(VERSION 3.15)
-project(HelloRoadRunner)
+project(hello_roadrunner)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Correct include paths
-include_directories(${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/include)
-link_directories(${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/lib)
+# Path to RoadRunner base
+set(RR_ROOT "${CMAKE_SOURCE_DIR}/externals/libroadrunner-release")
 
-add_definitions(-DLIBSBML_STATIC)
-
-# Create the executable
+# Executable
 add_executable(hello_roadrunner agnostic_rr.cpp)
 
-message(STATUS "Linking libraries from: ${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/lib")
+# Suppress warnings for MSVC
+if (MSVC)
+    target_link_options(hello_roadrunner PRIVATE /ignore:4217)
+endif()
 
-# Link RoadRunner + libSBML depending on build type
-target_link_libraries(hello_roadrunner
+# Include headers
+target_include_directories(hello_roadrunner PRIVATE
+    "${RR_ROOT}/include"
+)
+
+# Link RoadRunner and dependencies using build configuration (Debug vs Release)
+target_link_directories(hello_roadrunner PRIVATE
+    "${RR_ROOT}/lib"
+)
+
+target_link_libraries(hello_roadrunner PRIVATE
     roadrunner
     libsbml-staticmd
     zlibstatic
     libexpatMD
 )
 
-# Copy DLL after build
+# Auto-copy all .dlls from correct bin folder based on config
 add_custom_command(TARGET hello_roadrunner POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/bin/roadrunner.dll
-        $<TARGET_FILE_DIR:hello_roadrunner>
-)
-
-add_custom_target(run ALL
-    # Copy all DLLs in bin/
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/bin
-        $<TARGET_FILE_DIR:hello_roadrunner>
-
-    # Copy SBML model
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_SOURCE_DIR}/glycolysis.xml
-        $<TARGET_FILE_DIR:hello_roadrunner>
-
-    # Copy SBML model
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_SOURCE_DIR}/tca_cycle.xml
-        $<TARGET_FILE_DIR:hello_roadrunner>
-
-    # Run program
-    # COMMAND $<TARGET_FILE:hello_roadrunner>
-    # DEPENDS hello_roadrunner
-    # WORKING_DIRECTORY $<TARGET_FILE_DIR:hello_roadrunner>
+        "${RR_ROOT}/bin"
+        "$<TARGET_FILE_DIR:hello_roadrunner>"
 )
 
-
+# Auto-copy model files (you can add more later)
+foreach(XML glycolysis.xml tca_cycle.xml)
+    add_custom_command(TARGET hello_roadrunner POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/${XML}"
+            "$<TARGET_FILE_DIR:hello_roadrunner>"
+    )
+endforeach()

@@ -264,7 +264,7 @@
             href="http://www.ncbi.nlm.nih.gov/pubmed/20587024" target="_blank">Li C, Donizelli M,
           Rodriguez N, Dharuri H, Endler L, Chelliah V, Li L, He E, Henry A, Stefan MI, Snoep JL,
           Hucka M, Le Novère N, Laibe C (2010) BioModels Database: An enhanced, curated and
-          annotated resource for published quantitative kinetic models. BMC Syst Biol., 4:92.</a></p>
+            annotated resource for published quantitative kinetic models. BMC Syst Biol., 4:92.</a></p>
       </body>
     </notes>
     <annotation>
@@ -1068,7 +1068,8 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="ATP" metaid="metaid_0000076" name="ATP concentration" initialConcentration="1.5">
+      <species compartment="cytosol" id="ATP" metaid="metaid_0000076" name="ATP concentration"
+        initialConcentration="1.5">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
@@ -1085,7 +1086,8 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="ADP" metaid="metaid_0000077" name="ADP concentration" initialConcentration="2.1">
+      <species compartment="cytosol" id="ADP" metaid="metaid_0000077" name="ADP concentration"
+        initialConcentration="2.1">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
@@ -1102,7 +1104,8 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="AMP" metaid="metaid_0000078" name="AMP concentration" initialConcentration="0.5">
+      <species compartment="cytosol" id="AMP" metaid="metaid_0000078" name="AMP concentration"
+        initialConcentration="0.5">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"

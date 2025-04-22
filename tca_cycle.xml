@@ -198,13 +198,13 @@
       </unitDefinition>
     </listOfUnitDefinitions>
     <listOfCompartments>
-      <compartment id="cytoplasm" metaid="metaid_cytoplasm" name="cytoplasm" sboTerm="SBO:0000290"
+      <compartment id="cytosol" metaid="metaid_cytosol" name="cytosol" sboTerm="SBO:0000290"
         size="1">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
             xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
-            <rdf:Description rdf:about="#metaid_cytoplasm">
+            <rdf:Description rdf:about="#metaid_cytosol">
               <bqbiol:isVersionOf>
                 <rdf:Bag>
                   <rdf:li rdf:resource="http://identifiers.org/go/GO:0005737" />
@@ -293,7 +293,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="true" compartment="cytoplasm" constant="true" id="He"
+      <species boundaryCondition="true" compartment="cytosol" constant="true" id="He"
         initialConcentration="1" metaid="metaid_He" name="H+" sboTerm="SBO:0000327">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -445,7 +445,10 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="true" compartment="mitochondrion" constant="true" id="iP"
+      <species compartment="cytosol" id="P" initialConcentration="6.31" metaid="metaid_0000042"
+        name="High energy phosphates">
+      </species>
+      <species compartment="mitochondrion" id="iP"
         initialConcentration="2.44" metaid="metaid_iP" name="phosphate" sboTerm="SBO:0000327">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"

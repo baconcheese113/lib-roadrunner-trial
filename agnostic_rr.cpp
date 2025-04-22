@@ -7,6 +7,7 @@
 #include <sbml/SBMLReader.h>
 #include <sbml/SBMLDocument.h>
 #include <map> // For tracking previous values
+#include <numeric> // For std::iota
 #include <sbml/SBMLWriter.h>
 #include <sbml/SBMLReader.h>
 #include <sbml/SBMLDocument.h>
@@ -300,6 +301,40 @@ std::string cleanSBML(const std::string& sbml) {
     return cleanedSBML.str();
 }
 
+void clampNegativeConcentrations(rr::RoadRunner& rr) {
+    if (auto model = rr.getModel()) {
+        int numSpecies = model->getNumFloatingSpecies();
+
+        // Get all assignment rule target IDs
+        std::list<std::string> assignmentRuleIds;
+        model->getAssignmentRuleIds(assignmentRuleIds);
+
+        // Prepare indices of species NOT governed by assignment rules
+        std::vector<int> independentIndices;
+
+        for (int i = 0; i < numSpecies; ++i) {
+            std::string speciesId = model->getFloatingSpeciesId(i);
+
+            if (std::find(assignmentRuleIds.begin(), assignmentRuleIds.end(), speciesId) == assignmentRuleIds.end()) {
+                // Species is not governed by an assignment rule
+                independentIndices.push_back(i);
+            }
+        }
+
+        // Get and clamp concentrations only for independent species
+        std::vector<double> concentrations(independentIndices.size());
+        model->getFloatingSpeciesConcentrations(independentIndices.size(), independentIndices.data(), concentrations.data());
+
+        for (auto& conc : concentrations) {
+            if (conc < 0.0) {
+                conc = 0.00000001;
+            }
+        }
+
+        model->setFloatingSpeciesConcentrations(independentIndices.size(), independentIndices.data(), concentrations.data());
+    }
+}
+
 int main() {
     const std::string glyPath = "glycolysis.xml";
     const std::string tcaPath = "tca_cycle.xml";
@@ -330,6 +365,32 @@ int main() {
         rr::RoadRunner rr;
         rr.load(cleanedPath);
         std::cout << "Cleaned model loaded successfully!" << std::endl;
+
+        // auto integrator = rr.getIntegrator();
+        // Reference below for integrator settings:
+        // relative_tolerance
+        // absolute_tolerance
+        // stiff
+        // maximum_bdf_order
+        // maximum_adams_order
+        // maximum_num_steps
+        // maximum_time_step
+        // minimum_time_step
+        // initial_time_step
+        // multiple_steps
+        // variable_step_size
+        // max_output_rows
+
+        // integrator->setValue("absolute_tolerance", 1e-8);
+        // integrator->setValue("relative_tolerance", 1e-6);
+        // integrator->setValue("maximum_bdf_order", 5); // Optional but safe
+        // integrator->setValue("maximum_adams_order", 12); // Optional
+
+        // integrator->setValue("stiff", true);  // uses BDF
+        // integrator->setValue("maximum_num_steps", 10000);  // default is 500
+        // integrator->setValue("minimum_step_size", 1e-12);
+
+
 
         std::cout << "Running real-time simulation. Press 'p' to play/pause, 'q' to quit.\n";
 
@@ -374,11 +435,25 @@ int main() {
             }
 
             if (isPlaying) {
-                rr.oneStep(t, dt);
-                t += dt;
+                try {
+                    rr.oneStep(t, dt);
+                    t += dt;
+                    std::cout << "\033[2J\033[H"; // ANSI escape codes to clear screen and move cursor to top
+                } catch (const std::exception& e) {
+                    std::cerr << "⚠️ CVODE failed at t = " << t
+                              << " with dt = " << dt << "\n"
+                              << "Error: " << e.what() << "\n";
+                
+                    // Try a smaller step size next time, or just continue
+                    dt *= 0.5;  // or clamp to some min value
+                    if (dt < 1e-10) dt = 0.01;  // reset to default
+                    isPlaying = !isPlaying; // Toggle play/pause
+                }
+
+                // Clamp all floating species concentrations to zero if they go negative
+                clampNegativeConcentrations(rr);
 
                 // Clear the console and log species concentrations
-                std::cout << "\033[2J\033[H"; // ANSI escape codes to clear screen and move cursor to top
                 logSpeciesWithColor(rr, previousValues);
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Adjust for desired update rate
