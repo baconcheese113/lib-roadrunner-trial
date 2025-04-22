@@ -196,6 +196,13 @@
           <unit exponent="-1" kind="second" metaid="_095469" scale="1" />
         </listOfUnits>
       </unitDefinition>
+      <unitDefinition id="mM_per_min">
+        <listOfUnits>
+          <unit kind="mole" scale="-3"/>
+          <unit kind="litre" exponent="-1"/>
+          <unit kind="second" exponent="-1" multiplier="60" />
+        </listOfUnits>
+      </unitDefinition>
     </listOfUnitDefinitions>
     <listOfCompartments>
       <compartment id="cytosol" metaid="metaid_cytosol" name="cytosol" sboTerm="SBO:0000290"
@@ -1158,6 +1165,53 @@
               <ci> Jleak </ci>
             </apply>
           </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPiH_symport" reversible="true" name="Pi-H symport">
+        <listOfReactants>
+          <speciesReference species="P"/>
+          <speciesReference species="He"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="iP"/>
+          <speciesReference species="H"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> VmPiSym </ci>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <times/> <ci> P </ci> <ci> He </ci>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <apply><times/> <ci> iP </ci> <ci> H </ci></apply>
+                    <ci> KeqPiH </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/><ci> KmP </ci><ci> P </ci>
+                </apply>
+                <apply>
+                  <plus/><ci> KmH </ci><ci> He </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="VmPiSym"  value="10" units="mM_per_min"/>
+            <parameter id="KmP"      value="1"  units="mM"/>
+            <parameter id="KmH"      value="1"  units="mM"/>
+            <parameter id="KeqPiH"   value="10" units="dimensionless"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
     </listOfReactions>

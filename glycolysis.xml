@@ -1583,6 +1583,55 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
+      <reaction id="vAK" name="Adenylate kinase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ADP" stoichiometry="2" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ATP" stoichiometry="1" />
+          <speciesReference species="AMP" stoichiometry="1" />
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus />
+              <apply>
+                <times />
+                <ci> kf_AK </ci>
+                <apply>
+                  <power />
+                  <ci> ADP </ci>
+                  <cn type="integer"> 2 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <times />
+                <ci> kr_AK </ci>
+                <ci> ATP </ci>
+                <ci> AMP </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="kf_AK" value="10.0" units="permin" />
+            <parameter id="kr_AK" value="5.0" units="mMpermin" />
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vATPsink" name="Generic ATP Consumption" reversible="false">
+        <listOfReactants>
+          <speciesReference species="ATP" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ADP" />
+          <speciesReference species="P" />
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn> 0.5 </cn>
+          </math>
+        </kineticLaw>
+      </reaction>
       <reaction id="vALD" metaid="metaid_0000030" name="Aldolase">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"

@@ -643,6 +643,55 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
+      <reaction id="vAK" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ADP" stoichiometry="2"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ATP" stoichiometry="1"/>
+          <speciesReference species="AMP" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <ci> kf_AK </ci>
+                <apply>
+                  <power/>
+                  <ci> ADP </ci>
+                  <cn type="integer"> 2 </cn>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kr_AK </ci>
+                <ci> ATP </ci>
+                <ci> AMP </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="kf_AK" value="10" units="permin"/>
+            <parameter id="kr_AK" value="5" units="mMpermin"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vATPsink" reversible="false">
+        <listOfReactants>
+          <speciesReference species="ATP"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ADP"/>
+          <speciesReference species="P"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn> 0.5 </cn>
+          </math>
+        </kineticLaw>
+      </reaction>
       <reaction id="vALD">
         <listOfReactants>
           <speciesReference metaid="_773058" species="F16P"/>
@@ -1922,6 +1971,63 @@
               <ci> Jleak </ci>
             </apply>
           </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPiH_symport" reversible="true">
+        <listOfReactants>
+          <speciesReference species="P"/>
+          <speciesReference species="He"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="iP"/>
+          <speciesReference species="H"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> VmPiSym </ci>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <times/>
+                    <ci> P </ci>
+                    <ci> He </ci>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <apply>
+                      <times/>
+                      <ci> iP </ci>
+                      <ci> H </ci>
+                    </apply>
+                    <ci> KeqPiH </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <plus/>
+                  <ci> KmP </ci>
+                  <ci> P </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <ci> KmH </ci>
+                  <ci> He </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="VmPiSym" value="10" units="mM_per_min"/>
+            <parameter id="KmP" value="1" units="mM"/>
+            <parameter id="KmH" value="1" units="mM"/>
+            <parameter id="KeqPiH" value="10" units="dimensionless"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
     </listOfReactions>
