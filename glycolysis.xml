@@ -1068,7 +1068,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="ATP" metaid="metaid_0000076" name="ATP concentration">
+      <species compartment="cytosol" id="ATP" metaid="metaid_0000076" name="ATP concentration" initialConcentration="1.5">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
@@ -1085,7 +1085,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="ADP" metaid="metaid_0000077" name="ADP concentration">
+      <species compartment="cytosol" id="ADP" metaid="metaid_0000077" name="ADP concentration" initialConcentration="2.1">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
@@ -1102,7 +1102,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="AMP" metaid="metaid_0000078" name="AMP concentration">
+      <species compartment="cytosol" id="AMP" metaid="metaid_0000078" name="AMP concentration" initialConcentration="0.5">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
@@ -1119,7 +1119,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" constant="true" id="SUM_P" initialConcentration="4.1"
+      <species compartment="cytosol" id="SUM_P" initialConcentration="4.1"
         metaid="metaid_0000079" name="sum of AXP conc">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -1188,93 +1188,13 @@
         value="0.045" />
     </listOfParameters>
     <listOfRules>
-      <assignmentRule metaid="metaid_0000081" variable="ADP">
+      <assignmentRule variable="SUM_P">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
-            <divide />
-            <apply>
-              <minus />
-              <ci> SUM_P </ci>
-              <apply>
-                <power />
-                <apply>
-                  <plus />
-                  <apply>
-                    <times />
-                    <apply>
-                      <power />
-                      <ci> P </ci>
-                      <cn type="integer"> 2 </cn>
-                    </apply>
-                    <apply>
-                      <minus />
-                      <cn type="integer"> 1 </cn>
-                      <apply>
-                        <times />
-                        <cn type="integer"> 4 </cn>
-                        <ci> KeqAK </ci>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <times />
-                    <cn type="integer"> 2 </cn>
-                    <ci> SUM_P </ci>
-                    <ci> P </ci>
-                    <apply>
-                      <minus />
-                      <apply>
-                        <times />
-                        <cn type="integer"> 4 </cn>
-                        <ci> KeqAK </ci>
-                      </apply>
-                      <cn type="integer"> 1 </cn>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <power />
-                    <ci> SUM_P </ci>
-                    <cn type="integer"> 2 </cn>
-                  </apply>
-                </apply>
-                <cn> 0.5 </cn>
-              </apply>
-            </apply>
-            <apply>
-              <minus />
-              <cn type="integer"> 1 </cn>
-              <apply>
-                <times />
-                <cn type="integer"> 4 </cn>
-                <ci> KeqAK </ci>
-              </apply>
-            </apply>
-          </apply>
-        </math>
-      </assignmentRule>
-      <assignmentRule metaid="metaid_0000082" variable="ATP">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <apply>
-            <divide />
-            <apply>
-              <minus />
-              <ci> P </ci>
-              <ci> ADP </ci>
-            </apply>
-            <cn type="integer"> 2 </cn>
-          </apply>
-        </math>
-      </assignmentRule>
-      <assignmentRule metaid="metaid_0000083" variable="AMP">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <apply>
-            <minus />
-            <apply>
-              <minus />
-              <ci> SUM_P </ci>
-              <ci> ATP </ci>
-            </apply>
+            <plus />
+            <ci> ATP </ci>
             <ci> ADP </ci>
+            <ci> AMP </ci>
           </apply>
         </math>
       </assignmentRule>

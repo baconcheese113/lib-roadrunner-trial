@@ -4,36 +4,35 @@ project(HelloRoadRunner)
 set(CMAKE_CXX_STANDARD 17)
 
 # Correct include paths
-include_directories(${CMAKE_SOURCE_DIR}/externals/libroadrunner/include)
-link_directories(${CMAKE_SOURCE_DIR}/externals/libroadrunner/lib)
+include_directories(${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/include)
+link_directories(${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/lib)
 
 add_definitions(-DLIBSBML_STATIC)
 
 # Create the executable
 add_executable(hello_roadrunner agnostic_rr.cpp)
 
-message(STATUS "Linking libraries from: ${CMAKE_SOURCE_DIR}/externals/libroadrunner/lib")
+message(STATUS "Linking libraries from: ${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/lib")
 
 # Link RoadRunner + libSBML depending on build type
 target_link_libraries(hello_roadrunner
-    roadrunnerd
-    libsbml-staticmdd
-    zlibstaticd
-    libexpatdMD
+    roadrunner
+    libsbml-staticmd
+    zlibstatic
+    libexpatMD
 )
-
 
 # Copy DLL after build
 add_custom_command(TARGET hello_roadrunner POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_SOURCE_DIR}/externals/libroadrunner/bin/roadrunnerd.dll
+        ${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/bin/roadrunner.dll
         $<TARGET_FILE_DIR:hello_roadrunner>
 )
 
 add_custom_target(run ALL
     # Copy all DLLs in bin/
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/externals/libroadrunner/bin
+        ${CMAKE_SOURCE_DIR}/externals/libroadrunner-release/bin
         $<TARGET_FILE_DIR:hello_roadrunner>
 
     # Copy SBML model
