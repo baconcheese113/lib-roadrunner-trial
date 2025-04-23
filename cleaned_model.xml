@@ -325,6 +325,7 @@
       <parameter id="CPFKATP" value="3" units="dimensionless"/>
       <parameter id="KeqAK" value="0.45" units="dimensionless"/>
       <parameter id="KeqTPI" value="0.045" units="dimensionless"/>
+      <parameter id="toggle_vAK" value="1"/>
       <parameter id="ATPcrit" value="0" units="mM" constant="false"/>
       <parameter id="At" value="4.16" units="mM"/>
       <parameter id="C" value="6.75e-06" units="mM_per_mV"/>
@@ -654,21 +655,25 @@
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <minus/>
+              <times/>
+              <ci> toggle_vAK </ci>
               <apply>
-                <times/>
-                <ci> kf_AK </ci>
+                <minus/>
                 <apply>
-                  <power/>
-                  <ci> ADP </ci>
-                  <cn type="integer"> 2 </cn>
+                  <times/>
+                  <ci> kf_AK </ci>
+                  <apply>
+                    <power/>
+                    <ci> ADP </ci>
+                    <cn type="integer"> 2 </cn>
+                  </apply>
                 </apply>
-              </apply>
-              <apply>
-                <times/>
-                <ci> kr_AK </ci>
-                <ci> ATP </ci>
-                <ci> AMP </ci>
+                <apply>
+                  <times/>
+                  <ci> kr_AK </ci>
+                  <ci> ATP </ci>
+                  <ci> AMP </ci>
+                </apply>
               </apply>
             </apply>
           </math>

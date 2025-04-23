@@ -1189,6 +1189,7 @@
         value="0.45" />
       <parameter id="KeqTPI" metaid="metaid_0000090" name="TPI eq constant" units="dimensionless"
         value="0.045" />
+      <parameter id="toggle_vAK" value="1"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="SUM_P">
@@ -1594,21 +1595,25 @@
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <minus />
+              <times/>
+              <ci> toggle_vAK </ci>
               <apply>
-                <times />
-                <ci> kf_AK </ci>
+                <minus />
                 <apply>
-                  <power />
-                  <ci> ADP </ci>
-                  <cn type="integer"> 2 </cn>
+                  <times />
+                  <ci> kf_AK </ci>
+                  <apply>
+                    <power />
+                    <ci> ADP </ci>
+                    <cn type="integer"> 2 </cn>
+                  </apply>
                 </apply>
-              </apply>
-              <apply>
-                <times />
-                <ci> kr_AK </ci>
-                <ci> ATP </ci>
-                <ci> AMP </ci>
+                <apply>
+                  <times />
+                  <ci> kr_AK </ci>
+                  <ci> ATP </ci>
+                  <ci> AMP </ci>
+                </apply>
               </apply>
             </apply>
           </math>

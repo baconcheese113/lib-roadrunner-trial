@@ -335,6 +335,26 @@ void clampNegativeConcentrations(rr::RoadRunner& rr) {
     }
 }
 
+// Function to toggle reaction rates
+void toggleReactionRate(rr::RoadRunner& rr, const std::string& reactionId) {
+    try {
+        // Construct the toggle parameter ID
+        std::string toggleParamId = "toggle_" + reactionId;
+
+        // Get the current value of the toggle parameter
+        double currentValue = rr.getValue(toggleParamId);
+
+        // Flip the parameter value between 0 and 1
+        double newValue = (currentValue == 0.0) ? 1.0 : 0.0;
+        rr.setValue(toggleParamId, newValue);
+
+        std::cout << "Parameter " << toggleParamId << " set to " << newValue
+                  << " (" << (newValue == 1.0 ? "reaction enabled" : "reaction disabled") << ")." << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error: Unable to toggle parameter for reaction " << reactionId << ": " << e.what() << std::endl;
+    }
+}
+
 int main() {
     const std::string glyPath = "glycolysis.xml";
     const std::string tcaPath = "tca_cycle.xml";
@@ -431,6 +451,11 @@ int main() {
                     double increment;
                     std::cin >> increment;
                     increaseSpecies(rr, speciesId, increment);
+                } else if (ch == 't' || ch == 'T') {
+                    // std::cout << "Enter reaction ID to toggle: ";
+                    std::string reactionId = "vAK";
+                    // std::cin >> reactionId;
+                    toggleReactionRate(rr, reactionId);
                 }
             }
 
