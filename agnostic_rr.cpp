@@ -482,6 +482,64 @@ void checkDeathConditions(rr::RoadRunner& rr, bool& cellAlive, std::string& deat
     }
 }
 
+void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
+    // Reaction fluxes
+    auto reactionIds = rr.getReactionIds();
+    auto reactionRates = rr.getReactionRates();
+    std::cerr << "=== Reaction fluxes ===\n";
+    for (size_t i = 0; i < reactionIds.size(); ++i) {
+        std::cerr << std::setw(12) << reactionIds[i]
+                  << ": " << std::fixed << std::setprecision(4)
+                  << reactionRates[i] << "\n";
+    }
+
+    // Species rates-of-change
+    auto speciesIds = rr.getFloatingSpeciesIds();
+    auto speciesRates = rr.getRatesOfChange();
+    auto speciesConcs = rr.getFloatingSpeciesConcentrationsV();
+    std::cerr << "\n=== Species d[X]/dt ===\n";
+    for (size_t i = 0; i < speciesIds.size(); ++i) {
+        double newConcentration = speciesConcs[i] + speciesRates[i] * dt; // Estimate next concentration
+        if (newConcentration < 0) {
+            std::cerr << "\033[31m"; // Red color for negative concentration
+        }
+        std::cerr << std::setw(12) << speciesIds[i]
+                  << ": d[X]/dt = " << std::fixed << std::setprecision(4) << speciesRates[i]
+                  << ", [X] = " << speciesConcs[i] << "\033[0m\n"; // Reset color
+    }
+
+    // Full stoichiometry matrix
+    ls::DoubleMatrix S = rr.getFullStoichiometryMatrix();
+    std::cerr << "\n=== Biggest per-reaction contributor to each species ===\n";
+    for (size_t i = 0; i < speciesIds.size(); ++i) {
+        double maxContrib = 0.0;
+        std::string culprit;
+        for (size_t j = 0; j < reactionIds.size(); ++j) {
+            double coeff = S(i, j);
+            double contrib = coeff * reactionRates[j];
+            if (std::abs(contrib) > std::abs(maxContrib)) {
+                maxContrib = contrib;
+                culprit = reactionIds[j];
+            }
+        }
+        std::cerr << std::setw(12) << speciesIds[i]
+                  << " <- " << std::setw(8) << culprit
+                  << " (dXdt=" << maxContrib << ")\n";
+    }
+
+    // Largest flux and rate-of-change
+    auto maxFluxIt = std::max_element(reactionRates.begin(), reactionRates.end(),
+                                      [](double a, double b) { return std::abs(a) < std::abs(b); });
+    size_t maxFluxIdx = std::distance(reactionRates.begin(), maxFluxIt);
+    std::cerr << "\n>> Largest single flux: "
+              << reactionIds[maxFluxIdx] << " = " << *maxFluxIt << "\n";
+
+    auto maxRateIt = std::max_element(speciesRates.begin(), speciesRates.end(),
+                                      [](double a, double b) { return std::abs(a) < std::abs(b); });
+    size_t maxRateIdx = std::distance(speciesRates.begin(), maxRateIt);
+    std::cerr << ">> Largest |dX/dt|: "
+              << speciesIds[maxRateIdx] << " = " << *maxRateIt << "\n";
+}
 
 int main() {
     const std::string glyPath = "glycolysis.xml";
@@ -590,101 +648,24 @@ int main() {
                 } else if (ch == 'v' || ch == 'V') {
                     logAllSpecies = !logAllSpecies; // Toggle logging mode
                     std::cout << "Logging mode: " << (logAllSpecies ? "All species" : "Non-zero species") << std::endl;
-                } else if (ch == 'l') {            
-                    auto reactionIds = rr.getReactionIds();
-                    auto reactionRates = rr.getReactionRates();
-                    for (size_t i = 0; i < reactionIds.size(); ++i) {
-                        std::cout << reactionIds[i] << ": " << reactionRates[i] << "\n";
-                    }
+                } else if (ch == 'l') {
+                    logDebugInfo(rr, t, dt);
                 }
             }
 
             if (isPlaying) {
                 try {
+                    std::cout << "\033[2J\033[H"; // ANSI escape codes to clear screen and move cursor to top
                     rr.oneStep(t, dt);
                     t += dt;
-                    std::cout << "\033[2J\033[H"; // ANSI escape codes to clear screen and move cursor to top
                 } catch (const std::exception& e) {
                     std::cerr << "⚠️ CVODE failed at t = " << t
                               << " with dt = " << dt << "\n"
                               << "Error: " << e.what() << "\n\n";
-                
-                    // 1) Reaction fluxes (you already have these)
-                    auto rxnIds   = rr.getReactionIds();
-                    auto rxnRates = rr.getReactionRates();
-                
-                    std::cerr << "=== Reaction fluxes ===\n";
-                    for (size_t j = 0; j < rxnIds.size(); ++j) {
-                        std::cerr << std::setw(12) << rxnIds[j]
-                                  << ": " << std::fixed << std::setprecision(4)
-                                  << rxnRates[j] << "\n";
-                    }
-                
-                    // 2) Species rates-of-change
-                    auto spcIds   = rr.getFloatingSpeciesIds();
-                    auto spcRates = rr.getRatesOfChange();
-                    auto spcConcs = rr.getFloatingSpeciesConcentrationsV();
-
-                    std::cerr << "\n=== Species d[X]/dt ===\n";
-                    for (size_t i = 0; i < spcIds.size(); ++i) {
-                        double newConcentration = spcConcs[i] + spcRates[i] * dt; // Estimate next concentration
-                        if (newConcentration < 0) {
-                            std::cerr << "\033[31m"; // Red color for negative concentration
-                        }
-                        std::cerr << std::setw(12) << spcIds[i]
-                                  << ": d[X]/dt = " << std::fixed << std::setprecision(4) << spcRates[i]
-                                  << ", [X] = " << spcConcs[i] << "\033[0m\n"; // Reset color
-                    }
-                
-                    // 3) Get the full stoichiometry matrix  
-                    //    Rows = species, Columns = reactions
-                    ls::DoubleMatrix S = rr.getFullStoichiometryMatrix();
-                
-                    // 4) Compute which reaction contributes most to each species' d[X]/dt
-                    std::cerr << "\n=== Biggest per-reaction contributor to each species ===\n";
-                    for (size_t i = 0; i < spcIds.size(); ++i) {
-                        double maxContrib = 0.0;
-                        std::string culprit;
-                        for (size_t j = 0; j < rxnIds.size(); ++j) {
-                            // S(i,j) * rate_j
-                            double coeff    = S(i, j);
-                            double contrib  = coeff * rxnRates[j];
-                            if (std::abs(contrib) > std::abs(maxContrib)) {
-                                maxContrib = contrib;
-                                culprit    = rxnIds[j];
-                            }
-                        }
-                        std::cerr << std::setw(12) << spcIds[i]
-                                  << " <- " << std::setw(8) << culprit
-                                  << " (dXdt=" << maxContrib << ")\n";
-                    }
-                
-                    // 5) Identify overall worst offender
-                    //    Compare largest |flux| vs. largest |dX/dt|
-                    {
-                      auto maxFluxIt = std::max_element(rxnRates.begin(), rxnRates.end(),
-                                                        [](double a,double b){ return std::abs(a)<std::abs(b); });
-                      size_t j = std::distance(rxnRates.begin(), maxFluxIt);
-                      std::cerr << "\n>> Largest single flux: "
-                                << rxnIds[j] << " = " << *maxFluxIt << "\n";
-                    }
-                    {
-                      auto maxRateIt = std::max_element(spcRates.begin(), spcRates.end(),
-                                                        [](double a,double b){ return std::abs(a)<std::abs(b); });
-                      size_t i = std::distance(spcRates.begin(), maxRateIt);
-                      std::cerr << ">> Largest |dX/dt|: "
-                                << spcIds[i] << " = " << *maxRateIt << "\n";
-                    }
-                
-                    // 6) You can now toggle off the worst culprit to confirm:
-                    // toggleReactionRate(rr, rxnIds[j]);
-                
-                    // Finally, back off dt and pause so you can examine output
+                    logDebugInfo(rr, t, dt);
                     dt = std::max(dt * 0.5, 1e-6);
                     isPlaying = false;
                 }
-                
-                
 
                 // Clamp all floating species concentrations to zero if they go negative
                 clampNegativeConcentrations(rr);
@@ -695,11 +676,7 @@ int main() {
                 checkDeathConditions(rr, cellAlive, deathCause);
 
                 if (!cellAlive) {
-                    auto reactionIds = rr.getReactionIds();
-                    auto reactionRates = rr.getReactionRates();
-                    for (size_t i = 0; i < reactionIds.size(); ++i) {
-                        std::cout << reactionIds[i] << ": " << reactionRates[i] << "\n";
-                    }
+                    logDebugInfo(rr, t, dt);                    
                     std::cout << "Simulation ended. Death condition met: " << deathCause << std::endl;           
                     isPlaying = false;
                     break;
