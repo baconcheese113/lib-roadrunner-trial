@@ -45,68 +45,59 @@ bool validateSBML(const std::string& sbml) {
     return true;
 }
 
-double computeOsmoticPressure(rr::RoadRunner& rr) {
+std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
     auto speciesIds = rr.getFloatingSpeciesIds();
     auto concentrations = rr.getFloatingSpeciesConcentrationsV();
-    double osmoticPressure = 0.0;
-    std::vector<std::string> includedSpecies; // To store species IDs for logging
 
-    // List of species to exclude from osmotic pressure calculation
+    double osmoticPressureCytosol = 0.0;
+    double osmoticPressureMito = 0.0;
+    std::vector<std::string> includedCytosolSpecies;
+    std::vector<std::string> includedMitoSpecies;
+
     std::set<std::string> excludedSpecies = {"CO2", "He", "ETOH", "SUM_P"};
 
-    // Access the ExecutableModel to get compartment information
     auto* executableModel = rr.getModel();
     if (!executableModel) {
         throw std::runtime_error("No model loaded in RoadRunner.");
     }
 
-    // Process floating species
     for (size_t i = 0; i < speciesIds.size(); ++i) {
         const std::string& id = speciesIds[i];
         if (excludedSpecies.find(id) == excludedSpecies.end()) {
-            // Check if species is in the cytosol
             int speciesIndex = executableModel->getFloatingSpeciesIndex(id);
             int compartmentIndex = executableModel->getCompartmentIndexForFloatingSpecies(speciesIndex);
             std::string compartment = executableModel->getCompartmentId(compartmentIndex);
-    
+
             if (compartment == "cytosol") {
-                osmoticPressure += concentrations[i]; // Sum only cytosolic, non-blacklisted species
-                includedSpecies.push_back(id); // Add to log list
+                osmoticPressureCytosol += concentrations[i];
+                includedCytosolSpecies.push_back(id);
+            }
+            else if (compartment == "mitochondrion") {
+                osmoticPressureMito += concentrations[i];
+                includedMitoSpecies.push_back(id);
             }
         }
     }
 
-    // Process boundary species
-    auto boundaryIds = rr.getBoundarySpeciesIds();
-    for (const auto& id : boundaryIds) {
-        if (excludedSpecies.find(id) == excludedSpecies.end()) {
-            // Check if species is in the cytosol
-            int speciesIndex = executableModel->getBoundarySpeciesIndex(id);
-            int compartmentIndex = executableModel->getCompartmentIndexForBoundarySpecies(speciesIndex);
-            std::string compartment = executableModel->getCompartmentId(compartmentIndex);
-    
-            if (compartment == "cytosol") {
-                osmoticPressure += rr.getValue(id); // Sum only cytosolic, non-blacklisted species
-                includedSpecies.push_back(id); // Add to log list
-            }
-        }
-    }
-
-    // Log included species in a single line (color-coded in blue)
-    if (!includedSpecies.empty()) {
-        std::cout << "\033[34mSpecies included in osmotic pressure: ";
-        for (size_t i = 0; i < includedSpecies.size(); ++i) {
-            std::cout << includedSpecies[i];
-            if (i < includedSpecies.size() - 1) {
-                std::cout << ", ";
-            }
+    // Logging species lists
+    if (!includedCytosolSpecies.empty()) {
+        std::cout << "\033[34mCytosol species contributing to osmotic pressure: ";
+        for (size_t i = 0; i < includedCytosolSpecies.size(); ++i) {
+            std::cout << includedCytosolSpecies[i];
+            if (i < includedCytosolSpecies.size() - 1) std::cout << ", ";
         }
         std::cout << "\033[0m\n";
-    } else {
-        std::cout << "\033[34mNo species included in osmotic pressure calculation\033[0m\n";
+    }
+    if (!includedMitoSpecies.empty()) {
+        std::cout << "\033[36mMitochondrion species contributing to osmotic pressure: ";
+        for (size_t i = 0; i < includedMitoSpecies.size(); ++i) {
+            std::cout << includedMitoSpecies[i];
+            if (i < includedMitoSpecies.size() - 1) std::cout << ", ";
+        }
+        std::cout << "\033[0m\n";
     }
 
-    return osmoticPressure; // Return total osmotic pressure
+    return {osmoticPressureCytosol, osmoticPressureMito};
 }
 
 // Function to log all species and their concentrations with color coding
@@ -153,15 +144,24 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
     }
 
     // Log osmotic pressure with detailed calculation
-    double osmoticPressure = computeOsmoticPressure(rr);
-    double R = 0.0821; // Gas constant in L·atm·mol⁻¹·K⁻¹
-    double T = 298;    // Temperature in Kelvin (25°C)
-    double c = osmoticPressure / 1000; // Total molar concentration (mol/L)
-    double pressure = c * R * T;
+    auto [osmoticPressureCytosol, osmoticPressureMito] = computeOsmoticPressure(rr);
+    double R = 0.0821; // L·atm·mol⁻¹·K⁻¹
+    double T = 298;    // Kelvin
 
-    std::cout << "\033[34mOsmotic Pressure Calculation: " << std::fixed << std::setprecision(4)
-              << c << " mol/L * " << R << " L/atm/mol/K * " << T << " K = " 
-              << pressure << " atm\033[0m\n";
+    double c_cytosol = osmoticPressureCytosol / 1000; // mol/L
+    double pressure_cytosol = c_cytosol * R * T;
+
+    double c_mito = osmoticPressureMito / 1000; // mol/L
+    double pressure_mito = c_mito * R * T;
+
+    std::cout << "\033[34mOsmotic Pressure (Cytosol): " << std::fixed << std::setprecision(4)
+            << c_cytosol << " mol/L * " << R << " * " << T << " = "
+            << pressure_cytosol << " atm\033[0m\n";
+
+    std::cout << "\033[36mOsmotic Pressure (Mitochondrion): " << std::fixed << std::setprecision(4)
+            << c_mito << " mol/L * " << R << " * " << T << " = "
+            << pressure_mito << " atm\033[0m\n";
+
 
     auto boundaryIds = rr.getBoundarySpeciesIds();
     std::cout << "Boundary species concentrations:\n";
@@ -462,6 +462,11 @@ void checkDeathConditions(rr::RoadRunner& rr, bool& cellAlive, std::string& deat
             cellAlive = false;
             return;
         } 
+        if (id == "ROS_m" && concentration > 0.2) { // threshold can be tuned
+            deathCause = "Oxidative stress (ROS overload)";
+            cellAlive = false;
+            return;
+        }
         else if (id == "NADH") {
             NADH = concentration;
         } 

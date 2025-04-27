@@ -1263,38 +1263,52 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <times />
-              <ci> toggle_vGLK </ci>
+              <times/>
+              <ci>toggle_vGLK</ci>
               <apply>
-                <divide />
+                <times/>
+                <ci>cytosol</ci>
+                <ci>VmGLK</ci>
                 <apply>
-                  <times />
-                  <ci> cytosol </ci>
-                  <ci> VmGLK </ci>
-                  <ci> GLCi </ci>
-                  <ci> ATP </ci>
-                </apply>
-                <apply>
-                  <plus />
-                  <ci> KmGLKGLCi </ci>
-                  <ci> GLCi </ci>
-                </apply>
-                <apply>
-                  <plus/>
+                  <minus/>
                   <cn type="integer">1</cn>
                   <apply>
                     <times/>
-                    <cn type="real">0.5</cn>
                     <ci>AMPK_active</ci>
+                    <cn type="real">0.5</cn> <!-- AMPK reduces Vm by 50% when fully active -->
+                  </apply>
+                </apply>
+                <ci>GLCi</ci>
+                <ci>ATP</ci>
+              </apply>
+              <apply>
+                <divide/>
+                <cn type="integer">1</cn>
+                <apply>
+                  <times/>
+                  <apply>
+                    <plus/>
+                    <ci>KmGLKGLCi</ci>
+                    <ci>GLCi</ci>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <cn type="integer">1</cn>
+                    <apply>
+                      <divide/>
+                      <ci>G6P</ci>
+                      <ci>Ki_G6P</ci>
+                    </apply>
                   </apply>
                 </apply>
               </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmGLK" metaid="_772671" units="mMpermin" value="226.452" />
+            <parameter id="VmGLK" metaid="_772671" units="mMpermin" value="5" />
             <parameter id="KmGLKGLCi" metaid="_772683" units="mM" value="0.08" />
             <parameter id="KmGLKATP" metaid="_772695" units="mM" value="0.15" />
+            <parameter id="Ki_G6P" units="mM" value="0.2"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2888,9 +2902,13 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
               <ci> KATPASE </ci>
               <ci> toggle_vATP </ci>
               <apply>
-                <power/>
+                <divide/>
                 <ci> ATP </ci>
-                <cn type="integer">2</cn>
+                <apply>
+                  <plus/>
+                  <ci> KmATPASE </ci>
+                  <ci> ATP </ci>
+                </apply>
               </apply>
               <apply>
                 <divide/>
@@ -2905,6 +2923,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </math>
           <listOfParameters>
             <parameter id="KATPASE" metaid="_774360" units="permin" value="15" />
+            <parameter id="KmATPASE" metaid="_774361" units="mM" value="0.05" />
           </listOfParameters>
         </kineticLaw>
       </reaction>
