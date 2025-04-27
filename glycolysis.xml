@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<sbml xmlns="http://www.sbml.org/sbml/level2/version4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sbml.org/sbml/level2/version4
-https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level-2.version-4.release-1.xsd" level="2" metaid="metaid_0000001" version="4">
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sbml.org/sbml/level2/version4 https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level-2.version-4.release-1.xsd"
+  level="2" metaid="metaid_0000001" version="4">
   <model id="Teusink2000_Glycolysis" metaid="metaid_0000002" name="Teusink2000_Glycolysis">
     <notes>
       <body xmlns="http://www.w3.org/1999/xhtml">
@@ -944,9 +946,9 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </rdf:RDF>
         </annotation>
       </species>
-      <species id="AMPK_active" compartment="cytosol" initialConcentration="0"/>
-      <species boundaryCondition="true" compartment="cytosol" id="Glyc" initialConcentration="0"
-        metaid="metaid_0000018" name="Glycogen">
+      <species id="AMPK_active" compartment="cytosol" initialConcentration="0" />
+      <species compartment="cytosol" id="Glyc" initialConcentration="0" metaid="metaid_0000018"
+        name="Glycogen">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
@@ -963,8 +965,8 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="true" compartment="cytosol" id="Trh" initialConcentration="0"
-        metaid="metaid_0000019" name="Trehalose">
+      <species compartment="cytosol" id="Trh" initialConcentration="0" metaid="metaid_0000019"
+        name="Trehalose">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
@@ -1172,6 +1174,10 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </rdf:RDF>
         </annotation>
       </species>
+      <species id="Insulin" compartment="extracellular" initialConcentration="1.0"
+        boundaryCondition="true" constant="true" />
+      <species id="H2O" compartment="cytosol" initialConcentration="55000" boundaryCondition="true"
+        constant="true" />
     </listOfSpecies>
     <listOfParameters>
       <parameter id="gR" metaid="metaid_0000050" units="dimensionless" value="5.12" />
@@ -1191,10 +1197,10 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         value="0.45" />
       <parameter id="KeqTPI" metaid="metaid_0000090" name="TPI eq constant" units="dimensionless"
         value="0.045" />
-      <parameter id="toggle_vAK" value="1"/>
-      <parameter id="toggle_vATP" value="1"/>
-      <parameter id="toggle_vGLK" value="1"/>
-      <parameter id="K_AMPK" value="1" units="dimensionless"/>
+      <parameter id="toggle_vAK" value="1" />
+      <parameter id="toggle_vATP" value="1" />
+      <parameter id="toggle_vGLK" value="1" />
+      <parameter id="K_AMPK" value="1" units="dimensionless" />
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="SUM_P">
@@ -1210,16 +1216,16 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <assignmentRule variable="AMPK_active">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
-            <divide/>
+            <divide />
             <cn>1</cn>
             <apply>
-              <plus/>
+              <plus />
               <cn>1</cn>
               <apply>
-                <divide/>
+                <divide />
                 <ci>ATP</ci>
                 <apply>
-                  <times/>
+                  <times />
                   <ci>AMP</ci>
                   <ci>K_AMPK</ci>
                 </apply>
@@ -1263,17 +1269,17 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <times/>
+              <times />
               <ci>toggle_vGLK</ci>
               <apply>
-                <times/>
+                <times />
                 <ci>cytosol</ci>
                 <ci>VmGLK</ci>
                 <apply>
-                  <minus/>
+                  <minus />
                   <cn type="integer">1</cn>
                   <apply>
-                    <times/>
+                    <times />
                     <ci>AMPK_active</ci>
                     <cn type="real">0.5</cn> <!-- AMPK reduces Vm by 50% when fully active -->
                   </apply>
@@ -1282,20 +1288,20 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
                 <ci>ATP</ci>
               </apply>
               <apply>
-                <divide/>
+                <divide />
                 <cn type="integer">1</cn>
                 <apply>
-                  <times/>
+                  <times />
                   <apply>
-                    <plus/>
+                    <plus />
                     <ci>KmGLKGLCi</ci>
                     <ci>GLCi</ci>
                   </apply>
                   <apply>
-                    <plus/>
+                    <plus />
                     <cn type="integer">1</cn>
                     <apply>
-                      <divide/>
+                      <divide />
                       <ci>G6P</ci>
                       <ci>Ki_G6P</ci>
                     </apply>
@@ -1308,7 +1314,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
             <parameter id="VmGLK" metaid="_772671" units="mMpermin" value="5" />
             <parameter id="KmGLKGLCi" metaid="_772683" units="mM" value="0.08" />
             <parameter id="KmGLKATP" metaid="_772695" units="mM" value="0.15" />
-            <parameter id="Ki_G6P" units="mM" value="0.2"/>
+            <parameter id="Ki_G6P" units="mM" value="0.2" />
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1417,16 +1423,36 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         <listOfProducts>
           <speciesReference metaid="_772855" species="Glyc" />
         </listOfProducts>
-        <kineticLaw metaid="_772867">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times />
               <ci> cytosol </ci>
-              <ci> KGLYCOGEN_3 </ci>
+              <ci> kcat_GLYCO </ci>
+              <apply>
+                <divide />
+                <ci> G6P </ci>
+                <apply>
+                  <plus />
+                  <ci> Km_G6P_GLYCO </ci>
+                  <ci> G6P </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide />
+                <ci> P </ci>
+                <apply>
+                  <plus />
+                  <ci> Km_P_GLYCO </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="KGLYCOGEN_3" metaid="_772879" units="mMpermin" value="6" />
+            <parameter id="kcat_GLYCO" value="6" units="mMpermin" />
+            <parameter id="Km_G6P_GLYCO" value="0.1" units="mM" />
+            <parameter id="Km_P_GLYCO" value="0.1" units="mM" />
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1453,16 +1479,36 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         <listOfProducts>
           <speciesReference metaid="_772915" species="Trh" />
         </listOfProducts>
-        <kineticLaw metaid="_772928">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times />
               <ci> cytosol </ci>
-              <ci> KTREHALOSE </ci>
+              <ci> kcat_TREHA </ci>
+              <apply>
+                <divide />
+                <ci> G6P </ci>
+                <apply>
+                  <plus />
+                  <ci> Km_G6P_TREHA </ci>
+                  <ci> G6P </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide />
+                <ci> P </ci>
+                <apply>
+                  <plus />
+                  <ci> Km_P_TREHA </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="KTREHALOSE" metaid="_772940" units="mMpermin" value="2.4" />
+            <parameter id="kcat_TREHA" value="2.4" units="mMpermin" />
+            <parameter id="Km_G6P_TREHA" value="0.1" units="mM" />
+            <parameter id="Km_P_TREHA" value="0.1" units="mM" />
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1518,14 +1564,14 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
                     <ci> KmPFKF6P </ci>
                   </apply>
                   <apply>
-                    <divide/>
+                    <divide />
                     <ci> ATP </ci>
                     <apply>
-                      <plus/>
+                      <plus />
                       <ci> KmPFKATP </ci>
                       <ci> ATP </ci>
                     </apply>
-                  </apply>                
+                  </apply>
                   <apply>
                     <ci> R_PFK </ci>
                     <ci> KmPFKF6P </ci>
@@ -1579,11 +1625,11 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
                     </apply>
                   </apply>
                 </apply>
-                <plus/>
+                <plus />
                 <cn type="integer">1</cn>
               </apply>
               <apply>
-                <times/>
+                <times />
                 <cn type="real">0.3</cn>
                 <ci>AMPK_active</ci>
               </apply>
@@ -1605,7 +1651,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <times/>
+              <times />
               <ci> toggle_vAK </ci>
               <apply>
                 <minus />
@@ -1636,15 +1682,43 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <reaction id="vATPsink" name="Generic ATP Consumption" reversible="false">
         <listOfReactants>
           <speciesReference species="ATP" />
+          <speciesReference species="H2O" />
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="ADP" />
           <speciesReference species="P" />
+          <speciesReference species="H" />
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <cn> 0.5 </cn>
+            <apply>
+              <times />
+              <ci> cytosol </ci>
+              <ci> Vm_ATPsink </ci>
+              <apply>
+                <divide />
+                <ci> ATP </ci>
+                <apply>
+                  <plus />
+                  <ci> Km_ATPsink </ci>
+                  <ci> ATP </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide />
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <plus />
+                  <cn type="integer"> 1 </cn>
+                  <ci> AMPK_active </ci>
+                </apply>
+              </apply>
+            </apply>
           </math>
+          <listOfParameters>
+            <parameter id="Vm_ATPsink" value="10" units="mM_per_min" />
+            <parameter id="Km_ATPsink" value="0.1" units="mM" />
+          </listOfParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vALD" metaid="metaid_0000030" name="Aldolase">
@@ -2441,11 +2515,40 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
               <times />
               <ci> cytosol </ci>
               <ci> KSUCC </ci>
-              <ci> ACE </ci>
+              <apply>
+                <divide />
+                <ci> ACE </ci>
+                <apply>
+                  <plus />
+                  <ci> Km_ACE_SUCC </ci>
+                  <ci> ACE </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide />
+                <ci> NAD </ci>
+                <apply>
+                  <plus />
+                  <ci> Km_NAD_SUCC </ci>
+                  <ci> NAD </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide />
+                <ci> P </ci>
+                <apply>
+                  <plus />
+                  <ci> Km_P_SUCC </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
             <parameter id="KSUCC" metaid="_773915" value="21.4" />
+            <parameter id="Km_ACE_SUCC" value="0.1" units="mM" />
+            <parameter id="Km_NAD_SUCC" value="0.1" units="mM" />
+            <parameter id="Km_P_SUCC" value="0.1" units="mM" />
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2476,6 +2579,9 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         <listOfProducts>
           <speciesReference metaid="_773939" species="GLCi" />
         </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="Insulin" />
+        </listOfModifiers>
         <kineticLaw metaid="_773951">
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -2483,45 +2589,70 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
               <apply>
                 <times />
                 <apply>
+                  <times />
+                  <ci>VmGLT</ci>
+                  <apply>
+                    <divide />
+                    <apply>
+                      <power />
+                      <ci>Insulin</ci>
+                      <ci>nGLTInsulin</ci>
+                    </apply>
+                    <apply>
+                      <plus />
+                      <apply>
+                        <power />
+                        <ci>Insulin</ci>
+                        <ci>nGLTInsulin</ci>
+                      </apply>
+                      <apply>
+                        <power />
+                        <ci>KGLTInsulin</ci>
+                        <ci>nGLTInsulin</ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+                <apply>
                   <divide />
-                  <ci> VmGLT </ci>
-                  <ci> KmGLTGLCo </ci>
+                  <ci>VmGLT</ci>
+                  <ci>KmGLTGLCo</ci>
                 </apply>
                 <apply>
                   <minus />
-                  <ci> GLCo </ci>
+                  <ci>GLCo</ci>
                   <apply>
                     <divide />
-                    <ci> GLCi </ci>
-                    <ci> KeqGLT </ci>
+                    <ci>GLCi</ci>
+                    <ci>KeqGLT</ci>
                   </apply>
                 </apply>
               </apply>
               <apply>
                 <plus />
-                <cn type="integer"> 1 </cn>
+                <cn type="integer">1</cn>
                 <apply>
                   <divide />
-                  <ci> GLCo </ci>
-                  <ci> KmGLTGLCo </ci>
+                  <ci>GLCo</ci>
+                  <ci>KmGLTGLCo</ci>
                 </apply>
                 <apply>
                   <divide />
-                  <ci> GLCi </ci>
-                  <ci> KmGLTGLCi </ci>
+                  <ci>GLCi</ci>
+                  <ci>KmGLTGLCi</ci>
                 </apply>
                 <apply>
                   <divide />
                   <apply>
                     <times />
-                    <cn> 0.91 </cn>
-                    <ci> GLCo </ci>
-                    <ci> GLCi </ci>
+                    <cn>0.91</cn>
+                    <ci>GLCo</ci>
+                    <ci>GLCi</ci>
                   </apply>
                   <apply>
                     <times />
-                    <ci> KmGLTGLCo </ci>
-                    <ci> KmGLTGLCi </ci>
+                    <ci>KmGLTGLCo</ci>
+                    <ci>KmGLTGLCi</ci>
                   </apply>
                 </apply>
               </apply>
@@ -2532,6 +2663,8 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
             <parameter id="KmGLTGLCo" metaid="_773975" units="mM" value="1.1918" />
             <parameter id="KeqGLT" metaid="_773987" units="mM" value="1" />
             <parameter id="KmGLTGLCi" metaid="_773999" units="mM" value="1.1918" />
+            <parameter id="KGLTInsulin" units="dimensionless" value="0.5" />
+            <parameter id="nGLTInsulin" units="dimensionless" value="2" />
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2869,61 +3002,6 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
             <parameter id="KeqG3PDH" metaid="_774288" units="dimensionless" value="4300" />
             <parameter id="KmG3PDHGLY" metaid="_774300" units="mM" value="1" />
             <parameter id="KmG3PDHNAD" metaid="_774312" units="mM" value="0.93" />
-          </listOfParameters>
-        </kineticLaw>
-      </reaction>
-      <reaction id="vATP" metaid="metaid_0000041" name="ATPase activity">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000041">
-              <bqbiol:isVersionOf>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/3.6.1.3" />
-                  <rdf:li rdf:resource="http://identifiers.org/go/GO:0016887" />
-                </rdf:Bag>
-              </bqbiol:isVersionOf>
-            </rdf:Description>
-
-          </rdf:RDF>
-        </annotation>
-        <listOfReactants>
-          <speciesReference metaid="_774324" species="P" />
-        </listOfReactants>
-        <listOfModifiers>
-          <modifierSpeciesReference metaid="_774336" species="ATP" />
-        </listOfModifiers>
-        <kineticLaw metaid="_774348">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> cytosol </ci>
-              <ci> KATPASE </ci>
-              <ci> toggle_vATP </ci>
-              <apply>
-                <divide/>
-                <ci> ATP </ci>
-                <apply>
-                  <plus/>
-                  <ci> KmATPASE </ci>
-                  <ci> ATP </ci>
-                </apply>
-              </apply>
-              <apply>
-                <divide/>
-                <cn type="integer">1</cn>
-                <apply>
-                  <plus/>
-                  <cn type="integer">1</cn>
-                  <ci> AMPK_active </ci>
-                </apply>
-              </apply>
-            </apply>
-          </math>
-          <listOfParameters>
-            <parameter id="KATPASE" metaid="_774360" units="permin" value="15" />
-            <parameter id="KmATPASE" metaid="_774361" units="mM" value="0.05" />
           </listOfParameters>
         </kineticLaw>
       </reaction>

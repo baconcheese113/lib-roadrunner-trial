@@ -272,56 +272,58 @@
       <compartment id="mitochondrion" name="Mitochondrial Matrix" size="1"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="GLCi" compartment="cytosol" initialConcentration="0.087"/>
-      <species id="G6P" compartment="cytosol" initialConcentration="2.45"/>
-      <species id="F6P" compartment="cytosol" initialConcentration="0.62"/>
-      <species id="F16P" compartment="cytosol" initialConcentration="5.51"/>
-      <species id="TRIO" compartment="cytosol" initialConcentration="0.96"/>
-      <species id="BPG" compartment="cytosol" initialConcentration="0"/>
-      <species id="P3G" compartment="cytosol" initialConcentration="0.9"/>
-      <species id="P2G" compartment="cytosol" initialConcentration="0.12"/>
-      <species id="PEP" compartment="cytosol" initialConcentration="0.07"/>
-      <species id="PYR" compartment="cytosol" initialConcentration="1.85"/>
-      <species id="ACE" compartment="cytosol" initialConcentration="0.17"/>
-      <species id="P" compartment="cytosol" initialConcentration="6.31"/>
-      <species id="NAD" compartment="cytosol" initialConcentration="1.2"/>
-      <species id="NADH" compartment="cytosol" initialConcentration="0.39"/>
+      <species id="GLCi" name="Glucose in Cytosol" compartment="cytosol" initialConcentration="0.087"/>
+      <species id="G6P" name="Glucose 6 Phosphate" compartment="cytosol" initialConcentration="2.45"/>
+      <species id="F6P" name="Fructose 6 Phosphate" compartment="cytosol" initialConcentration="0.62"/>
+      <species id="F16P" name="Fructose-1,6 bisphosphate" compartment="cytosol" initialConcentration="5.51"/>
+      <species id="TRIO" name="Triose-phosphate" compartment="cytosol" initialConcentration="0.96"/>
+      <species id="BPG" name="1,3-bisphosphoglycerate" compartment="cytosol" initialConcentration="0"/>
+      <species id="P3G" name="3-phosphoglycerate" compartment="cytosol" initialConcentration="0.9"/>
+      <species id="P2G" name="2-phosphoglycerate" compartment="cytosol" initialConcentration="0.12"/>
+      <species id="PEP" name="Phosphoenolpyruvate" compartment="cytosol" initialConcentration="0.07"/>
+      <species id="PYR" name="Pyruvate" compartment="cytosol" initialConcentration="1.85"/>
+      <species id="ACE" name="Acetaldehyde" compartment="cytosol" initialConcentration="0.17"/>
+      <species id="P" name="High energy phosphates" compartment="cytosol" initialConcentration="6.31"/>
+      <species id="NAD" name="NAD" compartment="cytosol" initialConcentration="1.2"/>
+      <species id="NADH" name="NADH" compartment="cytosol" initialConcentration="0.39"/>
       <species id="AMPK_active" compartment="cytosol" initialConcentration="0"/>
-      <species id="Glyc" compartment="cytosol" initialConcentration="0" boundaryCondition="true"/>
-      <species id="Trh" compartment="cytosol" initialConcentration="0" boundaryCondition="true"/>
-      <species id="CO2" compartment="cytosol" initialConcentration="1" boundaryCondition="true"/>
-      <species id="SUCC" compartment="cytosol" initialConcentration="0" boundaryCondition="true"/>
-      <species id="GLCo" compartment="extracellular" initialConcentration="50" boundaryCondition="true"/>
-      <species id="ETOH" compartment="cytosol" initialConcentration="5" boundaryCondition="true"/>
-      <species id="GLY" compartment="cytosol" initialConcentration="0.15" boundaryCondition="true"/>
-      <species id="ATP" compartment="cytosol" initialConcentration="1.5"/>
-      <species id="ADP" compartment="cytosol" initialConcentration="2.1"/>
-      <species id="AMP" compartment="cytosol" initialConcentration="0.5"/>
-      <species id="SUM_P" compartment="cytosol" initialConcentration="4.1"/>
-      <species id="F26BP" compartment="cytosol" initialConcentration="0.02" constant="true"/>
-      <species id="PYR_m" compartment="mitochondrion" initialConcentration="0.1"/>
-      <species id="AcCoA_m" compartment="mitochondrion" initialConcentration="0.05"/>
-      <species id="OAA_m" compartment="mitochondrion" initialConcentration="0.01"/>
-      <species id="Cit_m" compartment="mitochondrion" initialConcentration="0.5"/>
-      <species id="IsoCit_m" compartment="mitochondrion" initialConcentration="0.05"/>
-      <species id="aKG_m" compartment="mitochondrion" initialConcentration="0.1"/>
-      <species id="SuccCoA_m" compartment="mitochondrion" initialConcentration="0.01"/>
-      <species id="Succ_m" compartment="mitochondrion" initialConcentration="0.1"/>
-      <species id="Fum_m" compartment="mitochondrion" initialConcentration="0.05"/>
-      <species id="Mal_m" compartment="mitochondrion" initialConcentration="0.1"/>
-      <species id="CoA_m" compartment="mitochondrion" initialConcentration="0.5"/>
-      <species id="FAD_m" compartment="mitochondrion" initialConcentration="0.5"/>
-      <species id="FADH2_m" compartment="mitochondrion" initialConcentration="0.05"/>
-      <species id="CO2_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
-      <species id="iP_m" compartment="mitochondrion" initialConcentration="2.44"/>
-      <species id="NAD_m" compartment="mitochondrion" initialConcentration="1.2"/>
-      <species id="NADH_m" compartment="mitochondrion" initialConcentration="0.39"/>
-      <species id="ATP_m" compartment="mitochondrion" initialConcentration="1.5"/>
-      <species id="ADP_m" compartment="mitochondrion" initialConcentration="2.1"/>
-      <species id="O2_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
-      <species id="H_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
-      <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true"/>
-      <species id="H2O_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
+      <species id="Glyc" name="Glycogen" compartment="cytosol" initialConcentration="0"/>
+      <species id="Trh" name="Trehalose" compartment="cytosol" initialConcentration="0"/>
+      <species id="CO2" name="CO2" compartment="cytosol" initialConcentration="1" boundaryCondition="true"/>
+      <species id="SUCC" name="Succinate" compartment="cytosol" initialConcentration="0" boundaryCondition="true"/>
+      <species id="GLCo" name="Extracellular Glucose" compartment="extracellular" initialConcentration="50" boundaryCondition="true"/>
+      <species id="ETOH" name="Ethanol" compartment="cytosol" initialConcentration="5" boundaryCondition="true"/>
+      <species id="GLY" name="Glycerol" compartment="cytosol" initialConcentration="0.15" boundaryCondition="true"/>
+      <species id="ATP" name="ATP concentration" compartment="cytosol" initialConcentration="1.5"/>
+      <species id="ADP" name="ADP concentration" compartment="cytosol" initialConcentration="2.1"/>
+      <species id="AMP" name="AMP concentration" compartment="cytosol" initialConcentration="0.5"/>
+      <species id="SUM_P" name="sum of AXP conc" compartment="cytosol" initialConcentration="4.1"/>
+      <species id="F26BP" name="F2,6P" compartment="cytosol" initialConcentration="0.02" constant="true"/>
+      <species id="Insulin" compartment="extracellular" initialConcentration="1" boundaryCondition="true" constant="true"/>
+      <species id="H2O" compartment="cytosol" initialConcentration="55000" boundaryCondition="true" constant="true"/>
+      <species id="PYR_m" name="Pyruvate" compartment="mitochondrion" initialConcentration="0.1"/>
+      <species id="AcCoA_m" name="Acetyl-CoA" compartment="mitochondrion" initialConcentration="0.05"/>
+      <species id="OAA_m" name="Oxaloacetate" compartment="mitochondrion" initialConcentration="0.01"/>
+      <species id="Cit_m" name="Citrate" compartment="mitochondrion" initialConcentration="0.5"/>
+      <species id="IsoCit_m" name="Isocitrate" compartment="mitochondrion" initialConcentration="0.05"/>
+      <species id="aKG_m" name="Alpha-Ketoglutarate" compartment="mitochondrion" initialConcentration="0.1"/>
+      <species id="SuccCoA_m" name="Succinyl-CoA" compartment="mitochondrion" initialConcentration="0.01"/>
+      <species id="Succ_m" name="Succinate" compartment="mitochondrion" initialConcentration="0.1"/>
+      <species id="Fum_m" name="Fumarate" compartment="mitochondrion" initialConcentration="0.05"/>
+      <species id="Mal_m" name="Malate" compartment="mitochondrion" initialConcentration="0.1"/>
+      <species id="CoA_m" name="Coenzyme A" compartment="mitochondrion" initialConcentration="0.5"/>
+      <species id="FAD_m" name="Flavin Adenine Dinucleotide (oxidized)" compartment="mitochondrion" initialConcentration="0.5"/>
+      <species id="FADH2_m" name="Flavin Adenine Dinucleotide (reduced)" compartment="mitochondrion" initialConcentration="0.05"/>
+      <species id="CO2_m" name="Carbon Dioxide" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
+      <species id="iP_m" name="Inorganic Phosphate" compartment="mitochondrion" initialConcentration="2.44"/>
+      <species id="NAD_m" name="Nicotinamide Adenine Dinucleotide (oxidized)" compartment="mitochondrion" initialConcentration="1.2"/>
+      <species id="NADH_m" name="Nicotinamide Adenine Dinucleotide (reduced)" compartment="mitochondrion" initialConcentration="0.39"/>
+      <species id="ATP_m" name="Adenosine Triphosphate (mitochondrial)" compartment="mitochondrion" initialConcentration="1.5"/>
+      <species id="ADP_m" name="Adenosine Diphosphate (mitochondrial)" compartment="mitochondrion" initialConcentration="2.1"/>
+      <species id="O2_m" name="Oxygen" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
+      <species id="H_m" name="Proton" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
+      <species id="H" name="Proton (cytosolic)" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true"/>
+      <species id="H2O_m" name="Water" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
       <species id="ROS_m" compartment="mitochondrion" initialConcentration="0"/>
     </listOfSpecies>
     <listOfParameters>
@@ -338,23 +340,23 @@
       <parameter id="CPFKF16BP" value="0.397" units="dimensionless"/>
       <parameter id="KPFKF16BP" value="0.111" units="mM"/>
       <parameter id="CPFKATP" value="3" units="dimensionless"/>
-      <parameter id="KeqAK" value="0.45" units="dimensionless"/>
-      <parameter id="KeqTPI" value="0.045" units="dimensionless"/>
+      <parameter id="KeqAK" name="AK eq constant" value="0.45" units="dimensionless"/>
+      <parameter id="KeqTPI" name="TPI eq constant" value="0.045" units="dimensionless"/>
       <parameter id="toggle_vAK" value="1"/>
       <parameter id="toggle_vATP" value="1"/>
       <parameter id="toggle_vGLK" value="1"/>
       <parameter id="K_AMPK" value="1" units="dimensionless"/>
-      <parameter id="kETC" value="60" units="per_min"/>
-      <parameter id="Km_NADH_m" value="0.1" units="mM"/>
-      <parameter id="Km_O2_m" value="0.1" units="mM"/>
-      <parameter id="kETC_FADH2" value="30" units="per_min"/>
-      <parameter id="Km_FADH2_m" value="0.1" units="mM"/>
-      <parameter id="Km_O2_FADH2" value="0.1" units="mM"/>
-      <parameter id="kATPsyn" value="70" units="per_mM_per_min"/>
-      <parameter id="Km_ADP_m" value="0.1" units="mM"/>
-      <parameter id="Km_iP_m" value="0.1" units="mM"/>
-      <parameter id="Km_H_m" value="0.1" units="mM"/>
-      <parameter id="kANT" value="70" units="per_s"/>
+      <parameter id="kETC" name="Electron Transport Chain Rate Constant (NADH)" value="60" units="per_min"/>
+      <parameter id="Km_NADH_m" name="Michaelis Constant for NADH_m in ETC" value="0.1" units="mM"/>
+      <parameter id="Km_O2_m" name="Michaelis Constant for O2_m in ETC" value="0.1" units="mM"/>
+      <parameter id="kETC_FADH2" name="Electron Transport Chain Rate Constant (FADH2)" value="30" units="per_min"/>
+      <parameter id="Km_FADH2_m" name="Michaelis Constant for FADH2_m in ETC" value="0.1" units="mM"/>
+      <parameter id="Km_O2_FADH2" name="Michaelis Constant for O2_m with FADH2" value="0.1" units="mM"/>
+      <parameter id="kATPsyn" name="ATP Synthase Rate Constant" value="70" units="per_mM_per_min"/>
+      <parameter id="Km_ADP_m" name="Michaelis Constant for ADP_m in ATP Synthase" value="0.1" units="mM"/>
+      <parameter id="Km_iP_m" name="Michaelis Constant for iP_m in ATP Synthase" value="0.1" units="mM"/>
+      <parameter id="Km_H_m" name="Michaelis Constant for H_m in ATP Synthase" value="0.1" units="mM"/>
+      <parameter id="kANT" name="Adenine Nucleotide Translocator Rate Constant" value="70" units="per_s"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="SUM_P">
@@ -390,7 +392,7 @@
       </assignmentRule>
     </listOfRules>
     <listOfReactions>
-      <reaction id="vGLK">
+      <reaction id="vGLK" name="Hexokinase">
         <listOfReactants>
           <speciesReference species="GLCi"/>
           <speciesReference species="ATP"/>
@@ -448,7 +450,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPGI">
+      <reaction id="vPGI" name="Glucose-6-phosphate isomerase">
         <listOfReactants>
           <speciesReference metaid="_772743" species="G6P"/>
         </listOfReactants>
@@ -504,7 +506,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vGLYCO" reversible="false">
+      <reaction id="vGLYCO" name="Glycogen synthesis" reversible="false">
         <listOfReactants>
           <speciesReference metaid="_772831" species="G6P"/>
           <speciesReference metaid="_772843" species="P"/>
@@ -512,20 +514,40 @@
         <listOfProducts>
           <speciesReference metaid="_772855" species="Glyc"/>
         </listOfProducts>
-        <kineticLaw metaid="_772867">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> cytosol </ci>
-              <ci> KGLYCOGEN_3 </ci>
+              <ci> kcat_GLYCO </ci>
+              <apply>
+                <divide/>
+                <ci> G6P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_G6P_GLYCO </ci>
+                  <ci> G6P </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_P_GLYCO </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter metaid="_772879" id="KGLYCOGEN_3" value="6" units="mMpermin"/>
+            <parameter id="kcat_GLYCO" value="6" units="mMpermin"/>
+            <parameter id="Km_G6P_GLYCO" value="0.1" units="mM"/>
+            <parameter id="Km_P_GLYCO" value="0.1" units="mM"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vTreha" reversible="false">
+      <reaction id="vTreha" name="Trehalose 6-phosphate synthase" reversible="false">
         <listOfReactants>
           <speciesReference metaid="_772891" species="G6P" stoichiometry="2"/>
           <speciesReference metaid="_772903" species="P"/>
@@ -533,20 +555,40 @@
         <listOfProducts>
           <speciesReference metaid="_772915" species="Trh"/>
         </listOfProducts>
-        <kineticLaw metaid="_772928">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> cytosol </ci>
-              <ci> KTREHALOSE </ci>
+              <ci> kcat_TREHA </ci>
+              <apply>
+                <divide/>
+                <ci> G6P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_G6P_TREHA </ci>
+                  <ci> G6P </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_P_TREHA </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter metaid="_772940" id="KTREHALOSE" value="2.4" units="mMpermin"/>
+            <parameter id="kcat_TREHA" value="2.4" units="mMpermin"/>
+            <parameter id="Km_G6P_TREHA" value="0.1" units="mM"/>
+            <parameter id="Km_P_TREHA" value="0.1" units="mM"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPFK" reversible="false">
+      <reaction id="vPFK" name="Phosphofructokinase" reversible="false">
         <listOfReactants>
           <speciesReference metaid="_772953" species="F6P"/>
           <speciesReference species="ATP"/>
@@ -605,7 +647,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vAK" reversible="true">
+      <reaction id="vAK" name="Adenylate kinase" reversible="true">
         <listOfReactants>
           <speciesReference species="ADP" stoichiometry="2"/>
         </listOfReactants>
@@ -644,21 +686,49 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vATPsink" reversible="false">
+      <reaction id="vATPsink" name="Generic ATP Consumption" reversible="false">
         <listOfReactants>
           <speciesReference species="ATP"/>
+          <speciesReference species="H2O"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="ADP"/>
           <speciesReference species="P"/>
+          <speciesReference species="H"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <cn> 0.5 </cn>
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> Vm_ATPsink </ci>
+              <apply>
+                <divide/>
+                <ci> ATP </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_ATPsink </ci>
+                  <ci> ATP </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <ci> AMPK_active </ci>
+                </apply>
+              </apply>
+            </apply>
           </math>
+          <listOfParameters>
+            <parameter id="Vm_ATPsink" value="10" units="mM_per_min"/>
+            <parameter id="Km_ATPsink" value="0.1" units="mM"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vALD">
+      <reaction id="vALD" name="Aldolase">
         <listOfReactants>
           <speciesReference metaid="_773058" species="F16P"/>
         </listOfReactants>
@@ -820,7 +890,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vGAPDH">
+      <reaction id="vGAPDH" name="Glyceraldehyde 3-phosphate dehydrogenase">
         <listOfReactants>
           <speciesReference metaid="_773170" species="TRIO"/>
           <speciesReference metaid="_773182" species="NAD"/>
@@ -932,7 +1002,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPGK">
+      <reaction id="vPGK" name="Phosphoglycerate kinase">
         <listOfReactants>
           <speciesReference metaid="_773302" species="BPG"/>
         </listOfReactants>
@@ -1021,7 +1091,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPGM">
+      <reaction id="vPGM" name="Phosphoglycerate mutase">
         <listOfReactants>
           <speciesReference metaid="_773446" species="P3G"/>
         </listOfReactants>
@@ -1077,7 +1147,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vENO">
+      <reaction id="vENO" name="Enolase">
         <listOfReactants>
           <speciesReference metaid="_773530" species="P2G"/>
         </listOfReactants>
@@ -1133,7 +1203,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPYK">
+      <reaction id="vPYK" name="Pyruvate kinase">
         <listOfReactants>
           <speciesReference metaid="_773614" species="PEP"/>
         </listOfReactants>
@@ -1225,7 +1295,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPDC" reversible="false">
+      <reaction id="vPDC" name="Pyruvate decarboxylase" reversible="false">
         <listOfReactants>
           <speciesReference metaid="_773758" species="PYR"/>
         </listOfReactants>
@@ -1281,7 +1351,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vSUC" reversible="false">
+      <reaction id="vSUC" name="Succinate synthesis" reversible="false">
         <listOfReactants>
           <speciesReference metaid="_773843" species="ACE" stoichiometry="2"/>
           <speciesReference metaid="_773855" species="NAD" stoichiometry="3"/>
@@ -1297,27 +1367,81 @@
               <times/>
               <ci> cytosol </ci>
               <ci> KSUCC </ci>
-              <ci> ACE </ci>
+              <apply>
+                <divide/>
+                <ci> ACE </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_ACE_SUCC </ci>
+                  <ci> ACE </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> NAD </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_NAD_SUCC </ci>
+                  <ci> NAD </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_P_SUCC </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
             <parameter metaid="_773915" id="KSUCC" value="21.4"/>
+            <parameter id="Km_ACE_SUCC" value="0.1" units="mM"/>
+            <parameter id="Km_NAD_SUCC" value="0.1" units="mM"/>
+            <parameter id="Km_P_SUCC" value="0.1" units="mM"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vGLT">
+      <reaction id="vGLT" name="Glucose transport">
         <listOfReactants>
           <speciesReference metaid="_773927" species="GLCo"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference metaid="_773939" species="GLCi"/>
         </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="Insulin"/>
+        </listOfModifiers>
         <kineticLaw metaid="_773951">
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <divide/>
               <apply>
                 <times/>
+                <ci> VmGLT </ci>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <power/>
+                    <ci> Insulin </ci>
+                    <ci> nGLTInsulin </ci>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <power/>
+                      <ci> Insulin </ci>
+                      <ci> nGLTInsulin </ci>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> KGLTInsulin </ci>
+                      <ci> nGLTInsulin </ci>
+                    </apply>
+                  </apply>
+                </apply>
                 <apply>
                   <divide/>
                   <ci> VmGLT </ci>
@@ -1368,10 +1492,12 @@
             <parameter metaid="_773975" id="KmGLTGLCo" value="1.1918" units="mM"/>
             <parameter metaid="_773987" id="KeqGLT" value="1" units="mM"/>
             <parameter metaid="_773999" id="KmGLTGLCi" value="1.1918" units="mM"/>
+            <parameter id="KGLTInsulin" value="0.5" units="dimensionless"/>
+            <parameter id="nGLTInsulin" value="2" units="dimensionless"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vADH">
+      <reaction id="vADH" name="Alcohol dehydrogenase">
         <listOfReactants>
           <speciesReference metaid="_774011" species="ACE"/>
           <speciesReference metaid="_774023" species="NADH"/>
@@ -1562,7 +1688,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vG3PDH" reversible="false">
+      <reaction id="vG3PDH" name="Glycerol 3-phosphate dehydrogenase" reversible="false">
         <listOfReactants>
           <speciesReference metaid="_774191" species="TRIO"/>
           <speciesReference metaid="_774204" species="NADH"/>
@@ -1672,47 +1798,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vATP">
-        <listOfReactants>
-          <speciesReference metaid="_774324" species="P"/>
-        </listOfReactants>
-        <listOfModifiers>
-          <modifierSpeciesReference metaid="_774336" species="ATP"/>
-        </listOfModifiers>
-        <kineticLaw metaid="_774348">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> cytosol </ci>
-              <ci> KATPASE </ci>
-              <ci> toggle_vATP </ci>
-              <apply>
-                <divide/>
-                <ci> ATP </ci>
-                <apply>
-                  <plus/>
-                  <ci> KmATPASE </ci>
-                  <ci> ATP </ci>
-                </apply>
-              </apply>
-              <apply>
-                <divide/>
-                <cn type="integer"> 1 </cn>
-                <apply>
-                  <plus/>
-                  <cn type="integer"> 1 </cn>
-                  <ci> AMPK_active </ci>
-                </apply>
-              </apply>
-            </apply>
-          </math>
-          <listOfParameters>
-            <parameter metaid="_774360" id="KATPASE" value="15" units="permin"/>
-            <parameter metaid="_774361" id="KmATPASE" value="0.05" units="mM"/>
-          </listOfParameters>
-        </kineticLaw>
-      </reaction>
-      <reaction id="vPYR_trans" reversible="true">
+      <reaction id="vPYR_trans" name="Pyruvate Transport" reversible="true">
         <listOfReactants>
           <speciesReference species="PYR"/>
         </listOfReactants>
@@ -1736,7 +1822,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vPDH" reversible="false">
+      <reaction id="vPDH" name="Pyruvate Dehydrogenase" reversible="false">
         <listOfReactants>
           <speciesReference species="PYR_m"/>
           <speciesReference species="CoA_m"/>
@@ -1786,7 +1872,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vCS" reversible="false">
+      <reaction id="vCS" name="Citrate Synthase" reversible="false">
         <listOfReactants>
           <speciesReference species="AcCoA_m"/>
           <speciesReference species="OAA_m"/>
@@ -1827,7 +1913,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vAcon" reversible="true">
+      <reaction id="vAcon" name="Aconitase" reversible="true">
         <listOfReactants>
           <speciesReference species="Cit_m"/>
         </listOfReactants>
@@ -1856,7 +1942,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vIDH" reversible="false">
+      <reaction id="vIDH" name="Isocitrate Dehydrogenase" reversible="false">
         <listOfReactants>
           <speciesReference species="IsoCit_m"/>
           <speciesReference species="NAD_m"/>
@@ -1898,7 +1984,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vAKGDH" reversible="false">
+      <reaction id="vAKGDH" name="Alpha-Ketoglutarate Dehydrogenase" reversible="false">
         <listOfReactants>
           <speciesReference species="aKG_m"/>
           <speciesReference species="CoA_m"/>
@@ -1948,7 +2034,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vSCS" reversible="false">
+      <reaction id="vSCS" name="Succinyl-CoA Synthetase" reversible="false">
         <listOfReactants>
           <speciesReference species="SuccCoA_m"/>
           <speciesReference species="ADP_m"/>
@@ -1998,7 +2084,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vSDH" reversible="false">
+      <reaction id="vSDH" name="Succinate Dehydrogenase" reversible="false">
         <listOfReactants>
           <speciesReference species="Succ_m"/>
           <speciesReference species="FAD_m"/>
@@ -2039,7 +2125,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vFUM" reversible="true">
+      <reaction id="vFUM" name="Fumarase" reversible="true">
         <listOfReactants>
           <speciesReference species="Fum_m"/>
         </listOfReactants>
@@ -2068,7 +2154,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vMDH" reversible="true">
+      <reaction id="vMDH" name="Malate Dehydrogenase" reversible="true">
         <listOfReactants>
           <speciesReference species="Mal_m"/>
           <speciesReference species="NAD_m"/>
@@ -2101,7 +2187,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vETC_FADH2" reversible="false">
+      <reaction id="vETC_FADH2" name="FADH2 Oxidation" reversible="false">
         <listOfReactants>
           <speciesReference species="FADH2_m" stoichiometry="1"/>
           <speciesReference species="O2" stoichiometry="0.5"/>
@@ -2125,7 +2211,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vETC" reversible="false">
+      <reaction id="vETC" name="Electron Transport Chain (NADH)" reversible="false">
         <listOfReactants>
           <speciesReference species="NADH_m" stoichiometry="1"/>
           <speciesReference species="O2_m" stoichiometry="0.5"/>
@@ -2163,7 +2249,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="vATPsyn" reversible="false">
+      <reaction id="vATPsyn" name="ATP Synthase" reversible="false">
         <listOfReactants>
           <speciesReference species="ADP_m" stoichiometry="1"/>
           <speciesReference species="iP_m" stoichiometry="1"/>
@@ -2232,7 +2318,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vANT" reversible="true">
+      <reaction id="vANT" name="Adenine Nucleotide Translocator" reversible="true">
         <listOfReactants>
           <speciesReference species="ATP_m" stoichiometry="1"/>
           <speciesReference species="ADP" stoichiometry="1"/>
@@ -2263,7 +2349,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="vROS" reversible="false">
+      <reaction id="vROS" name="ROS Production" reversible="false">
         <listOfProducts>
           <speciesReference species="ROS_m" stoichiometry="1"/>
         </listOfProducts>
@@ -2298,7 +2384,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vAntioxidants" reversible="false">
+      <reaction id="vAntioxidants" name="ROS Scavenging" reversible="false">
         <listOfReactants>
           <speciesReference species="ROS_m" stoichiometry="1"/>
         </listOfReactants>

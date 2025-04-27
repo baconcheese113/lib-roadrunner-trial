@@ -337,7 +337,6 @@ std::string cleanSBML(const std::string& sbml) {
         species->unsetAnnotation();
         species->unsetNotes();
         species->unsetMetaId();
-        species->unsetName();
         species->unsetSBOTerm();
     }
 
@@ -346,7 +345,6 @@ std::string cleanSBML(const std::string& sbml) {
         parameter->unsetAnnotation();
         parameter->unsetNotes();
         parameter->unsetMetaId();
-        parameter->unsetName();
         parameter->unsetSBOTerm();
     }
 
@@ -355,7 +353,6 @@ std::string cleanSBML(const std::string& sbml) {
         reaction->unsetAnnotation();
         reaction->unsetNotes();
         reaction->unsetMetaId();
-        reaction->unsetName();
         reaction->unsetSBOTerm();
     }
 
@@ -374,7 +371,6 @@ std::string cleanSBML(const std::string& sbml) {
         event->unsetAnnotation();
         event->unsetNotes();
         event->unsetMetaId();
-        event->unsetName();
         event->unsetSBOTerm();
     }
 
@@ -627,12 +623,17 @@ int main() {
                     // 2) Species rates-of-change
                     auto spcIds   = rr.getFloatingSpeciesIds();
                     auto spcRates = rr.getRatesOfChange();
-                
+                    auto spcConcs = rr.getFloatingSpeciesConcentrationsV();
+
                     std::cerr << "\n=== Species d[X]/dt ===\n";
                     for (size_t i = 0; i < spcIds.size(); ++i) {
+                        double newConcentration = spcConcs[i] + spcRates[i] * dt; // Estimate next concentration
+                        if (newConcentration < 0) {
+                            std::cerr << "\033[31m"; // Red color for negative concentration
+                        }
                         std::cerr << std::setw(12) << spcIds[i]
-                                  << ": " << std::fixed << std::setprecision(4)
-                                  << spcRates[i] << "\n";
+                                  << ": d[X]/dt = " << std::fixed << std::setprecision(4) << spcRates[i]
+                                  << ", [X] = " << spcConcs[i] << "\033[0m\n"; // Reset color
                     }
                 
                     // 3) Get the full stoichiometry matrix  
