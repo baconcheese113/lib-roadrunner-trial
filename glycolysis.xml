@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" metaid="metaid_0000001" version="4">
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sbml.org/sbml/level2/version4
+https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level-2.version-4.release-1.xsd" level="2" metaid="metaid_0000001" version="4">
   <model id="Teusink2000_Glycolysis" metaid="metaid_0000002" name="Teusink2000_Glycolysis">
     <notes>
       <body xmlns="http://www.w3.org/1999/xhtml">
@@ -943,6 +944,7 @@
           </rdf:RDF>
         </annotation>
       </species>
+      <species id="AMPK_active" compartment="cytosol" initialConcentration="0"/>
       <species boundaryCondition="true" compartment="cytosol" id="Glyc" initialConcentration="0"
         metaid="metaid_0000018" name="Glycogen">
         <annotation>
@@ -1032,7 +1034,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="true" compartment="cytosol" id="ETOH" initialConcentration="50"
+      <species boundaryCondition="true" compartment="cytosol" id="ETOH" initialConcentration="5"
         metaid="metaid_0000023" name="Ethanol">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -1190,6 +1192,9 @@
       <parameter id="KeqTPI" metaid="metaid_0000090" name="TPI eq constant" units="dimensionless"
         value="0.045" />
       <parameter id="toggle_vAK" value="1"/>
+      <parameter id="toggle_vATP" value="1"/>
+      <parameter id="toggle_vGLK" value="1"/>
+      <parameter id="K_AMPK" value="1" units="dimensionless"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="SUM_P">
@@ -1199,6 +1204,27 @@
             <ci> ATP </ci>
             <ci> ADP </ci>
             <ci> AMP </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="AMPK_active">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <cn>1</cn>
+            <apply>
+              <plus/>
+              <cn>1</cn>
+              <apply>
+                <divide/>
+                <ci>ATP</ci>
+                <apply>
+                  <times/>
+                  <ci>AMP</ci>
+                  <ci>K_AMPK</ci>
+                </apply>
+              </apply>
+            </apply>
           </apply>
         </math>
       </assignmentRule>
@@ -1227,81 +1253,39 @@
           </rdf:RDF>
         </annotation>
         <listOfReactants>
-          <speciesReference metaid="_772596" species="GLCi" />
-          <speciesReference metaid="_772609" species="P" />
+          <speciesReference species="GLCi" />
+          <speciesReference species="ATP" />
         </listOfReactants>
         <listOfProducts>
-          <speciesReference metaid="_772621" species="G6P" />
+          <speciesReference species="G6P" />
+          <speciesReference species="ADP" />
         </listOfProducts>
-        <listOfModifiers>
-          <modifierSpeciesReference metaid="_772634" species="ATP" />
-          <modifierSpeciesReference metaid="_772647" species="ADP" />
-        </listOfModifiers>
-        <kineticLaw metaid="_772659">
+        <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <divide />
+              <times />
+              <ci> toggle_vGLK </ci>
               <apply>
-                <times />
+                <divide />
                 <apply>
-                  <divide />
-                  <apply>
-                    <times />
-                    <ci> cytosol </ci>
-                    <ci> VmGLK </ci>
-                  </apply>
-                  <apply>
-                    <times />
-                    <ci> KmGLKGLCi </ci>
-                    <ci> KmGLKATP </ci>
-                  </apply>
-                </apply>
-                <apply>
-                  <minus />
-                  <apply>
-                    <times />
-                    <ci> GLCi </ci>
-                    <ci> ATP </ci>
-                  </apply>
-                  <apply>
-                    <divide />
-                    <apply>
-                      <times />
-                      <ci> G6P </ci>
-                      <ci> ADP </ci>
-                    </apply>
-                    <ci> KeqGLK </ci>
-                  </apply>
-                </apply>
-              </apply>
-              <apply>
-                <times />
-                <apply>
-                  <plus />
-                  <cn type="integer"> 1 </cn>
-                  <apply>
-                    <divide />
-                    <ci> GLCi </ci>
-                    <ci> KmGLKGLCi </ci>
-                  </apply>
-                  <apply>
-                    <divide />
-                    <ci> G6P </ci>
-                    <ci> KmGLKG6P </ci>
-                  </apply>
+                  <times />
+                  <ci> cytosol </ci>
+                  <ci> VmGLK </ci>
+                  <ci> GLCi </ci>
+                  <ci> ATP </ci>
                 </apply>
                 <apply>
                   <plus />
-                  <cn type="integer"> 1 </cn>
+                  <ci> KmGLKGLCi </ci>
+                  <ci> GLCi </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <cn type="integer">1</cn>
                   <apply>
-                    <divide />
-                    <ci> ATP </ci>
-                    <ci> KmGLKATP </ci>
-                  </apply>
-                  <apply>
-                    <divide />
-                    <ci> ADP </ci>
-                    <ci> KmGLKADP </ci>
+                    <times/>
+                    <cn type="real">0.5</cn>
+                    <ci>AMPK_active</ci>
                   </apply>
                 </apply>
               </apply>
@@ -1311,9 +1295,6 @@
             <parameter id="VmGLK" metaid="_772671" units="mMpermin" value="226.452" />
             <parameter id="KmGLKGLCi" metaid="_772683" units="mM" value="0.08" />
             <parameter id="KmGLKATP" metaid="_772695" units="mM" value="0.15" />
-            <parameter id="KeqGLK" metaid="_772707" units="dimensionless" value="3800" />
-            <parameter id="KmGLKG6P" metaid="_772719" units="mM" value="30" />
-            <parameter id="KmGLKADP" metaid="_772731" units="mM" value="0.23" />
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -1495,10 +1476,11 @@
         </annotation>
         <listOfReactants>
           <speciesReference metaid="_772953" species="F6P" />
-          <speciesReference metaid="_772966" species="P" />
+          <speciesReference species="ATP" />
         </listOfReactants>
         <listOfProducts>
           <speciesReference metaid="_772979" species="F16P" />
+          <speciesReference species="ADP" />
         </listOfProducts>
         <listOfModifiers>
           <modifierSpeciesReference metaid="_772992" species="AMP" />
@@ -1508,35 +1490,28 @@
         <kineticLaw metaid="_773032">
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <divide />
+              <times />
               <apply>
-                <times />
-                <ci> cytosol </ci>
-                <ci> VmPFK </ci>
-                <ci> gR </ci>
+                <divide />
                 <apply>
-                  <divide />
-                  <ci> F6P </ci>
-                  <ci> KmPFKF6P </ci>
-                </apply>
-                <apply>
-                  <divide />
-                  <ci> ATP </ci>
-                  <ci> KmPFKATP </ci>
-                </apply>
-                <apply>
-                  <ci> R_PFK </ci>
-                  <ci> KmPFKF6P </ci>
-                  <ci> KmPFKATP </ci>
+                  <times />
+                  <ci> cytosol </ci>
+                  <ci> VmPFK </ci>
                   <ci> gR </ci>
-                  <ci> ATP </ci>
-                  <ci> F6P </ci>
-                </apply>
-              </apply>
-              <apply>
-                <plus />
-                <apply>
-                  <power />
+                  <apply>
+                    <divide />
+                    <ci> F6P </ci>
+                    <ci> KmPFKF6P </ci>
+                  </apply>
+                  <apply>
+                    <divide/>
+                    <ci> ATP </ci>
+                    <apply>
+                      <plus/>
+                      <ci> KmPFKATP </ci>
+                      <ci> ATP </ci>
+                    </apply>
+                  </apply>                
                   <apply>
                     <ci> R_PFK </ci>
                     <ci> KmPFKF6P </ci>
@@ -1545,37 +1520,58 @@
                     <ci> ATP </ci>
                     <ci> F6P </ci>
                   </apply>
-                  <cn type="integer"> 2 </cn>
                 </apply>
                 <apply>
-                  <times />
-                  <apply>
-                    <ci> L_PFK </ci>
-                    <ci> Lzero </ci>
-                    <ci> CiPFKATP </ci>
-                    <ci> KiPFKATP </ci>
-                    <ci> CPFKAMP </ci>
-                    <ci> KPFKAMP </ci>
-                    <ci> CPFKF26BP </ci>
-                    <ci> KPFKF26BP </ci>
-                    <ci> CPFKF16BP </ci>
-                    <ci> KPFKF16BP </ci>
-                    <ci> ATP </ci>
-                    <ci> AMP </ci>
-                    <ci> F16P </ci>
-                    <ci> F26BP </ci>
-                  </apply>
+                  <plus />
                   <apply>
                     <power />
                     <apply>
-                      <ci> T_PFK </ci>
-                      <ci> CPFKATP </ci>
+                      <ci> R_PFK </ci>
+                      <ci> KmPFKF6P </ci>
                       <ci> KmPFKATP </ci>
+                      <ci> gR </ci>
                       <ci> ATP </ci>
+                      <ci> F6P </ci>
                     </apply>
                     <cn type="integer"> 2 </cn>
                   </apply>
+                  <apply>
+                    <times />
+                    <apply>
+                      <ci> L_PFK </ci>
+                      <ci> Lzero </ci>
+                      <ci> CiPFKATP </ci>
+                      <ci> KiPFKATP </ci>
+                      <ci> CPFKAMP </ci>
+                      <ci> KPFKAMP </ci>
+                      <ci> CPFKF26BP </ci>
+                      <ci> KPFKF26BP </ci>
+                      <ci> CPFKF16BP </ci>
+                      <ci> KPFKF16BP </ci>
+                      <ci> ATP </ci>
+                      <ci> AMP </ci>
+                      <ci> F16P </ci>
+                      <ci> F26BP </ci>
+                    </apply>
+                    <apply>
+                      <power />
+                      <apply>
+                        <ci> T_PFK </ci>
+                        <ci> CPFKATP </ci>
+                        <ci> KmPFKATP </ci>
+                        <ci> ATP </ci>
+                      </apply>
+                      <cn type="integer"> 2 </cn>
+                    </apply>
+                  </apply>
                 </apply>
+                <plus/>
+                <cn type="integer">1</cn>
+              </apply>
+              <apply>
+                <times/>
+                <cn type="real">0.3</cn>
+                <ci>AMPK_active</ci>
               </apply>
             </apply>
           </math>
@@ -2724,7 +2720,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmADH" metaid="_774071" units="mMpermin" value="810" />
+            <parameter id="VmADH" metaid="_774071" units="mMpermin" value="50" />
             <parameter id="KiADHNAD" metaid="_774083" units="mM" value="0.92" />
             <parameter id="KmADHETOH" metaid="_774095" units="mM" value="17" />
             <parameter id="KeqADH" metaid="_774107" units="dimensionless" value="6.9E-5" />
@@ -2887,14 +2883,28 @@
         <kineticLaw metaid="_774348">
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <times />
+              <times/>
               <ci> cytosol </ci>
               <ci> KATPASE </ci>
-              <ci> ATP </ci>
+              <ci> toggle_vATP </ci>
+              <apply>
+                <power/>
+                <ci> ATP </ci>
+                <cn type="integer">2</cn>
+              </apply>
+              <apply>
+                <divide/>
+                <cn type="integer">1</cn>
+                <apply>
+                  <plus/>
+                  <cn type="integer">1</cn>
+                  <ci> AMPK_active </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="KATPASE" metaid="_774360" units="permin" value="33.7" />
+            <parameter id="KATPASE" metaid="_774360" units="permin" value="15" />
           </listOfParameters>
         </kineticLaw>
       </reaction>

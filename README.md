@@ -4,6 +4,10 @@
 
 Grab the latest .zip **Release** from https://github.com/sys-bio/roadrunner/releases and extract it to `externals/libroadrunner-release`.
 
+## Development
+
+Start VSCode from the Developer Command Prompt for VS 2022
+
 ## Build and run
 
 To just use CMakeLists, manually create a `build` directory and run the following commands from the root of the project:

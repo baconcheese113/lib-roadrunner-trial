@@ -40,7 +40,7 @@ add_custom_command(TARGET hello_roadrunner POST_BUILD
 )
 
 # Auto-copy model files (you can add more later)
-foreach(XML glycolysis.xml tca_cycle.xml)
+foreach(XML glycolysis.xml tca_cycle.xml oxphos.xml)
     add_custom_command(TARGET hello_roadrunner POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_SOURCE_DIR}/${XML}"

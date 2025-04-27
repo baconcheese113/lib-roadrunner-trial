@@ -13,6 +13,7 @@
 #include <sbml/SBMLDocument.h>
 #include <sbml/Model.h>
 #include <rr/rrExecutableModel.h>
+#include <cmath> // For std::abs
 
 // Function to check if the file exists
 bool checkFileExists(const std::string& path) {
@@ -44,8 +45,72 @@ bool validateSBML(const std::string& sbml) {
     return true;
 }
 
+double computeOsmoticPressure(rr::RoadRunner& rr) {
+    auto speciesIds = rr.getFloatingSpeciesIds();
+    auto concentrations = rr.getFloatingSpeciesConcentrationsV();
+    double osmoticPressure = 0.0;
+    std::vector<std::string> includedSpecies; // To store species IDs for logging
+
+    // List of species to exclude from osmotic pressure calculation
+    std::set<std::string> excludedSpecies = {"CO2", "He", "ETOH", "SUM_P"};
+
+    // Access the ExecutableModel to get compartment information
+    auto* executableModel = rr.getModel();
+    if (!executableModel) {
+        throw std::runtime_error("No model loaded in RoadRunner.");
+    }
+
+    // Process floating species
+    for (size_t i = 0; i < speciesIds.size(); ++i) {
+        const std::string& id = speciesIds[i];
+        if (excludedSpecies.find(id) == excludedSpecies.end()) {
+            // Check if species is in the cytosol
+            int speciesIndex = executableModel->getFloatingSpeciesIndex(id);
+            int compartmentIndex = executableModel->getCompartmentIndexForFloatingSpecies(speciesIndex);
+            std::string compartment = executableModel->getCompartmentId(compartmentIndex);
+    
+            if (compartment == "cytosol") {
+                osmoticPressure += concentrations[i]; // Sum only cytosolic, non-blacklisted species
+                includedSpecies.push_back(id); // Add to log list
+            }
+        }
+    }
+
+    // Process boundary species
+    auto boundaryIds = rr.getBoundarySpeciesIds();
+    for (const auto& id : boundaryIds) {
+        if (excludedSpecies.find(id) == excludedSpecies.end()) {
+            // Check if species is in the cytosol
+            int speciesIndex = executableModel->getBoundarySpeciesIndex(id);
+            int compartmentIndex = executableModel->getCompartmentIndexForBoundarySpecies(speciesIndex);
+            std::string compartment = executableModel->getCompartmentId(compartmentIndex);
+    
+            if (compartment == "cytosol") {
+                osmoticPressure += rr.getValue(id); // Sum only cytosolic, non-blacklisted species
+                includedSpecies.push_back(id); // Add to log list
+            }
+        }
+    }
+
+    // Log included species in a single line (color-coded in blue)
+    if (!includedSpecies.empty()) {
+        std::cout << "\033[34mSpecies included in osmotic pressure: ";
+        for (size_t i = 0; i < includedSpecies.size(); ++i) {
+            std::cout << includedSpecies[i];
+            if (i < includedSpecies.size() - 1) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << "\033[0m\n";
+    } else {
+        std::cout << "\033[34mNo species included in osmotic pressure calculation\033[0m\n";
+    }
+
+    return osmoticPressure; // Return total osmotic pressure
+}
+
 // Function to log all species and their concentrations with color coding
-void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& previousValues) {
+void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& previousValues, bool logAllSpecies) {
     auto ids = rr.getFloatingSpeciesIds();
     auto concs = rr.getFloatingSpeciesConcentrationsV();
 
@@ -61,6 +126,11 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
         double currentValue = concs[i];
         double previousValue = previousValues[id];
         double diff = currentValue - previousValue;
+
+        // Skip logging zero concentrations unless logAllSpecies is true
+        if (!logAllSpecies && currentValue < 0.00004) {
+            continue;
+        }
 
         // Retrieve the compartment name for the species
         int speciesIndex = executableModel->getFloatingSpeciesIndex(id);
@@ -82,12 +152,28 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
         previousValues[id] = currentValue; // Update previous value
     }
 
+    // Log osmotic pressure with detailed calculation
+    double osmoticPressure = computeOsmoticPressure(rr);
+    double R = 0.0821; // Gas constant in L·atm·mol⁻¹·K⁻¹
+    double T = 298;    // Temperature in Kelvin (25°C)
+    double c = osmoticPressure / 1000; // Total molar concentration (mol/L)
+    double pressure = c * R * T;
+
+    std::cout << "\033[34mOsmotic Pressure Calculation: " << std::fixed << std::setprecision(4)
+              << c << " mol/L * " << R << " L/atm/mol/K * " << T << " K = " 
+              << pressure << " atm\033[0m\n";
+
     auto boundaryIds = rr.getBoundarySpeciesIds();
     std::cout << "Boundary species concentrations:\n";
     for (const auto& id : boundaryIds) {
         double currentValue = rr.getValue(id);
         double previousValue = previousValues[id];
         double diff = currentValue - previousValue;
+
+        // Skip logging zero concentrations unless logAllSpecies is true
+        if (!logAllSpecies && currentValue == 0.0) {
+            continue;
+        }
 
         // Retrieve the compartment name for the boundary species
         int speciesIndex = executableModel->getBoundarySpeciesIndex(id);
@@ -136,21 +222,15 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
         throw std::runtime_error("Error retrieving models from SBML documents.");
     }
 
-    // Rename compartment "cytoplasm" to "cytosol" in both models
-    auto renameCompartment = [](libsbml::Model* model) {
-        auto compartment = model->getCompartment("cytoplasm");
-        if (compartment) {
-            compartment->setId("cytosol");
+    // Merge unit definitions from model2 into model1
+    for (unsigned int i = 0; i < model2->getNumUnitDefinitions(); ++i) {
+        auto unitDef = model2->getUnitDefinition(i)->clone();
+        if (!model1->getUnitDefinition(unitDef->getIdAttribute())) {
+            model1->addUnitDefinition(static_cast<libsbml::UnitDefinition*>(unitDef));
+        } else {
+            delete unitDef; // Avoid memory leak
         }
-        for (unsigned int i = 0; i < model->getNumSpecies(); ++i) {
-            auto species = model->getSpecies(i);
-            if (species->getCompartment() == "cytoplasm") {
-                species->setCompartment("cytosol");
-            }
-        }
-    };
-    renameCompartment(model1);
-    renameCompartment(model2);
+    }
 
     // Merge compartments from model2 into model1
     for (unsigned int i = 0; i < model2->getNumCompartments(); ++i) {
@@ -159,20 +239,6 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
             model1->addCompartment(static_cast<libsbml::Compartment*>(compartment));
         } else {
             delete compartment; // Avoid memory leak
-        }
-    }
-
-    // Remove "cytoplasm" if it is unused in model1
-    if (model1->getCompartment("cytoplasm")) {
-        bool isUsed = false;
-        for (unsigned int i = 0; i < model1->getNumSpecies(); ++i) {
-            if (model1->getSpecies(i)->getCompartment() == "cytoplasm") {
-                isUsed = true;
-                break;
-            }
-        }
-        if (!isUsed) {
-            model1->removeCompartment("cytoplasm");
         }
     }
 
@@ -203,6 +269,26 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
             model1->addParameter(static_cast<libsbml::Parameter*>(parameter));
         } else {
             delete parameter; // Avoid memory leak
+        }
+    }
+
+    // Merge initial assignments from model2 into model1
+    for (unsigned int i = 0; i < model2->getNumInitialAssignments(); ++i) {
+        auto initAssign = model2->getInitialAssignment(i)->clone();
+        if (!model1->getInitialAssignment(initAssign->getSymbol())) {
+            model1->addInitialAssignment(static_cast<libsbml::InitialAssignment*>(initAssign));
+        } else {
+            delete initAssign; // Avoid memory leak
+        }
+    }
+
+    // Merge rules from model2 into model1
+    for (unsigned int i = 0; i < model2->getNumRules(); ++i) {
+        auto rule = model2->getRule(i)->clone();
+        if (!model1->getRule(rule->getVariable())) {
+            model1->addRule(static_cast<libsbml::Rule*>(rule));
+        } else {
+            delete rule; // Avoid memory leak
         }
     }
 
@@ -355,11 +441,53 @@ void toggleReactionRate(rr::RoadRunner& rr, const std::string& reactionId) {
     }
 }
 
+void checkDeathConditions(rr::RoadRunner& rr, bool& cellAlive, std::string& deathCause) {
+    auto speciesIds = rr.getFloatingSpeciesIds();
+    auto concentrations = rr.getFloatingSpeciesConcentrationsV();
+
+    double NADH = -1.0;
+    double NAD = -1.0;
+
+    for (size_t i = 0; i < speciesIds.size(); ++i) {
+        const std::string& id = speciesIds[i];
+        double concentration = concentrations[i];
+
+        if (id == "ATP" && concentration < 0.5) {
+            deathCause = "Energy collapse";
+            cellAlive = false;
+            return;
+        } 
+        else if (id == "P" && concentration > 25.0) { // Pi overload
+            deathCause = "Osmotic lysis";
+            cellAlive = false;
+            return;
+        } 
+        else if (id == "NADH") {
+            NADH = concentration;
+        } 
+        else if (id == "NAD") {
+            NAD = concentration;
+        }
+    }
+
+    // Only check Redox collapse after scanning all species
+    if (NAD >= 0 && NADH >= 0) {
+        double total = NAD + NADH;
+        if (total > 0.0 && (NADH / total) > 0.9) { // Highly reduced state
+            deathCause = "Redox collapse";
+            cellAlive = false;
+            return;
+        }
+    }
+}
+
+
 int main() {
     const std::string glyPath = "glycolysis.xml";
     const std::string tcaPath = "tca_cycle.xml";
+    const std::string oxphosPath = "oxphos.xml";
 
-    if (!checkFileExists(glyPath) || !checkFileExists(tcaPath)) {
+    if (!checkFileExists(glyPath) || !checkFileExists(tcaPath) || !checkFileExists(oxphosPath)) {
         return 1;
     }
 
@@ -367,7 +495,8 @@ int main() {
         // Load and merge SBML models
         std::string sbml1 = loadSBMLFromFile(glyPath);
         std::string sbml2 = loadSBMLFromFile(tcaPath);
-        std::string mergedSBML = mergeSBMLModels(sbml1, sbml2);
+        std::string sbml3 = loadSBMLFromFile(oxphosPath);
+        std::string mergedSBML = mergeSBMLModels(mergeSBMLModels(sbml1, sbml2), sbml3);
 
         // Clean the merged SBML
         std::string cleanedSBML = cleanSBML(mergedSBML);
@@ -386,7 +515,7 @@ int main() {
         rr.load(cleanedPath);
         std::cout << "Cleaned model loaded successfully!" << std::endl;
 
-        // auto integrator = rr.getIntegrator();
+        auto integrator = rr.getIntegrator();
         // Reference below for integrator settings:
         // relative_tolerance
         // absolute_tolerance
@@ -401,22 +530,20 @@ int main() {
         // variable_step_size
         // max_output_rows
 
-        // integrator->setValue("absolute_tolerance", 1e-8);
-        // integrator->setValue("relative_tolerance", 1e-6);
+        integrator->setValue("relative_tolerance", 1e-6);
+        integrator->setValue("absolute_tolerance", 1e-8);
+        integrator->setValue("stiff", true);  // uses BDF
         // integrator->setValue("maximum_bdf_order", 5); // Optional but safe
         // integrator->setValue("maximum_adams_order", 12); // Optional
-
-        // integrator->setValue("stiff", true);  // uses BDF
         // integrator->setValue("maximum_num_steps", 10000);  // default is 500
-        // integrator->setValue("minimum_step_size", 1e-12);
-
-
+        integrator->setValue("minimum_time_step", 1e-10);
 
         std::cout << "Running real-time simulation. Press 'p' to play/pause, 'q' to quit.\n";
 
         double t = 0.0;
         double dt = 0.01;
         bool isPlaying = false; // Play/pause toggle
+        bool logAllSpecies = true; // Flag to toggle between logging all species and non-zero species
 
         // Dynamically set selections to include all floating species
         auto floatingSpeciesIds = rr.getFloatingSpeciesIds();
@@ -431,6 +558,9 @@ int main() {
         for (const auto& id : rr.getBoundarySpeciesIds()) {
             previousValues[id] = rr.getValue(id); // Initialize with current values
         }
+
+        bool cellAlive = true;
+        std::string deathCause;
 
         while (true) {
             if (_kbhit()) {
@@ -452,10 +582,19 @@ int main() {
                     std::cin >> increment;
                     increaseSpecies(rr, speciesId, increment);
                 } else if (ch == 't' || ch == 'T') {
-                    // std::cout << "Enter reaction ID to toggle: ";
-                    std::string reactionId = "vAK";
-                    // std::cin >> reactionId;
+                    std::cout << "Enter reaction ID to toggle: ";
+                    std::string reactionId; // = "vAK";
+                    std::cin >> reactionId;
                     toggleReactionRate(rr, reactionId);
+                } else if (ch == 'v' || ch == 'V') {
+                    logAllSpecies = !logAllSpecies; // Toggle logging mode
+                    std::cout << "Logging mode: " << (logAllSpecies ? "All species" : "Non-zero species") << std::endl;
+                } else if (ch == 'l') {            
+                    auto reactionIds = rr.getReactionIds();
+                    auto reactionRates = rr.getReactionRates();
+                    for (size_t i = 0; i < reactionIds.size(); ++i) {
+                        std::cout << reactionIds[i] << ": " << reactionRates[i] << "\n";
+                    }
                 }
             }
 
@@ -467,19 +606,98 @@ int main() {
                 } catch (const std::exception& e) {
                     std::cerr << "⚠️ CVODE failed at t = " << t
                               << " with dt = " << dt << "\n"
-                              << "Error: " << e.what() << "\n";
+                              << "Error: " << e.what() << "\n\n";
                 
-                    // Try a smaller step size next time, or just continue
-                    dt *= 0.5;  // or clamp to some min value
-                    if (dt < 1e-10) dt = 0.01;  // reset to default
-                    isPlaying = !isPlaying; // Toggle play/pause
+                    // 1) Reaction fluxes (you already have these)
+                    auto rxnIds   = rr.getReactionIds();
+                    auto rxnRates = rr.getReactionRates();
+                
+                    std::cerr << "=== Reaction fluxes ===\n";
+                    for (size_t j = 0; j < rxnIds.size(); ++j) {
+                        std::cerr << std::setw(12) << rxnIds[j]
+                                  << ": " << std::fixed << std::setprecision(4)
+                                  << rxnRates[j] << "\n";
+                    }
+                
+                    // 2) Species rates-of-change
+                    auto spcIds   = rr.getFloatingSpeciesIds();
+                    auto spcRates = rr.getRatesOfChange();
+                
+                    std::cerr << "\n=== Species d[X]/dt ===\n";
+                    for (size_t i = 0; i < spcIds.size(); ++i) {
+                        std::cerr << std::setw(12) << spcIds[i]
+                                  << ": " << std::fixed << std::setprecision(4)
+                                  << spcRates[i] << "\n";
+                    }
+                
+                    // 3) Get the full stoichiometry matrix  
+                    //    Rows = species, Columns = reactions
+                    ls::DoubleMatrix S = rr.getFullStoichiometryMatrix();
+                
+                    // 4) Compute which reaction contributes most to each species' d[X]/dt
+                    std::cerr << "\n=== Biggest per-reaction contributor to each species ===\n";
+                    for (size_t i = 0; i < spcIds.size(); ++i) {
+                        double maxContrib = 0.0;
+                        std::string culprit;
+                        for (size_t j = 0; j < rxnIds.size(); ++j) {
+                            // S(i,j) * rate_j
+                            double coeff    = S(i, j);
+                            double contrib  = coeff * rxnRates[j];
+                            if (std::abs(contrib) > std::abs(maxContrib)) {
+                                maxContrib = contrib;
+                                culprit    = rxnIds[j];
+                            }
+                        }
+                        std::cerr << std::setw(12) << spcIds[i]
+                                  << " <- " << std::setw(8) << culprit
+                                  << " (dXdt=" << maxContrib << ")\n";
+                    }
+                
+                    // 5) Identify overall worst offender
+                    //    Compare largest |flux| vs. largest |dX/dt|
+                    {
+                      auto maxFluxIt = std::max_element(rxnRates.begin(), rxnRates.end(),
+                                                        [](double a,double b){ return std::abs(a)<std::abs(b); });
+                      size_t j = std::distance(rxnRates.begin(), maxFluxIt);
+                      std::cerr << "\n>> Largest single flux: "
+                                << rxnIds[j] << " = " << *maxFluxIt << "\n";
+                    }
+                    {
+                      auto maxRateIt = std::max_element(spcRates.begin(), spcRates.end(),
+                                                        [](double a,double b){ return std::abs(a)<std::abs(b); });
+                      size_t i = std::distance(spcRates.begin(), maxRateIt);
+                      std::cerr << ">> Largest |dX/dt|: "
+                                << spcIds[i] << " = " << *maxRateIt << "\n";
+                    }
+                
+                    // 6) You can now toggle off the worst culprit to confirm:
+                    // toggleReactionRate(rr, rxnIds[j]);
+                
+                    // Finally, back off dt and pause so you can examine output
+                    dt = std::max(dt * 0.5, 1e-6);
+                    isPlaying = false;
                 }
+                
+                
 
                 // Clamp all floating species concentrations to zero if they go negative
                 clampNegativeConcentrations(rr);
 
                 // Clear the console and log species concentrations
-                logSpeciesWithColor(rr, previousValues);
+                logSpeciesWithColor(rr, previousValues, logAllSpecies);
+
+                checkDeathConditions(rr, cellAlive, deathCause);
+
+                if (!cellAlive) {
+                    auto reactionIds = rr.getReactionIds();
+                    auto reactionRates = rr.getReactionRates();
+                    for (size_t i = 0; i < reactionIds.size(); ++i) {
+                        std::cout << reactionIds[i] << ": " << reactionRates[i] << "\n";
+                    }
+                    std::cout << "Simulation ended. Death condition met: " << deathCause << std::endl;           
+                    isPlaying = false;
+                    break;
+                }
 
                 std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Adjust for desired update rate
             }

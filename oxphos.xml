@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sbml.org/sbml/level2/version4
+https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level-2.version-4.release-1.xsd" level="2" version="4">
+  <model id="OxPhos">
+    <!-- Compartments (reused from cleaned_model.xml) -->
+    <listOfCompartments>
+      <compartment id="cytosol" size="1" name="Cytosol"/>
+      <compartment id="mitochondrion" name="Mitochondrial Matrix" size="1"/>
+    </listOfCompartments>
+    
+    <!-- Species (new mitochondrial species and reused existing ones) -->
+    <listOfSpecies>
+      <!-- New mitochondrial species for OxPhos -->
+      <species id="NAD_m" compartment="mitochondrion" initialConcentration="1.2" name="Nicotinamide Adenine Dinucleotide (oxidized)"/>
+      <species id="NADH_m" compartment="mitochondrion" initialConcentration="0.39" name="Nicotinamide Adenine Dinucleotide (reduced)"/>
+      <species id="ATP_m" compartment="mitochondrion" initialConcentration="1.5" name="Adenosine Triphosphate (mitochondrial)"/>
+      <species id="ADP_m" compartment="mitochondrion" initialConcentration="2.1" name="Adenosine Diphosphate (mitochondrial)"/>
+      
+      <!-- Existing species from cleaned_model.xml reused -->
+      <species id="ATP" compartment="cytosol" initialConcentration="1.5" name="Adenosine Triphosphate (cytosolic)"/>
+      <species id="ADP" compartment="cytosol" initialConcentration="2.1" name="Adenosine Diphosphate (cytosolic)"/>
+      <species id="O2_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Oxygen"/>
+      <species id="H_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton"/>
+      <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
+      <species id="H2O_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Water"/>
+      <species id="P" compartment="cytosol" initialConcentration="6.31" name="High energy phosphates" />
+      <species id="iP_m" compartment="mitochondrion" initialConcentration="2.44" name="Inorganic Phosphate"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="kETC" value="60" units="per_min" name="Electron Transport Chain Rate Constant (NADH)"/>
+      <parameter id="Km_NADH_m" value="0.1" units="mM" name="Michaelis Constant for NADH_m in ETC"/>
+      <parameter id="Km_O2_m" value="0.1" units="mM" name="Michaelis Constant for O2_m in ETC"/>
+      <parameter id="kETC_FADH2" value="30" units="per_min" name="Electron Transport Chain Rate Constant (FADH2)"/>
+      <parameter id="Km_FADH2_m" value="0.1" units="mM" name="Michaelis Constant for FADH2_m in ETC"/>
+      <parameter id="Km_O2_FADH2" value="0.1" units="mM" name="Michaelis Constant for O2_m with FADH2"/>
+      <parameter id="kATPsyn" value="70" units="per_mM_per_min" name="ATP Synthase Rate Constant"/>
+      <parameter id="Km_ADP_m" value="0.1" units="mM" name="Michaelis Constant for ADP_m in ATP Synthase"/>
+      <parameter id="Km_iP_m" value="0.1" units="mM" name="Michaelis Constant for iP_m in ATP Synthase"/>
+      <parameter id="Km_H_m" value="0.1" units="mM" name="Michaelis Constant for H_m in ATP Synthase"/>
+      <parameter id="kANT" metaid="_304827" units="per_s" value="70" name="Adenine Nucleotide Translocator Rate Constant"/>
+    </listOfParameters>
+    
+    <!-- Reactions for OxPhos -->
+    <listOfReactions>
+      <!-- Electron Transport Chain (ETC) -->
+      <reaction id="vETC" reversible="false" name="Electron Transport Chain (NADH)">
+        <listOfReactants>
+          <speciesReference species="NADH_m" stoichiometry="1"/>
+          <speciesReference species="O2_m" stoichiometry="0.5"/>
+          <speciesReference species="H_m" stoichiometry="5"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="NAD_m" stoichiometry="1"/>
+          <speciesReference species="H2O_m" stoichiometry="1"/>
+          <speciesReference species="H" stoichiometry="10"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>kETC</ci>
+              <apply>
+                <divide/>
+                <ci>NADH_m</ci>
+                <apply><plus/><ci>Km_NADH_m</ci><ci>NADH_m</ci></apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci>O2_m</ci>
+                <apply><plus/><ci>Km_O2_m</ci><ci>O2_m</ci></apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+
+      <reaction id="vETC_FADH2" reversible="false" name="Electron Transport Chain (FADH2)">
+        <listOfReactants>
+          <speciesReference species="FADH2_m" stoichiometry="1"/>
+          <speciesReference species="O2_m" stoichiometry="0.5"/>
+          <speciesReference species="H_m" stoichiometry="5"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="FAD_m" stoichiometry="1"/>
+          <speciesReference species="H2O_m" stoichiometry="1"/>
+          <speciesReference species="H" stoichiometry="10"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>kETC_FADH2</ci>
+              <apply>
+                <divide/>
+                <ci>FADH2_m</ci>
+                <apply><plus/><ci>Km_FADH2_m</ci><ci>FADH2_m</ci></apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci>O2_m</ci>
+                <apply><plus/><ci>Km_O2_FADH2</ci><ci>O2_m</ci></apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      
+      <!-- ATP Synthase (Chemiosmosis) -->
+      <reaction id="vATPsyn" reversible="false" name="ATP Synthase">
+        <listOfReactants>
+          <speciesReference species="ADP_m" stoichiometry="1"/>
+          <speciesReference species="iP_m" stoichiometry="1"/>
+          <speciesReference species="H" stoichiometry="3"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ATP_m" stoichiometry="1"/>
+          <speciesReference species="H2O_m" stoichiometry="1"/>
+          <speciesReference species="H_m" stoichiometry="3"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>kATPsyn</ci>
+              <apply>
+                <divide/>
+                <ci>ADP_m</ci>
+                <apply><plus/><ci>Km_ADP_m</ci><ci>ADP_m</ci></apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci>iP_m</ci>
+                <apply><plus/><ci>Km_iP_m</ci><ci>iP_m</ci></apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci>H</ci>
+                <apply><plus/><ci>Km_H_m</ci><ci>H</ci></apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <reaction id="vPiH_symport" reversible="false">
+        <listOfReactants>
+          <speciesReference species="P" stoichiometry="1"/> <!-- Cytosolic phosphate -->
+          <speciesReference species="H" stoichiometry="1"/> <!-- Proton -->
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="iP_m" stoichiometry="1"/> <!-- Mitochondrial phosphate -->
+          <speciesReference species="H_m" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>kPiH</ci>
+              <ci>P</ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="kPiH" value="10" units="per_min"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      
+      
+      <!-- Adenine Nucleotide Translocator (ANT) -->
+      <reaction id="vANT" reversible="true" name="Adenine Nucleotide Translocator">
+        <listOfReactants>
+          <speciesReference species="ATP_m" stoichiometry="1"/>
+          <speciesReference species="ADP" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ATP" stoichiometry="1"/>
+          <speciesReference species="ADP_m" stoichiometry="1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kANT </ci>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <ci> ATP_m </ci>
+                  <ci> ADP </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> ATP </ci>
+                  <ci> ADP_m </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
