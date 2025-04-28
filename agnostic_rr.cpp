@@ -14,6 +14,7 @@
 #include <sbml/Model.h>
 #include <rr/rrExecutableModel.h>
 #include <cmath> // For std::abs
+#include <chrono> // For performance timing
 
 // Function to check if the file exists
 bool checkFileExists(const std::string& path) {
@@ -112,6 +113,7 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
     }
 
     std::cout << "Floating species concentrations:\n";
+    int columnCount = 0; // Track the number of columns printed
     for (size_t i = 0; i < ids.size(); ++i) {
         const std::string& id = ids[i];
         double currentValue = concs[i];
@@ -138,9 +140,22 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
             std::cout << "\033[0m"; // Reset color
         }
 
-        std::cout << id << " (" << compartment << "): " << std::fixed << std::setprecision(4) << currentValue
-                  << " (" << std::fixed << std::setprecision(4) << diff << ")\033[0m" << std::endl; // Reset color after value
+        std::ostringstream entry;
+        entry << id << " (" << compartment << "): "
+            << std::fixed << std::setprecision(4) << currentValue
+            << " (" << std::fixed << std::setprecision(4) << diff << ")";
+
+        std::cout << std::left << std::setw(55) << entry.str() << "\033[0m";
+
         previousValues[id] = currentValue; // Update previous value
+
+        // Print a newline after every 3 columns
+        if (++columnCount % 3 == 0) {
+            std::cout << "\n";
+        }
+    }
+    if (columnCount % 3 != 0) {
+        std::cout << "\n"; // Ensure the last line ends with a newline
     }
 
     // Log osmotic pressure with detailed calculation
@@ -162,9 +177,9 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
             << c_mito << " mol/L * " << R << " * " << T << " = "
             << pressure_mito << " atm\033[0m\n";
 
-
     auto boundaryIds = rr.getBoundarySpeciesIds();
     std::cout << "Boundary species concentrations:\n";
+    columnCount = 0; // Reset column count for boundary species
     for (const auto& id : boundaryIds) {
         double currentValue = rr.getValue(id);
         double previousValue = previousValues[id];
@@ -190,8 +205,22 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
             std::cout << "\033[0m"; // Reset color
         }
 
-        std::cout << id << " (" << compartment << "): " << std::fixed << std::setprecision(4) << currentValue << "\033[0m" << std::endl; // Reset color after value
+        
+        std::ostringstream entry;
+        entry << id << " (" << compartment << "): "
+            << std::fixed << std::setprecision(4) << currentValue;
+
+        std::cout << std::left << std::setw(55) << entry.str() << "\033[0m";
+
         previousValues[id] = currentValue; // Update previous value
+
+        // Print a newline after every 3 columns
+        if (++columnCount % 3 == 0) {
+            std::cout << "\n";
+        }
+    }
+    if (columnCount % 3 != 0) {
+        std::cout << "\n"; // Ensure the last line ends with a newline
     }
 }
 
@@ -541,12 +570,46 @@ void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
               << speciesIds[maxRateIdx] << " = " << *maxRateIt << "\n";
 }
 
+// Function to simulate lookahead and predict crash time
+double simulateLookahead(rr::RoadRunner& rr, double currentTime, double lookaheadTime, double dt) {
+    rr::RoadRunner rrLookahead = rr; // Clone the current RoadRunner instance
+    double t = currentTime;
+    bool cellAlive = true;
+    std::string deathCause;
+
+    while (t < currentTime + lookaheadTime) {
+        try {
+            rrLookahead.oneStep(t, dt);
+            t += dt;
+
+            // Check death conditions
+            checkDeathConditions(rrLookahead, cellAlive, deathCause);
+            if (!cellAlive) {
+                std::cout << "->> Predicting death at t = " << t
+                          << " (relative to current time: " << t - currentTime << ")"
+                          << " due to: " << deathCause << std::endl;
+                return t; // Return the predicted crash time
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "->> Predicting crash at t = " << t
+                      << " (relative to current time: " << t - currentTime << ")"
+                      << " with dt = " << dt << "\n"
+                      << "Error: " << e.what() << "\n";
+            return t;
+        }
+    }
+
+    std::cout << "->> No crash predicted within the next " << lookaheadTime << " time units.\n";
+    return -1.0; // Indicate no crash predicted
+}
+
 int main() {
     const std::string glyPath = "glycolysis.xml";
     const std::string tcaPath = "tca_cycle.xml";
     const std::string oxphosPath = "oxphos.xml";
+    const std::string pppPath = "ppp.xml";
 
-    if (!checkFileExists(glyPath) || !checkFileExists(tcaPath) || !checkFileExists(oxphosPath)) {
+    if (!checkFileExists(glyPath) || !checkFileExists(tcaPath) || !checkFileExists(oxphosPath) || !checkFileExists(pppPath)) {
         return 1;
     }
 
@@ -555,7 +618,8 @@ int main() {
         std::string sbml1 = loadSBMLFromFile(glyPath);
         std::string sbml2 = loadSBMLFromFile(tcaPath);
         std::string sbml3 = loadSBMLFromFile(oxphosPath);
-        std::string mergedSBML = mergeSBMLModels(mergeSBMLModels(sbml1, sbml2), sbml3);
+        std::string sbml4 = loadSBMLFromFile(pppPath);
+        std::string mergedSBML = mergeSBMLModels(mergeSBMLModels(mergeSBMLModels(sbml1, sbml2), sbml3), sbml4);
 
         // Clean the merged SBML
         std::string cleanedSBML = cleanSBML(mergedSBML);
@@ -621,6 +685,9 @@ int main() {
         bool cellAlive = true;
         std::string deathCause;
 
+        double lookaheadTime = 1.0; // Time units to look ahead
+        double lookaheadDt = dt;  // Time step for lookahead simulation
+
         while (true) {
             if (_kbhit()) {
                 char ch = _getch();
@@ -650,13 +717,27 @@ int main() {
                     std::cout << "Logging mode: " << (logAllSpecies ? "All species" : "Non-zero species") << std::endl;
                 } else if (ch == 'l') {
                     logDebugInfo(rr, t, dt);
+                } else if (ch == 'f' || ch == 'F') {
+                    // Trigger lookahead simulation
+                    simulateLookahead(rr, t, lookaheadTime, lookaheadDt);
                 }
             }
 
             if (isPlaying) {
                 try {
-                    std::cout << "\033[2J\033[H"; // ANSI escape codes to clear screen and move cursor to top
+                    
+                    // Start performance timer
+                    auto start = std::chrono::high_resolution_clock::now();
+                    
                     rr.oneStep(t, dt);
+                    
+                    // Stop performance timer
+                    auto end = std::chrono::high_resolution_clock::now();
+                    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+                    
+                    std::cout << "\033[2J\033[H"; // ANSI escape codes to clear screen and move cursor to top
+                    // Log time taken for oneStep
+                    std::cout << "Time taken for oneStep: " << (double)duration / 1000.0 << " milliseconds. Current time: " << t << "\n";
                     t += dt;
                 } catch (const std::exception& e) {
                     std::cerr << "⚠️ CVODE failed at t = " << t
@@ -673,6 +754,9 @@ int main() {
                 // Clear the console and log species concentrations
                 logSpeciesWithColor(rr, previousValues, logAllSpecies);
 
+                // Run lookahead simulation every frame
+                // simulateLookahead(rr, t, lookaheadTime, lookaheadDt);
+
                 checkDeathConditions(rr, cellAlive, deathCause);
 
                 if (!cellAlive) {
@@ -682,7 +766,7 @@ int main() {
                     break;
                 }
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Adjust for desired update rate
+                std::this_thread::sleep_for(std::chrono::milliseconds((long)(dt * 1000))); // Adjust for desired update rate
             }
         }
     } catch (const std::exception& e) {

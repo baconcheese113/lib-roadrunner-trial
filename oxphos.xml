@@ -34,10 +34,6 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <parameter id="kETC_FADH2" value="30" units="per_min" name="Electron Transport Chain Rate Constant (FADH2)"/>
       <parameter id="Km_FADH2_m" value="0.1" units="mM" name="Michaelis Constant for FADH2_m in ETC"/>
       <parameter id="Km_O2_FADH2" value="0.1" units="mM" name="Michaelis Constant for O2_m with FADH2"/>
-      <parameter id="kATPsyn" value="70" units="per_mM_per_min" name="ATP Synthase Rate Constant"/>
-      <parameter id="Km_ADP_m" value="0.1" units="mM" name="Michaelis Constant for ADP_m in ATP Synthase"/>
-      <parameter id="Km_iP_m" value="0.1" units="mM" name="Michaelis Constant for iP_m in ATP Synthase"/>
-      <parameter id="Km_H_m" value="0.1" units="mM" name="Michaelis Constant for H_m in ATP Synthase"/>
       <parameter id="kANT" metaid="_304827" units="per_s" value="70" name="Adenine Nucleotide Translocator Rate Constant"/>
     </listOfParameters>
     
@@ -108,7 +104,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       </reaction>
       
       <!-- ATP Synthase (Chemiosmosis) -->
-      <reaction id="vATPsyn" reversible="false" name="ATP Synthase">
+      <reaction id="vATPsyn" name="ATP Synthase" reversible="false">
         <listOfReactants>
           <speciesReference species="ADP_m" stoichiometry="1"/>
           <speciesReference species="iP_m" stoichiometry="1"/>
@@ -123,50 +119,97 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci>kATPsyn</ci>
+              <ci> Vmax_ATPsyn </ci>
               <apply>
                 <divide/>
-                <ci>ADP_m</ci>
-                <apply><plus/><ci>Km_ADP_m</ci><ci>ADP_m</ci></apply>
+                <ci> ADP_m </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_ADP_m </ci>
+                  <ci> ADP_m </ci>
+                </apply>
               </apply>
               <apply>
                 <divide/>
-                <ci>iP_m</ci>
-                <apply><plus/><ci>Km_iP_m</ci><ci>iP_m</ci></apply>
+                <ci> iP_m </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_Pi_m </ci>
+                  <ci> iP_m </ci>
+                </apply>
               </apply>
               <apply>
                 <divide/>
-                <ci>H</ci>
-                <apply><plus/><ci>Km_H_m</ci><ci>H</ci></apply>
+                <ci> H </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_H_m </ci>
+                  <ci> H </ci>
+                </apply>
               </apply>
             </apply>
           </math>
+          <listOfParameters>
+            <parameter id="Vmax_ATPsyn" value="5" units="mM_per_min" name="Maximum rate of ATP synthase"/>
+            <parameter id="Km_ADP_m" value="0.03" units="mM" name="Michaelis constant for mitochondrial ADP"/>
+            <parameter id="Km_Pi_m" value="0.2" units="mM" name="Michaelis constant for mitochondrial Pi"/>
+            <parameter id="Km_H_m" value="0.1" units="mM" name="Michaelis constant for proton concentration"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
 
-      <reaction id="vPiH_symport" reversible="false">
+      <!-- Pi/H+ Symport realistic model -->
+      <reaction id="vPiH_symport" name="Phosphate-H+ Symport" reversible="false">
         <listOfReactants>
-          <speciesReference species="P" stoichiometry="1"/> <!-- Cytosolic phosphate -->
-          <speciesReference species="H" stoichiometry="1"/> <!-- Proton -->
+          <speciesReference species="P" stoichiometry="1"/>
+          <speciesReference species="H" stoichiometry="1"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="iP_m" stoichiometry="1"/> <!-- Mitochondrial phosphate -->
+          <speciesReference species="iP_m" stoichiometry="1"/>
           <speciesReference species="H_m" stoichiometry="1"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci>kPiH</ci>
-              <ci>P</ci>
+              <ci> Vmax_PiH </ci>
+              <apply>
+                <divide/>
+                <ci> P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_PiH </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> H </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_H_PiH </ci>
+                  <ci> H </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> Km_iP_m </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_iP_m </ci>
+                  <ci> iP_m </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="kPiH" value="10" units="per_min"/>
+            <parameter id="Vmax_PiH" value="20" units="mM_per_min" name="Max transport rate"/>
+            <parameter id="Km_PiH" value="0.5" units="mM" name="Km for cytosolic P"/>
+            <parameter id="Km_H_PiH" value="0.1" units="mM" name="Km for proton concentration"/>
+            <parameter id="Km_iP_m" value="10.0" units="mM" name="Inhibition by mitochondrial iP_m"/>
           </listOfParameters>
         </kineticLaw>
-      </reaction>
-      
+      </reaction>      
       
       <!-- Adenine Nucleotide Translocator (ANT) -->
       <reaction id="vANT" reversible="true" name="Adenine Nucleotide Translocator">

@@ -24,6 +24,10 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <species id="FADH2_m" compartment="mitochondrion" initialConcentration="0.05" name="Flavin Adenine Dinucleotide (reduced)"/>
       <species id="CO2_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Carbon Dioxide"/>
       <species id="iP_m" compartment="mitochondrion" initialConcentration="2.44" name="Inorganic Phosphate"/>
+      <species id="O2_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Oxygen"/>
+      <species id="H_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton"/>
+      <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
+      <species id="H2O_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Water"/>
     </listOfSpecies>
     
     <!-- Reactions for TCA cycle -->
@@ -118,25 +122,27 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <!-- 50 * (.2225 / (0.01 + .2225)) * (.0006 / (.05 + .0006)) -->
+            <!-- 50 * 0.9569 * 0.0119 = 2.4736 -->
             <apply>
-              <divide/>
+              <times/>
+              <ci>VmCS</ci>
               <apply>
-                <times/>
-                <ci> VmCS </ci>
-                <ci> AcCoA_m </ci>
-                <ci> OAA_m </ci>
+                <divide/>
+                <ci>AcCoA_m</ci>
+                <apply>
+                  <plus/>
+                  <ci>KmCS_AcCoA</ci>
+                  <ci>AcCoA_m</ci>
+                </apply>
               </apply>
               <apply>
-                <times/>
+                <divide/>
+                <ci>OAA_m</ci>
                 <apply>
                   <plus/>
-                  <ci> KmCS_AcCoA </ci>
-                  <ci> AcCoA_m </ci>
-                </apply>
-                <apply>
-                  <plus/>
-                  <ci> KmCS_OAA </ci>
-                  <ci> OAA_m </ci>
+                  <ci>KmCS_OAA</ci>
+                  <ci>OAA_m</ci>
                 </apply>
               </apply>
             </apply>
@@ -144,7 +150,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           <listOfParameters>
             <parameter id="VmCS" value="50" units="mM_per_min" name="Maximum Velocity of CS"/>
             <parameter id="KmCS_AcCoA" value="0.01" units="mM" name="Michaelis Constant for Acetyl-CoA"/>
-            <parameter id="KmCS_OAA" value="0.005" units="mM" name="Michaelis Constant for Oxaloacetate"/>
+            <parameter id="KmCS_OAA" value="0.05" units="mM" name="Michaelis Constant for Oxaloacetate"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -239,32 +245,23 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <divide/>
+              <times/>
               <apply>
-                <times/>
-                <ci> VmAKGDH </ci>
-                <ci> aKG_m </ci>
-                <ci> CoA_m </ci>
-                <ci> NAD_m </ci>
-              </apply>
-              <apply>
-                <times/>
+                <divide/>
+                <ci>VmAKGDH</ci>
                 <apply>
                   <plus/>
-                  <ci> KmAKGDH_aKG </ci>
-                  <ci> aKG_m </ci>
-                </apply>
-                <apply>
-                  <plus/>
-                  <ci> KmAKGDH_CoA </ci>
-                  <ci> CoA_m </ci>
-                </apply>
-                <apply>
-                  <plus/>
-                  <ci> KmAKGDH_NAD </ci>
-                  <ci> NAD_m </ci>
+                  <cn>1</cn>
+                  <apply>
+                    <divide/>
+                    <ci>K_slowdown_AKGDH</ci>
+                    <ci>aKG_m</ci>
+                  </apply>
                 </apply>
               </apply>
+              <ci>aKG_m</ci>
+              <ci>CoA_m</ci>
+              <ci>NAD_m</ci>
             </apply>
           </math>
           <listOfParameters>
@@ -272,6 +269,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
             <parameter id="KmAKGDH_aKG" value="0.1" units="mM" name="Michaelis Constant for Alpha-Ketoglutarate"/>
             <parameter id="KmAKGDH_CoA" value="0.01" units="mM" name="Michaelis Constant for CoA"/>
             <parameter id="KmAKGDH_NAD" value="0.1" units="mM" name="Michaelis Constant for NAD"/>
+            <parameter id="K_slowdown_AKGDH" value="0.01" units="mM" name="Slowdown Constant for Alpha-Ketoglutarate"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -440,14 +438,14 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <!-- FADH2 oxidation (feeds into OxPhos ETC) -->
       <reaction id="vETC_FADH2" reversible="false" name="FADH2 Oxidation">
         <listOfReactants>
-          <speciesReference species="FADH2_m" stoichiometry="1"/>
-          <speciesReference species="O2" stoichiometry="0.5"/>
-          <speciesReference species="H" stoichiometry="3"/>
+          <speciesReference species="FADH2_m"/>
+          <speciesReference species="O2_m" stoichiometry="0.5"/>
+          <speciesReference species="H_m" stoichiometry="2"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="FAD_m" stoichiometry="1"/>
-          <speciesReference species="H2O" stoichiometry="1"/>
-          <speciesReference species="He" stoichiometry="6"/>
+          <speciesReference species="FAD_m"/>
+          <speciesReference species="H2O_m"/>
+          <speciesReference species="H_m" stoichiometry="4"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -459,6 +457,87 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </math>
           <listOfParameters>
             <parameter id="kETC_FADH2" value="60" units="per_min" name="Rate Constant of FADH2 Oxidation"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+
+      <!-- NADH oxidation (feeds into OxPhos ETC) -->
+      <reaction id="vETC_NADH" reversible="false" name="NADH Oxidation">
+        <listOfReactants>
+          <speciesReference species="NADH_m"/>
+          <speciesReference species="O2_m" stoichiometry="0.5"/>
+          <speciesReference species="H_m" stoichiometry="1"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="NAD_m"/>
+          <speciesReference species="H2O_m"/>
+          <speciesReference species="H_m" stoichiometry="3"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kETC_NADH </ci>
+              <ci> NADH_m </ci>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="kETC_NADH" value="100" units="per_min" name="Rate Constant of NADH Oxidation"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+
+        <!-- Pyruvate Carboxylase (PC) -->
+      <reaction id="vPC" reversible="false" name="Pyruvate Carboxylase">
+        <listOfReactants>
+          <speciesReference species="PYR_m"/>
+          <speciesReference species="CO2_m"/>
+          <speciesReference species="ATP_m"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="OAA_m"/>
+          <speciesReference species="ADP_m"/>
+          <speciesReference species="iP_m"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>VmPC</ci>
+              <apply>
+                <divide/>
+                <ci>PYR_m</ci>
+                <apply>
+                  <plus/>
+                  <ci>KmPC_PYR</ci>
+                  <ci>PYR_m</ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci>ATP_m</ci>
+                <apply>
+                  <plus/>
+                  <ci>KmPC_ATP</ci>
+                  <ci>ATP_m</ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci>CO2_m</ci>
+                <apply>
+                  <plus/>
+                  <ci>KmPC_CO2</ci>
+                  <ci>CO2_m</ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="VmPC" value="5.0" units="mM_per_min"/>
+            <parameter id="KmPC_PYR" value="0.05" units="mM"/>
+            <parameter id="KmPC_ATP" value="0.05" units="mM"/>
+            <parameter id="KmPC_CO2" value="0.01" units="mM"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
