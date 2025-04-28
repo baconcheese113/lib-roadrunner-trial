@@ -404,7 +404,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="BPG" initialConcentration="0" metaid="metaid_0000009"
+      <species compartment="cytosol" id="BPG" initialConcentration="0.1" metaid="metaid_0000009"
         name="1,3-bisphosphoglycerate">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -458,7 +458,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="PEP" initialConcentration="0.07" metaid="metaid_0000012"
+      <species compartment="cytosol" id="PEP" initialConcentration="0.1" metaid="metaid_0000012"
         name="Phosphoenolpyruvate">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -528,7 +528,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="P" initialConcentration="6.31" metaid="metaid_0000042"
+      <species compartment="cytosol" id="P" initialConcentration="5" metaid="metaid_0000042"
         name="High energy phosphates">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -592,13 +592,13 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species id="AMPK_active" compartment="cytosol" initialConcentration="0" />
-      <species compartment="cytosol" id="Glyc" initialConcentration="0" metaid="metaid_0000018"
+      <species id="AMPK_active" compartment="cytosol" initialConcentration="0.001" />
+      <species compartment="cytosol" id="Glyc" initialConcentration="0.1" metaid="metaid_0000018"
         name="Glycogen">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000018">
               <bqbiol:is>
                 <rdf:Bag>
@@ -611,12 +611,12 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species compartment="cytosol" id="Trh" initialConcentration="0" metaid="metaid_0000019"
+      <species compartment="cytosol" id="Trh" initialConcentration="0.1" metaid="metaid_0000019"
         name="Trehalose">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000019">
               <bqbiol:is>
                 <rdf:Bag>
@@ -633,8 +633,8 @@
         metaid="metaid_0000020" name="CO2">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000020">
               <bqbiol:is>
                 <rdf:Bag>
@@ -647,12 +647,12 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="true" compartment="cytosol" id="SUCC" initialConcentration="0"
+      <species boundaryCondition="true" compartment="cytosol" id="SUCC" initialConcentration="0.1"
         metaid="metaid_0000021" name="Succinate">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000021">
               <bqbiol:is>
                 <rdf:Bag>
@@ -665,11 +665,11 @@
         </annotation>
       </species>
       <species boundaryCondition="true" compartment="extracellular" id="GLCo"
-        initialConcentration="50" metaid="metaid_0000022" name="Extracellular Glucose">
+        initialConcentration="10" metaid="metaid_0000022" name="Extracellular Glucose">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000022">
               <bqbiol:is>
                 <rdf:Bag>
@@ -686,8 +686,8 @@
         metaid="metaid_0000023" name="Ethanol">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000023">
               <bqbiol:is>
                 <rdf:Bag>
@@ -704,8 +704,8 @@
         metaid="metaid_0000024" name="Glycerol">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000024">
               <bqbiol:is>
                 <rdf:Bag>
@@ -719,11 +719,11 @@
         </annotation>
       </species>
       <species compartment="cytosol" id="ATP" metaid="metaid_0000076" name="ATP concentration"
-        initialConcentration="1.5">
+        initialConcentration="3">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000076">
               <bqbiol:is>
                 <rdf:Bag>
@@ -737,11 +737,11 @@
         </annotation>
       </species>
       <species compartment="cytosol" id="ADP" metaid="metaid_0000077" name="ADP concentration"
-        initialConcentration="2.1">
+        initialConcentration="0.7">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000077">
               <bqbiol:is>
                 <rdf:Bag>
@@ -758,8 +758,8 @@
         initialConcentration="0.5">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000078">
               <bqbiol:is>
                 <rdf:Bag>
@@ -778,8 +778,8 @@
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
             xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
             xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/"
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000079">
               <bqbiol:hasPart>
                 <rdf:Bag>
@@ -806,8 +806,8 @@
         metaid="metaid_0000061" name="F2,6P">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:bqmodel="http://biomodels.net/model-qualifiers/"
-            xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            xmlns:bqmodel="http://www.biomodels.net/model-qualifiers/"
+            xmlns:bqbiol="http://www.biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000061">
               <bqbiol:is>
                 <rdf:Bag>
@@ -822,18 +822,18 @@
       </species>
       <species id="Insulin" compartment="extracellular" initialConcentration="1.0"
         boundaryCondition="true" constant="true" />
-      <species id="H2O" compartment="cytosol" initialConcentration="55000" boundaryCondition="true"
+      <species id="H2O" compartment="cytosol" initialConcentration="1.0" boundaryCondition="true"
         constant="true" />
-      <species id="IMP" name="Inosine Monophosphate" compartment="cytosol" initialConcentration="0" />
-      <species id="NH4" name="Ammonia" compartment="cytosol" initialConcentration="0" />
-      <species id="G1P" name="Glucose 1 Phosphate" compartment="cytosol" initialConcentration="0" />
+      <species id="IMP" name="Inosine Monophosphate" compartment="cytosol" initialConcentration="0.01" />
+      <species id="NH4" name="Ammonia" compartment="cytosol" initialConcentration="0.01" />
+      <species id="G1P" name="Glucose 1 Phosphate" compartment="cytosol" initialConcentration="0.01" />
     </listOfSpecies>
     <listOfParameters>
       <parameter id="gR" metaid="metaid_0000050" units="dimensionless" value="5.12" />
       <parameter id="KmPFKF6P" metaid="metaid_0000051" units="mM" value="0.1" />
       <parameter id="KmPFKATP" metaid="metaid_0000054" units="mM" value="0.71" />
       <parameter id="Lzero" metaid="metaid_0000055" units="dimensionless" value="0.66" />
-      <parameter id="CiPFKATP" metaid="metaid_0000056" units="dimensionless" value="100" />
+      <parameter id="CiPFKATP" metaid="metaid_0000056" units="dimensionless" value="10" />
       <parameter id="KiPFKATP" metaid="metaid_0000057" units="mM" value="0.65" />
       <parameter id="CPFKAMP" metaid="metaid_0000058" units="dimensionless" value="0.0845" />
       <parameter id="KPFKAMP" metaid="metaid_0000059" units="mM" value="0.0995" />
@@ -850,6 +850,7 @@
       <parameter id="toggle_vATP" value="1" />
       <parameter id="toggle_vGLK" value="1" />
       <parameter id="K_AMPK" value="1" units="dimensionless" />
+      <parameter id="kATP_decay" value="0.001" units="per_min" /> <!-- Small decay rate -->
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="SUM_P">
@@ -883,6 +884,16 @@
           </apply>
         </math>
       </assignmentRule>
+      <!-- Add a decay rule for ATP -->
+      <rateRule variable="ATP">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus />
+            <ci> kATP_decay </ci>
+            <ci> ATP </ci>
+          </apply>
+        </math>
+      </rateRule>
     </listOfRules>
     <listOfReactions>
       <reaction id="vGLK" metaid="metaid_0000025" name="Hexokinase">
@@ -1398,7 +1409,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vm_ATPsink" value="10" units="mM_per_min" />
+            <parameter id="Vm_ATPsink" value="1" units="mM_per_min" />
             <parameter id="Km_ATPsink" value="0.1" units="mM" />
           </listOfParameters>
         </kineticLaw>
@@ -2091,7 +2102,7 @@
             <parameter id="KmPYKPEP" metaid="_773698" units="mM" value="0.14" />
             <parameter id="KmPYKADP" metaid="_773710" units="mM" value="0.53" />
             <parameter id="KeqPYK" metaid="_773722" units="dimensionless" value="6500" />
-            <parameter id="KmPYKPYR" metaid="_773734" units="mM" value="21" />
+            <parameter id="KmPYKPYR" metaid="_773734" units="mM" value="0.9" />
             <parameter id="KmPYKATP" metaid="_773746" units="mM" value="1.5" />
           </listOfParameters>
         </kineticLaw>

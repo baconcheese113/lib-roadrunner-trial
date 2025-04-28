@@ -277,40 +277,40 @@
       <species id="F6P" name="Fructose 6 Phosphate" compartment="cytosol" initialConcentration="0.62"/>
       <species id="F16P" name="Fructose-1,6 bisphosphate" compartment="cytosol" initialConcentration="5.51"/>
       <species id="TRIO" name="Triose-phosphate" compartment="cytosol" initialConcentration="0.96"/>
-      <species id="BPG" name="1,3-bisphosphoglycerate" compartment="cytosol" initialConcentration="0"/>
+      <species id="BPG" name="1,3-bisphosphoglycerate" compartment="cytosol" initialConcentration="0.1"/>
       <species id="P3G" name="3-phosphoglycerate" compartment="cytosol" initialConcentration="0.9"/>
       <species id="P2G" name="2-phosphoglycerate" compartment="cytosol" initialConcentration="0.12"/>
-      <species id="PEP" name="Phosphoenolpyruvate" compartment="cytosol" initialConcentration="0.07"/>
+      <species id="PEP" name="Phosphoenolpyruvate" compartment="cytosol" initialConcentration="0.1"/>
       <species id="PYR" name="Pyruvate" compartment="cytosol" initialConcentration="1.85"/>
       <species id="ACE" name="Acetaldehyde" compartment="cytosol" initialConcentration="0.17"/>
-      <species id="P" name="High energy phosphates" compartment="cytosol" initialConcentration="6.31"/>
+      <species id="P" name="High energy phosphates" compartment="cytosol" initialConcentration="5"/>
       <species id="NAD" name="NAD" compartment="cytosol" initialConcentration="1.2"/>
       <species id="NADH" name="NADH" compartment="cytosol" initialConcentration="0.39"/>
-      <species id="AMPK_active" compartment="cytosol" initialConcentration="0"/>
-      <species id="Glyc" name="Glycogen" compartment="cytosol" initialConcentration="0"/>
-      <species id="Trh" name="Trehalose" compartment="cytosol" initialConcentration="0"/>
+      <species id="AMPK_active" compartment="cytosol" initialConcentration="0.001"/>
+      <species id="Glyc" name="Glycogen" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="Trh" name="Trehalose" compartment="cytosol" initialConcentration="0.1"/>
       <species id="CO2" name="CO2" compartment="cytosol" initialConcentration="1" boundaryCondition="true"/>
-      <species id="SUCC" name="Succinate" compartment="cytosol" initialConcentration="0" boundaryCondition="true"/>
-      <species id="GLCo" name="Extracellular Glucose" compartment="extracellular" initialConcentration="50" boundaryCondition="true"/>
+      <species id="SUCC" name="Succinate" compartment="cytosol" initialConcentration="0.1" boundaryCondition="true"/>
+      <species id="GLCo" name="Extracellular Glucose" compartment="extracellular" initialConcentration="10" boundaryCondition="true"/>
       <species id="ETOH" name="Ethanol" compartment="cytosol" initialConcentration="5" boundaryCondition="true"/>
       <species id="GLY" name="Glycerol" compartment="cytosol" initialConcentration="0.15" boundaryCondition="true"/>
-      <species id="ATP" name="ATP concentration" compartment="cytosol" initialConcentration="1.5"/>
-      <species id="ADP" name="ADP concentration" compartment="cytosol" initialConcentration="2.1"/>
+      <species id="ATP" name="ATP concentration" compartment="cytosol" initialConcentration="3"/>
+      <species id="ADP" name="ADP concentration" compartment="cytosol" initialConcentration="0.7"/>
       <species id="AMP" name="AMP concentration" compartment="cytosol" initialConcentration="0.5"/>
       <species id="SUM_P" name="sum of AXP conc" compartment="cytosol" initialConcentration="4.1"/>
       <species id="F26BP" name="F2,6P" compartment="cytosol" initialConcentration="0.02" constant="true"/>
       <species id="Insulin" compartment="extracellular" initialConcentration="1" boundaryCondition="true" constant="true"/>
-      <species id="H2O" compartment="cytosol" initialConcentration="55000" boundaryCondition="true" constant="true"/>
-      <species id="IMP" name="Inosine Monophosphate" compartment="cytosol" initialConcentration="0"/>
-      <species id="NH4" name="Ammonia" compartment="cytosol" initialConcentration="0"/>
-      <species id="G1P" name="Glucose 1 Phosphate" compartment="cytosol" initialConcentration="0"/>
+      <species id="H2O" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true"/>
+      <species id="IMP" name="Inosine Monophosphate" compartment="cytosol" initialConcentration="0.01"/>
+      <species id="NH4" name="Ammonia" compartment="cytosol" initialConcentration="0.01"/>
+      <species id="G1P" name="Glucose 1 Phosphate" compartment="cytosol" initialConcentration="0.01"/>
       <species id="PYR_m" name="Pyruvate" compartment="mitochondrion" initialConcentration="0.1"/>
       <species id="AcCoA_m" name="Acetyl-CoA" compartment="mitochondrion" initialConcentration="0.05"/>
-      <species id="OAA_m" name="Oxaloacetate" compartment="mitochondrion" initialConcentration="0.01"/>
+      <species id="OAA_m" name="Oxaloacetate" compartment="mitochondrion" initialConcentration="0.1"/>
       <species id="Cit_m" name="Citrate" compartment="mitochondrion" initialConcentration="0.5"/>
       <species id="IsoCit_m" name="Isocitrate" compartment="mitochondrion" initialConcentration="0.05"/>
       <species id="aKG_m" name="Alpha-Ketoglutarate" compartment="mitochondrion" initialConcentration="0.1"/>
-      <species id="SuccCoA_m" name="Succinyl-CoA" compartment="mitochondrion" initialConcentration="0.01"/>
+      <species id="SuccCoA_m" name="Succinyl-CoA" compartment="mitochondrion" initialConcentration="0.1"/>
       <species id="Succ_m" name="Succinate" compartment="mitochondrion" initialConcentration="0.1"/>
       <species id="Fum_m" name="Fumarate" compartment="mitochondrion" initialConcentration="0.05"/>
       <species id="Mal_m" name="Malate" compartment="mitochondrion" initialConcentration="0.1"/>
@@ -318,7 +318,7 @@
       <species id="FAD_m" name="Flavin Adenine Dinucleotide (oxidized)" compartment="mitochondrion" initialConcentration="0.5"/>
       <species id="FADH2_m" name="Flavin Adenine Dinucleotide (reduced)" compartment="mitochondrion" initialConcentration="0.05"/>
       <species id="CO2_m" name="Carbon Dioxide" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
-      <species id="iP_m" name="Inorganic Phosphate" compartment="mitochondrion" initialConcentration="2.44"/>
+      <species id="iP_m" name="Inorganic Phosphate" compartment="mitochondrion" initialConcentration="5"/>
       <species id="O2_m" name="Oxygen" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
       <species id="H_m" name="Proton" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true"/>
       <species id="H" name="Proton (cytosolic)" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true"/>
@@ -327,14 +327,14 @@
       <species id="NADH_m" name="Nicotinamide Adenine Dinucleotide (reduced)" compartment="mitochondrion" initialConcentration="0.39"/>
       <species id="ATP_m" name="Adenosine Triphosphate (mitochondrial)" compartment="mitochondrion" initialConcentration="1.5"/>
       <species id="ADP_m" name="Adenosine Diphosphate (mitochondrial)" compartment="mitochondrion" initialConcentration="2.1"/>
-      <species id="ROS_m" compartment="mitochondrion" initialConcentration="0"/>
-      <species id="P6GL" name="6-Phosphogluconolactone" compartment="cytosol" initialConcentration="0"/>
-      <species id="P6G" name="6-Phosphogluconate" compartment="cytosol" initialConcentration="0"/>
-      <species id="Ru5P" name="Ribulose-5-phosphate" compartment="cytosol" initialConcentration="0"/>
-      <species id="R5P" name="Ribose-5-phosphate" compartment="cytosol" initialConcentration="0"/>
-      <species id="X5P" name="Xylulose-5-phosphate" compartment="cytosol" initialConcentration="0"/>
-      <species id="S7P" name="Sedoheptulose-7-phosphate" compartment="cytosol" initialConcentration="0"/>
-      <species id="E4P" name="Erythrose-4-phosphate" compartment="cytosol" initialConcentration="0"/>
+      <species id="ROS_m" compartment="mitochondrion" initialConcentration="0.001"/>
+      <species id="P6GL" name="6-Phosphogluconolactone" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="P6G" name="6-Phosphogluconate" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="Ru5P" name="Ribulose-5-phosphate" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="R5P" name="Ribose-5-phosphate" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="X5P" name="Xylulose-5-phosphate" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="S7P" name="Sedoheptulose-7-phosphate" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="E4P" name="Erythrose-4-phosphate" compartment="cytosol" initialConcentration="0.1"/>
       <species id="NADP" name="Nicotinamide Adenine Dinucleotide Phosphate (oxidized)" compartment="cytosol" initialConcentration="0.1"/>
       <species id="NADPH" name="Nicotinamide Adenine Dinucleotide Phosphate (reduced)" compartment="cytosol" initialConcentration="0.1"/>
     </listOfSpecies>
@@ -762,7 +762,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vm_ATPsink" value="10" units="mM_per_min"/>
+            <parameter id="Vm_ATPsink" value="1" units="mM_per_min"/>
             <parameter id="Km_ATPsink" value="0.1" units="mM"/>
           </listOfParameters>
         </kineticLaw>
@@ -1329,7 +1329,7 @@
             <parameter metaid="_773698" id="KmPYKPEP" value="0.14" units="mM"/>
             <parameter metaid="_773710" id="KmPYKADP" value="0.53" units="mM"/>
             <parameter metaid="_773722" id="KeqPYK" value="6500" units="dimensionless"/>
-            <parameter metaid="_773734" id="KmPYKPYR" value="21" units="mM"/>
+            <parameter metaid="_773734" id="KmPYKPYR" value="0.9" units="mM"/>
             <parameter metaid="_773746" id="KmPYKATP" value="1.5" units="mM"/>
           </listOfParameters>
         </kineticLaw>
@@ -2263,54 +2263,6 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vETC_FADH2" name="FADH2 Oxidation" reversible="false">
-        <listOfReactants>
-          <speciesReference species="FADH2_m"/>
-          <speciesReference species="O2_m" stoichiometry="0.5"/>
-          <speciesReference species="H_m" stoichiometry="2"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="FAD_m"/>
-          <speciesReference species="H2O_m"/>
-          <speciesReference species="H_m" stoichiometry="4"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> kETC_FADH2 </ci>
-              <ci> FADH2_m </ci>
-            </apply>
-          </math>
-          <listOfParameters>
-            <parameter id="kETC_FADH2" name="Rate Constant of FADH2 Oxidation" value="60" units="per_min"/>
-          </listOfParameters>
-        </kineticLaw>
-      </reaction>
-      <reaction id="vETC_NADH" name="NADH Oxidation" reversible="false">
-        <listOfReactants>
-          <speciesReference species="NADH_m"/>
-          <speciesReference species="O2_m" stoichiometry="0.5"/>
-          <speciesReference species="H_m" stoichiometry="1"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="NAD_m"/>
-          <speciesReference species="H2O_m"/>
-          <speciesReference species="H_m" stoichiometry="3"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> kETC_NADH </ci>
-              <ci> NADH_m </ci>
-            </apply>
-          </math>
-          <listOfParameters>
-            <parameter id="kETC_NADH" name="Rate Constant of NADH Oxidation" value="100" units="per_min"/>
-          </listOfParameters>
-        </kineticLaw>
-      </reaction>
       <reaction id="vPC" name="Pyruvate Carboxylase" reversible="false">
         <listOfReactants>
           <speciesReference species="PYR_m"/>
@@ -2395,6 +2347,44 @@
                 <apply>
                   <plus/>
                   <ci> Km_O2_m </ci>
+                  <ci> O2_m </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vETC_FADH2" name="Electron Transport Chain (FADH2)" reversible="false">
+        <listOfReactants>
+          <speciesReference species="FADH2_m" stoichiometry="1"/>
+          <speciesReference species="O2_m" stoichiometry="0.5"/>
+          <speciesReference species="H_m" stoichiometry="5"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="FAD_m" stoichiometry="1"/>
+          <speciesReference species="H2O_m" stoichiometry="1"/>
+          <speciesReference species="H" stoichiometry="10"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kETC_FADH2 </ci>
+              <apply>
+                <divide/>
+                <ci> FADH2_m </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_FADH2_m </ci>
+                  <ci> FADH2_m </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> O2_m </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_O2_FADH2 </ci>
                   <ci> O2_m </ci>
                 </apply>
               </apply>

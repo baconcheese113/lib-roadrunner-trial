@@ -17,15 +17,15 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <species id="ADP_m" compartment="mitochondrion" initialConcentration="2.1" name="Adenosine Diphosphate (mitochondrial)"/>
       
       <!-- Existing species from cleaned_model.xml reused -->
-      <species id="ATP" compartment="cytosol" initialConcentration="1.5" name="Adenosine Triphosphate (cytosolic)"/>
-      <species id="ADP" compartment="cytosol" initialConcentration="2.1" name="Adenosine Diphosphate (cytosolic)"/>
+      <species id="ATP" compartment="cytosol" initialConcentration="3" name="Adenosine Triphosphate (cytosolic)"/>
+      <species id="ADP" compartment="cytosol" initialConcentration="0.7" name="Adenosine Diphosphate (cytosolic)"/>
       <species id="O2_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Oxygen"/>
       <species id="H_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton"/>
       <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
       <species id="H2O_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Water"/>
-      <species id="P" compartment="cytosol" initialConcentration="6.31" name="High energy phosphates" />
-      <species id="iP_m" compartment="mitochondrion" initialConcentration="2.44" name="Inorganic Phosphate"/>
-      <species id="ROS_m" compartment="mitochondrion" initialConcentration="0"/>
+      <species id="P" compartment="cytosol" initialConcentration="5" name="High energy phosphates" />
+      <species id="iP_m" compartment="mitochondrion" initialConcentration="5" name="Inorganic Phosphate"/>
+      <species id="ROS_m" compartment="mitochondrion" initialConcentration="0.001"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="kETC" value="60" units="per_min" name="Electron Transport Chain Rate Constant (NADH)"/>
@@ -34,7 +34,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <parameter id="kETC_FADH2" value="30" units="per_min" name="Electron Transport Chain Rate Constant (FADH2)"/>
       <parameter id="Km_FADH2_m" value="0.1" units="mM" name="Michaelis Constant for FADH2_m in ETC"/>
       <parameter id="Km_O2_FADH2" value="0.1" units="mM" name="Michaelis Constant for O2_m with FADH2"/>
-      <parameter id="kANT" metaid="_304827" units="per_s" value="70" name="Adenine Nucleotide Translocator Rate Constant"/>
+      <parameter id="kANT" metaid="_304827" units="per_s" value="20" name="Adenine Nucleotide Translocator Rate Constant"/>
     </listOfParameters>
     
     <!-- Reactions for OxPhos -->

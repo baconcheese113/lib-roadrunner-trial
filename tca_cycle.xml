@@ -11,11 +11,11 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
     <listOfSpecies>
       <species id="PYR_m" compartment="mitochondrion" initialConcentration="0.1" name="Pyruvate"/>
       <species id="AcCoA_m" compartment="mitochondrion" initialConcentration="0.05" name="Acetyl-CoA"/>
-      <species id="OAA_m" compartment="mitochondrion" initialConcentration="0.01" name="Oxaloacetate"/>
+      <species id="OAA_m" compartment="mitochondrion" initialConcentration="0.1" name="Oxaloacetate"/>
       <species id="Cit_m" compartment="mitochondrion" initialConcentration="0.5" name="Citrate"/>
       <species id="IsoCit_m" compartment="mitochondrion" initialConcentration="0.05" name="Isocitrate"/>
       <species id="aKG_m" compartment="mitochondrion" initialConcentration="0.1" name="Alpha-Ketoglutarate"/>
-      <species id="SuccCoA_m" compartment="mitochondrion" initialConcentration="0.01" name="Succinyl-CoA"/>
+      <species id="SuccCoA_m" compartment="mitochondrion" initialConcentration="0.1" name="Succinyl-CoA"/>
       <species id="Succ_m" compartment="mitochondrion" initialConcentration="0.1" name="Succinate"/>
       <species id="Fum_m" compartment="mitochondrion" initialConcentration="0.05" name="Fumarate"/>
       <species id="Mal_m" compartment="mitochondrion" initialConcentration="0.1" name="Malate"/>
@@ -23,7 +23,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <species id="FAD_m" compartment="mitochondrion" initialConcentration="0.5" name="Flavin Adenine Dinucleotide (oxidized)"/>
       <species id="FADH2_m" compartment="mitochondrion" initialConcentration="0.05" name="Flavin Adenine Dinucleotide (reduced)"/>
       <species id="CO2_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Carbon Dioxide"/>
-      <species id="iP_m" compartment="mitochondrion" initialConcentration="2.44" name="Inorganic Phosphate"/>
+      <species id="iP_m" compartment="mitochondrion" initialConcentration="5" name="Inorganic Phosphate"/>
       <species id="O2_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Oxygen"/>
       <species id="H_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton"/>
       <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
@@ -431,58 +431,6 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           <listOfParameters>
             <parameter id="kMDH_f" value="100" units="per_mM_per_min" name="Forward Rate Constant of MDH"/>
             <parameter id="kMDH_r" value="10" units="per_mM_per_min" name="Reverse Rate Constant of MDH"/>
-          </listOfParameters>
-        </kineticLaw>
-      </reaction>
-      
-      <!-- FADH2 oxidation (feeds into OxPhos ETC) -->
-      <reaction id="vETC_FADH2" reversible="false" name="FADH2 Oxidation">
-        <listOfReactants>
-          <speciesReference species="FADH2_m"/>
-          <speciesReference species="O2_m" stoichiometry="0.5"/>
-          <speciesReference species="H_m" stoichiometry="2"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="FAD_m"/>
-          <speciesReference species="H2O_m"/>
-          <speciesReference species="H_m" stoichiometry="4"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> kETC_FADH2 </ci>
-              <ci> FADH2_m </ci>
-            </apply>
-          </math>
-          <listOfParameters>
-            <parameter id="kETC_FADH2" value="60" units="per_min" name="Rate Constant of FADH2 Oxidation"/>
-          </listOfParameters>
-        </kineticLaw>
-      </reaction>
-
-      <!-- NADH oxidation (feeds into OxPhos ETC) -->
-      <reaction id="vETC_NADH" reversible="false" name="NADH Oxidation">
-        <listOfReactants>
-          <speciesReference species="NADH_m"/>
-          <speciesReference species="O2_m" stoichiometry="0.5"/>
-          <speciesReference species="H_m" stoichiometry="1"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="NAD_m"/>
-          <speciesReference species="H2O_m"/>
-          <speciesReference species="H_m" stoichiometry="3"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> kETC_NADH </ci>
-              <ci> NADH_m </ci>
-            </apply>
-          </math>
-          <listOfParameters>
-            <parameter id="kETC_NADH" value="100" units="per_min" name="Rate Constant of NADH Oxidation"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
