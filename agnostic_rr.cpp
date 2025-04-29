@@ -355,14 +355,17 @@ std::string cleanSBML(const std::string& sbml) {
     // Remove <annotation> and <notes> from the model and its components
     model->unsetAnnotation();
     model->unsetNotes();
+    model->unsetMetaId();
 
     for (unsigned int i = 0; i < model->getNumCompartments(); ++i) {
+        model->getCompartment(i)->unsetMetaId();
         model->getCompartment(i)->unsetAnnotation();
         model->getCompartment(i)->unsetNotes();
     }
 
     for (unsigned int i = 0; i < model->getNumSpecies(); ++i) {
         auto species = model->getSpecies(i);
+        species->unsetMetaId();
         species->unsetAnnotation();
         species->unsetNotes();
         species->unsetMetaId();
@@ -371,6 +374,7 @@ std::string cleanSBML(const std::string& sbml) {
 
     for (unsigned int i = 0; i < model->getNumParameters(); ++i) {
         auto parameter = model->getParameter(i);
+        parameter->unsetMetaId();
         parameter->unsetAnnotation();
         parameter->unsetNotes();
         parameter->unsetMetaId();
@@ -379,28 +383,65 @@ std::string cleanSBML(const std::string& sbml) {
 
     for (unsigned int i = 0; i < model->getNumReactions(); ++i) {
         auto reaction = model->getReaction(i);
+        reaction->unsetMetaId();
         reaction->unsetAnnotation();
         reaction->unsetNotes();
         reaction->unsetMetaId();
         reaction->unsetSBOTerm();
+
+        // Remove metaid from local parameters in the reaction's kinetic law
+        if (auto kineticLaw = reaction->getKineticLaw()) {
+            kineticLaw->unsetMetaId();
+            for (unsigned int j = 0; j < kineticLaw->getNumParameters(); ++j) {
+                kineticLaw->getParameter(j)->unsetMetaId();
+            }
+        }
+        for(unsigned int j = 0; j < reaction->getNumReactants(); ++j) {
+            auto reactant = reaction->getReactant(j);
+            reactant->unsetMetaId();
+            reactant->unsetAnnotation();
+            reactant->unsetNotes();
+        }
+        for(unsigned int j = 0; j < reaction->getNumProducts(); ++j) {
+            auto product = reaction->getProduct(j);
+            product->unsetMetaId();
+            product->unsetAnnotation();
+            product->unsetNotes();
+        }
+        for(unsigned int j = 0; j < reaction->getNumModifiers(); ++j) {
+            auto modifier = reaction->getModifier(j);
+            modifier->unsetMetaId();
+            modifier->unsetAnnotation();
+            modifier->unsetNotes();
+        }
     }
 
     for (unsigned int i = 0; i < model->getNumRules(); ++i) {
+        model->getRule(i)->unsetMetaId();
         model->getRule(i)->unsetAnnotation();
         model->getRule(i)->unsetNotes();
     }
 
     for (unsigned int i = 0; i < model->getNumInitialAssignments(); ++i) {
+        model->getInitialAssignment(i)->unsetMetaId();
         model->getInitialAssignment(i)->unsetAnnotation();
         model->getInitialAssignment(i)->unsetNotes();
     }
 
     for (unsigned int i = 0; i < model->getNumEvents(); ++i) {
         auto event = model->getEvent(i);
+        event->unsetMetaId();
         event->unsetAnnotation();
         event->unsetNotes();
         event->unsetMetaId();
         event->unsetSBOTerm();
+    }
+
+    for (unsigned int i = 0; i < model->getNumUnitDefinitions(); ++i) {
+        auto unitDef = model->getUnitDefinition(i);
+        unitDef->unsetMetaId();
+        unitDef->unsetAnnotation();
+        unitDef->unsetNotes();
     }
 
     // Write the cleaned SBML to a string
