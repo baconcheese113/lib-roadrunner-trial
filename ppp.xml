@@ -10,6 +10,8 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <species id="G6P" name="Glucose 6 Phosphate" compartment="cytosol" initialConcentration="2.45"/>
       <species id="NADP" name="Nicotinamide Adenine Dinucleotide Phosphate (oxidized)" compartment="cytosol" initialConcentration="0.1"/>
       <species id="NADPH" name="Nicotinamide Adenine Dinucleotide Phosphate (reduced)" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="P6GL" name="6-Phosphogluconolactone" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
     </listOfSpecies>
     <listOfReactions>
       <!-- Retain only the G6PDH reaction with reduced Vmax -->

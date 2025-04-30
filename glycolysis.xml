@@ -483,13 +483,13 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vGLYCO" name="Glycogen synthesis" reversible="false">
+      <reaction id="vGLYCO" name="Glycogen Synthase" reversible="false">
         <listOfReactants>
-          <speciesReference species="G6P"/>
-          <speciesReference species="P"/>
+          <speciesReference species="G6P" />
+          <speciesReference species="P" />
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="Glyc"/>
+          <speciesReference species="Glyc" />
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -515,12 +515,32 @@
                   <ci> P </ci>
                 </apply>
               </apply>
+              <apply>
+                <divide/>
+                <ci> Insulin </ci>
+                <apply>
+                  <plus/>
+                  <ci> KGLYCO_Insulin </ci>
+                  <ci> Insulin </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> KGLYCO_AMPK </ci>
+                <apply>
+                  <plus/>
+                  <ci> KGLYCO_AMPK </ci>
+                  <ci> AMPK_active </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="kcat_GLYCO" value="6" units="mMpermin"/>
-            <parameter id="Km_G6P_GLYCO" value="0.1" units="mM"/>
-            <parameter id="Km_P_GLYCO" value="0.1" units="mM"/>
+            <parameter id="kcat_GLYCO" value="6" units="mMpermin" name="Max Glycogen Synthase Rate"/>
+            <parameter id="Km_G6P_GLYCO" value="0.1" units="mM" name="Km for G6P"/>
+            <parameter id="Km_P_GLYCO" value="0.1" units="mM" name="Km for Phosphate"/>
+            <parameter id="KGLYCO_Insulin" value="0.5" units="dimensionless" name="Activation Constant for Insulin"/>
+            <parameter id="KGLYCO_AMPK" value="0.5" units="dimensionless" name="Inhibition Constant for AMPK"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -535,23 +555,101 @@
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <divide/>
+              <times/>
+              <ci> Vm_GP </ci>
               <apply>
-                <times/>
-                <ci> Vm_GP </ci>
+                <divide/>
                 <ci> Glyc </ci>
-                <ci> P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_Glyc </ci>
+                  <ci> Glyc </ci>
+                </apply>
               </apply>
               <apply>
-                <plus/>
-                <ci> Km_Pi </ci>
+                <divide/>
                 <ci> P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_P </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> AMPK_active </ci>
+                <apply>
+                  <plus/>
+                  <ci> KGP_AMPK </ci>
+                  <ci> AMPK_active </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> KGP_Insulin </ci>
+                <apply>
+                  <plus/>
+                  <ci> KGP_Insulin </ci>
+                  <ci> Insulin </ci>
+                </apply>
               </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vm_GP" name="Maximum Velocity Glycogen Phosphorylase" value="10" units="mM_per_min"/>
-            <parameter id="Km_Pi" name="Michaelis Constant for Inorganic Phosphate" value="1" units="mM"/>
+            <parameter id="Vm_GP" value="10" units="mM_per_min" name="Max GP Rate (Vm)" />
+            <parameter id="Km_Glyc" value="1.0" units="mM" name="Km for Glycogen" />
+            <parameter id="Km_P" value="0.5" units="mM" name="Km for Phosphate (Pi)" />
+            <parameter id="KGP_AMPK" value="0.5" units="dimensionless" name="AMPK Activation Constant" />
+            <parameter id="KGP_Insulin" value="0.5" units="dimensionless" name="Insulin Inhibition Constant" />
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      
+      <reaction id="vPGM_G1P" name="Phosphoglucomutase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="G1P"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="G6P"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> VmPGM_G1P </ci>
+                <apply>
+                  <minus/>
+                  <ci> G1P </ci>
+                  <apply>
+                    <divide/>
+                    <ci> G6P </ci>
+                    <ci> Keq_PGM_G1P </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> G1P </ci>
+                  <ci> Km_G1P_PGM </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci> G6P </ci>
+                  <ci> Km_G6P_PGM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="VmPGM_G1P" value="100" units="mMpermin"/>
+            <parameter id="Km_G1P_PGM" value="0.15" units="mM"/>
+            <parameter id="Km_G6P_PGM" value="0.15" units="mM"/>
+            <parameter id="Keq_PGM_G1P" value="0.4" units="dimensionless"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>

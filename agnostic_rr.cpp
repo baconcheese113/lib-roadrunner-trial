@@ -705,7 +705,7 @@ int main() {
         std::cout << "Running real-time simulation. Press 'p' to play/pause, 'q' to quit.\n";
 
         double t = 0.0;
-        double dt = 0.01;
+        double dt = 0.05;
         bool isPlaying = false; // Play/pause toggle
         bool logAllSpecies = true; // Flag to toggle between logging all species and non-zero species
 

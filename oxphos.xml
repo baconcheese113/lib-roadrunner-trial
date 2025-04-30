@@ -28,13 +28,12 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <species id="ROS_m" compartment="mitochondrion" initialConcentration="0.001"/>
     </listOfSpecies>
     <listOfParameters>
-      <parameter id="kETC" value="60" units="per_min" name="Electron Transport Chain Rate Constant (NADH)"/>
+      <parameter id="kETC" value="30" units="per_min" name="Electron Transport Chain Rate Constant (NADH)"/>
       <parameter id="Km_NADH_m" value="0.1" units="mM" name="Michaelis Constant for NADH_m in ETC"/>
       <parameter id="Km_O2_m" value="0.1" units="mM" name="Michaelis Constant for O2_m in ETC"/>
       <parameter id="kETC_FADH2" value="30" units="per_min" name="Electron Transport Chain Rate Constant (FADH2)"/>
       <parameter id="Km_FADH2_m" value="0.1" units="mM" name="Michaelis Constant for FADH2_m in ETC"/>
       <parameter id="Km_O2_FADH2" value="0.1" units="mM" name="Michaelis Constant for O2_m with FADH2"/>
-      <parameter id="kANT" metaid="_304827" units="per_s" value="20" name="Adenine Nucleotide Translocator Rate Constant"/>
     </listOfParameters>
     
     <!-- Reactions for OxPhos -->
@@ -108,12 +107,12 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
         <listOfReactants>
           <speciesReference species="ADP_m" stoichiometry="1"/>
           <speciesReference species="iP_m" stoichiometry="1"/>
-          <speciesReference species="H" stoichiometry="3"/>
+          <speciesReference species="H_m" stoichiometry="3"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="ATP_m" stoichiometry="1"/>
           <speciesReference species="H2O_m" stoichiometry="1"/>
-          <speciesReference species="H_m" stoichiometry="3"/>
+          <speciesReference species="H" stoichiometry="3"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -140,17 +139,17 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
               </apply>
               <apply>
                 <divide/>
-                <ci> H </ci>
+                <ci> H_m </ci>
                 <apply>
                   <plus/>
                   <ci> Km_H_m </ci>
-                  <ci> H </ci>
+                  <ci> H_m </ci>
                 </apply>
               </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vmax_ATPsyn" value="5" units="mM_per_min" name="Maximum rate of ATP synthase"/>
+            <parameter id="Vmax_ATPsyn" value="12" units="mM_per_min" name="Maximum rate of ATP synthase"/>
             <parameter id="Km_ADP_m" value="0.03" units="mM" name="Michaelis constant for mitochondrial ADP"/>
             <parameter id="Km_Pi_m" value="0.2" units="mM" name="Michaelis constant for mitochondrial Pi"/>
             <parameter id="Km_H_m" value="0.1" units="mM" name="Michaelis constant for proton concentration"/>
@@ -209,7 +208,48 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
             <parameter id="Km_iP_m" value="10.0" units="mM" name="Inhibition by mitochondrial iP_m"/>
           </listOfParameters>
         </kineticLaw>
-      </reaction>      
+      </reaction>
+      
+      <reaction id="vPi_import" name="Cytosolic Pi Import" reversible="false">
+        <listOfReactants>
+          <speciesReference species="iP_m"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> Vm_Pi_import </ci>
+              <apply>
+                <divide/>
+                <ci> iP_m </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_Pi_import </ci>
+                  <ci> iP_m </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> Km_P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_P </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Vm_Pi_import" value="1" units="mMpermin"/>
+            <parameter id="Km_Pi_import" value="0.1" units="mM"/>
+            <parameter id="Km_P" value="1.0" units="mM"/>
+          </listOfParameters>
+        </kineticLaw>
+        
+      </reaction>
       
       <!-- Adenine Nucleotide Translocator (ANT) -->
       <reaction id="vANT" reversible="true" name="Adenine Nucleotide Translocator">
@@ -225,22 +265,49 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kANT </ci>
+              <ci> Vmax_ANT </ci>
               <apply>
                 <minus/>
                 <apply>
-                  <times/>
-                  <ci> ATP_m </ci>
-                  <ci> ADP </ci>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> ATP_m </ci>
+                    <ci> ADP </ci>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> Km_ATP_m </ci>
+                    <ci> ATP_m </ci>
+                    <ci> Km_ADP </ci>
+                    <ci> ADP </ci>
+                  </apply>
                 </apply>
                 <apply>
-                  <times/>
-                  <ci> ATP </ci>
-                  <ci> ADP_m </ci>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> ATP </ci>
+                    <ci> ADP_m </ci>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> Km_ATP </ci>
+                    <ci> ATP </ci>
+                    <ci> Km_ADP_m </ci>
+                    <ci> ADP_m </ci>
+                  </apply>
                 </apply>
               </apply>
             </apply>
           </math>
+          <listOfParameters>
+            <parameter id="Vmax_ANT" value="5.0" units="mM_per_min" name="Maximum ANT transport rate"/>
+            <parameter id="Km_ATP_m" value="0.05" units="mM" name="Km for mitochondrial ATP"/>
+            <parameter id="Km_ADP" value="0.05" units="mM" name="Km for cytosolic ADP"/>
+            <parameter id="Km_ATP" value="0.05" units="mM" name="Km for cytosolic ATP"/>
+            <parameter id="Km_ADP_m" value="0.05" units="mM" name="Km for mitochondrial ADP"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
 

@@ -330,6 +330,7 @@
       <species id="ROS_m" compartment="mitochondrion" initialConcentration="0.001"/>
       <species id="NADP" name="Nicotinamide Adenine Dinucleotide Phosphate (oxidized)" compartment="cytosol" initialConcentration="0.1"/>
       <species id="NADPH" name="Nicotinamide Adenine Dinucleotide Phosphate (reduced)" compartment="cytosol" initialConcentration="0.1"/>
+      <species id="P6GL" name="6-Phosphogluconolactone" compartment="cytosol" initialConcentration="0.1"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="gR" value="5.12" units="dimensionless"/>
@@ -352,13 +353,12 @@
       <parameter id="toggle_vGLK" value="1"/>
       <parameter id="K_AMPK" value="1" units="dimensionless"/>
       <parameter id="kATP_decay" value="0.001" units="per_min"/>
-      <parameter id="kETC" name="Electron Transport Chain Rate Constant (NADH)" value="60" units="per_min"/>
+      <parameter id="kETC" name="Electron Transport Chain Rate Constant (NADH)" value="30" units="per_min"/>
       <parameter id="Km_NADH_m" name="Michaelis Constant for NADH_m in ETC" value="0.1" units="mM"/>
       <parameter id="Km_O2_m" name="Michaelis Constant for O2_m in ETC" value="0.1" units="mM"/>
       <parameter id="kETC_FADH2" name="Electron Transport Chain Rate Constant (FADH2)" value="30" units="per_min"/>
       <parameter id="Km_FADH2_m" name="Michaelis Constant for FADH2_m in ETC" value="0.1" units="mM"/>
       <parameter id="Km_O2_FADH2" name="Michaelis Constant for O2_m with FADH2" value="0.1" units="mM"/>
-      <parameter id="kANT" name="Adenine Nucleotide Translocator Rate Constant" value="20" units="per_s"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="SUM_P">
@@ -517,7 +517,7 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="vGLYCO" name="Glycogen synthesis" reversible="false">
+      <reaction id="vGLYCO" name="Glycogen Synthase" reversible="false">
         <listOfReactants>
           <speciesReference species="G6P"/>
           <speciesReference species="P"/>
@@ -549,12 +549,32 @@
                   <ci> P </ci>
                 </apply>
               </apply>
+              <apply>
+                <divide/>
+                <ci> Insulin </ci>
+                <apply>
+                  <plus/>
+                  <ci> KGLYCO_Insulin </ci>
+                  <ci> Insulin </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> KGLYCO_AMPK </ci>
+                <apply>
+                  <plus/>
+                  <ci> KGLYCO_AMPK </ci>
+                  <ci> AMPK_active </ci>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="kcat_GLYCO" value="6" units="mMpermin"/>
-            <parameter id="Km_G6P_GLYCO" value="0.1" units="mM"/>
-            <parameter id="Km_P_GLYCO" value="0.1" units="mM"/>
+            <parameter id="kcat_GLYCO" name="Max Glycogen Synthase Rate" value="6" units="mMpermin"/>
+            <parameter id="Km_G6P_GLYCO" name="Km for G6P" value="0.1" units="mM"/>
+            <parameter id="Km_P_GLYCO" name="Km for Phosphate" value="0.1" units="mM"/>
+            <parameter id="KGLYCO_Insulin" name="Activation Constant for Insulin" value="0.5" units="dimensionless"/>
+            <parameter id="KGLYCO_AMPK" name="Inhibition Constant for AMPK" value="0.5" units="dimensionless"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -569,23 +589,100 @@
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <divide/>
+              <times/>
+              <ci> Vm_GP </ci>
               <apply>
-                <times/>
-                <ci> Vm_GP </ci>
+                <divide/>
                 <ci> Glyc </ci>
-                <ci> P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_Glyc </ci>
+                  <ci> Glyc </ci>
+                </apply>
               </apply>
               <apply>
-                <plus/>
-                <ci> Km_Pi </ci>
+                <divide/>
                 <ci> P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_P </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> AMPK_active </ci>
+                <apply>
+                  <plus/>
+                  <ci> KGP_AMPK </ci>
+                  <ci> AMPK_active </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> KGP_Insulin </ci>
+                <apply>
+                  <plus/>
+                  <ci> KGP_Insulin </ci>
+                  <ci> Insulin </ci>
+                </apply>
               </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vm_GP" name="Maximum Velocity Glycogen Phosphorylase" value="10" units="mM_per_min"/>
-            <parameter id="Km_Pi" name="Michaelis Constant for Inorganic Phosphate" value="1" units="mM"/>
+            <parameter id="Vm_GP" name="Max GP Rate (Vm)" value="10" units="mM_per_min"/>
+            <parameter id="Km_Glyc" name="Km for Glycogen" value="1" units="mM"/>
+            <parameter id="Km_P" name="Km for Phosphate (Pi)" value="0.5" units="mM"/>
+            <parameter id="KGP_AMPK" name="AMPK Activation Constant" value="0.5" units="dimensionless"/>
+            <parameter id="KGP_Insulin" name="Insulin Inhibition Constant" value="0.5" units="dimensionless"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="vPGM_G1P" name="Phosphoglucomutase" reversible="true">
+        <listOfReactants>
+          <speciesReference species="G1P"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="G6P"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> VmPGM_G1P </ci>
+                <apply>
+                  <minus/>
+                  <ci> G1P </ci>
+                  <apply>
+                    <divide/>
+                    <ci> G6P </ci>
+                    <ci> Keq_PGM_G1P </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <ci> G1P </ci>
+                  <ci> Km_G1P_PGM </ci>
+                </apply>
+                <apply>
+                  <divide/>
+                  <ci> G6P </ci>
+                  <ci> Km_G6P_PGM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="VmPGM_G1P" value="100" units="mMpermin"/>
+            <parameter id="Km_G1P_PGM" value="0.15" units="mM"/>
+            <parameter id="Km_G6P_PGM" value="0.15" units="mM"/>
+            <parameter id="Keq_PGM_G1P" value="0.4" units="dimensionless"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -2399,12 +2496,12 @@
         <listOfReactants>
           <speciesReference species="ADP_m" stoichiometry="1"/>
           <speciesReference species="iP_m" stoichiometry="1"/>
-          <speciesReference species="H" stoichiometry="3"/>
+          <speciesReference species="H_m" stoichiometry="3"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="ATP_m" stoichiometry="1"/>
           <speciesReference species="H2O_m" stoichiometry="1"/>
-          <speciesReference species="H_m" stoichiometry="3"/>
+          <speciesReference species="H" stoichiometry="3"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2431,17 +2528,17 @@
               </apply>
               <apply>
                 <divide/>
-                <ci> H </ci>
+                <ci> H_m </ci>
                 <apply>
                   <plus/>
                   <ci> Km_H_m </ci>
-                  <ci> H </ci>
+                  <ci> H_m </ci>
                 </apply>
               </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vmax_ATPsyn" name="Maximum rate of ATP synthase" value="5" units="mM_per_min"/>
+            <parameter id="Vmax_ATPsyn" name="Maximum rate of ATP synthase" value="12" units="mM_per_min"/>
             <parameter id="Km_ADP_m" name="Michaelis constant for mitochondrial ADP" value="0.03" units="mM"/>
             <parameter id="Km_Pi_m" name="Michaelis constant for mitochondrial Pi" value="0.2" units="mM"/>
             <parameter id="Km_H_m" name="Michaelis constant for proton concentration" value="0.1" units="mM"/>
@@ -2499,6 +2596,45 @@
           </listOfParameters>
         </kineticLaw>
       </reaction>
+      <reaction id="vPi_import" name="Cytosolic Pi Import" reversible="false">
+        <listOfReactants>
+          <speciesReference species="iP_m"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> Vm_Pi_import </ci>
+              <apply>
+                <divide/>
+                <ci> iP_m </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_Pi_import </ci>
+                  <ci> iP_m </ci>
+                </apply>
+              </apply>
+              <apply>
+                <divide/>
+                <ci> Km_P </ci>
+                <apply>
+                  <plus/>
+                  <ci> Km_P </ci>
+                  <ci> P </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfParameters>
+            <parameter id="Vm_Pi_import" value="1" units="mMpermin"/>
+            <parameter id="Km_Pi_import" value="0.1" units="mM"/>
+            <parameter id="Km_P" value="1" units="mM"/>
+          </listOfParameters>
+        </kineticLaw>
+      </reaction>
       <reaction id="vANT" name="Adenine Nucleotide Translocator" reversible="true">
         <listOfReactants>
           <speciesReference species="ATP_m" stoichiometry="1"/>
@@ -2512,22 +2648,49 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kANT </ci>
+              <ci> Vmax_ANT </ci>
               <apply>
                 <minus/>
                 <apply>
-                  <times/>
-                  <ci> ATP_m </ci>
-                  <ci> ADP </ci>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> ATP_m </ci>
+                    <ci> ADP </ci>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> Km_ATP_m </ci>
+                    <ci> ATP_m </ci>
+                    <ci> Km_ADP </ci>
+                    <ci> ADP </ci>
+                  </apply>
                 </apply>
                 <apply>
-                  <times/>
-                  <ci> ATP </ci>
-                  <ci> ADP_m </ci>
+                  <divide/>
+                  <apply>
+                    <times/>
+                    <ci> ATP </ci>
+                    <ci> ADP_m </ci>
+                  </apply>
+                  <apply>
+                    <plus/>
+                    <ci> Km_ATP </ci>
+                    <ci> ATP </ci>
+                    <ci> Km_ADP_m </ci>
+                    <ci> ADP_m </ci>
+                  </apply>
                 </apply>
               </apply>
             </apply>
           </math>
+          <listOfParameters>
+            <parameter id="Vmax_ANT" name="Maximum ANT transport rate" value="5" units="mM_per_min"/>
+            <parameter id="Km_ATP_m" name="Km for mitochondrial ATP" value="0.05" units="mM"/>
+            <parameter id="Km_ADP" name="Km for cytosolic ADP" value="0.05" units="mM"/>
+            <parameter id="Km_ATP" name="Km for cytosolic ATP" value="0.05" units="mM"/>
+            <parameter id="Km_ADP_m" name="Km for mitochondrial ADP" value="0.05" units="mM"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
       <reaction id="vROS" name="ROS Production" reversible="false">
