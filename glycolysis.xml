@@ -1,235 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sbml xmlns="http://www.sbml.org/sbml/level2/version4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" level="2" version="4">
+<sbml xmlns="http://www.sbml.org/sbml/level2/version5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sbml.org/sbml/level2/version5 https://sbml.org/documents/specifications/level-2/version-5/release-1/sbml.level-2.version-5.release-1.xsd" level="2"
+  version="5">
   <model id="Teusink2000_Glycolysis" name="Teusink2000_Glycolysis">
-    <listOfFunctionDefinitions>
-      <functionDefinition id="L_PFK" name="L_PFK">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <lambda>
-            <bvar>
-              <ci> L </ci>
-            </bvar>
-            <bvar>
-              <ci> CiATP </ci>
-            </bvar>
-            <bvar>
-              <ci> KiATP </ci>
-            </bvar>
-            <bvar>
-              <ci> CAMP </ci>
-            </bvar>
-            <bvar>
-              <ci> KAMP </ci>
-            </bvar>
-            <bvar>
-              <ci> CF26BP </ci>
-            </bvar>
-            <bvar>
-              <ci> KF26BP </ci>
-            </bvar>
-            <bvar>
-              <ci> CF16BP </ci>
-            </bvar>
-            <bvar>
-              <ci> KF16BP </ci>
-            </bvar>
-            <bvar>
-              <ci> AT </ci>
-            </bvar>
-            <bvar>
-              <ci> AM </ci>
-            </bvar>
-            <bvar>
-              <ci> F16 </ci>
-            </bvar>
-            <bvar>
-              <ci> F26 </ci>
-            </bvar>
-            <apply>
-              <times/>
-              <ci> L </ci>
-              <apply>
-                <power/>
-                <apply>
-                  <divide/>
-                  <apply>
-                    <plus/>
-                    <cn type="integer"> 1 </cn>
-                    <apply>
-                      <times/>
-                      <ci> CiATP </ci>
-                      <apply>
-                        <divide/>
-                        <ci> AT </ci>
-                        <ci> KiATP </ci>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <plus/>
-                    <cn type="integer"> 1 </cn>
-                    <apply>
-                      <divide/>
-                      <ci> AT </ci>
-                      <ci> KiATP </ci>
-                    </apply>
-                  </apply>
-                </apply>
-                <cn type="integer"> 2 </cn>
-              </apply>
-              <apply>
-                <power/>
-                <apply>
-                  <divide/>
-                  <apply>
-                    <plus/>
-                    <cn type="integer"> 1 </cn>
-                    <apply>
-                      <times/>
-                      <ci> CAMP </ci>
-                      <apply>
-                        <divide/>
-                        <ci> AM </ci>
-                        <ci> KAMP </ci>
-                      </apply>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <plus/>
-                    <cn type="integer"> 1 </cn>
-                    <apply>
-                      <divide/>
-                      <ci> AM </ci>
-                      <ci> KAMP </ci>
-                    </apply>
-                  </apply>
-                </apply>
-                <cn type="integer"> 2 </cn>
-              </apply>
-              <apply>
-                <power/>
-                <apply>
-                  <divide/>
-                  <apply>
-                    <plus/>
-                    <cn type="integer"> 1 </cn>
-                    <apply>
-                      <divide/>
-                      <apply>
-                        <times/>
-                        <ci> CF26BP </ci>
-                        <ci> F26 </ci>
-                      </apply>
-                      <ci> KF26BP </ci>
-                    </apply>
-                    <apply>
-                      <divide/>
-                      <apply>
-                        <times/>
-                        <ci> CF16BP </ci>
-                        <ci> F16 </ci>
-                      </apply>
-                      <ci> KF16BP </ci>
-                    </apply>
-                  </apply>
-                  <apply>
-                    <plus/>
-                    <cn type="integer"> 1 </cn>
-                    <apply>
-                      <divide/>
-                      <ci> F26 </ci>
-                      <ci> KF26BP </ci>
-                    </apply>
-                    <apply>
-                      <divide/>
-                      <ci> F16 </ci>
-                      <ci> KF16BP </ci>
-                    </apply>
-                  </apply>
-                </apply>
-                <cn type="integer"> 2 </cn>
-              </apply>
-            </apply>
-          </lambda>
-        </math>
-      </functionDefinition>
-      <functionDefinition id="R_PFK" name="R_PFK">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <lambda>
-            <bvar>
-              <ci> KmF6P </ci>
-            </bvar>
-            <bvar>
-              <ci> KmATP </ci>
-            </bvar>
-            <bvar>
-              <ci> g </ci>
-            </bvar>
-            <bvar>
-              <ci> AT </ci>
-            </bvar>
-            <bvar>
-              <ci> F6 </ci>
-            </bvar>
-            <apply>
-              <plus/>
-              <cn type="integer"> 1 </cn>
-              <apply>
-                <divide/>
-                <ci> F6 </ci>
-                <ci> KmF6P </ci>
-              </apply>
-              <apply>
-                <divide/>
-                <ci> AT </ci>
-                <ci> KmATP </ci>
-              </apply>
-              <apply>
-                <times/>
-                <ci> g </ci>
-                <apply>
-                  <divide/>
-                  <ci> F6 </ci>
-                  <ci> KmF6P </ci>
-                </apply>
-                <apply>
-                  <divide/>
-                  <ci> AT </ci>
-                  <ci> KmATP </ci>
-                </apply>
-              </apply>
-            </apply>
-          </lambda>
-        </math>
-      </functionDefinition>
-      <functionDefinition id="T_PFK" name="T_PFK">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <lambda>
-            <bvar>
-              <ci> CATP </ci>
-            </bvar>
-            <bvar>
-              <ci> KmATP </ci>
-            </bvar>
-            <bvar>
-              <ci> AT </ci>
-            </bvar>
-            <apply>
-              <plus/>
-              <cn type="integer"> 1 </cn>
-              <apply>
-                <times/>
-                <ci> CATP </ci>
-                <apply>
-                  <divide/>
-                  <ci> AT </ci>
-                  <ci> KmATP </ci>
-                </apply>
-              </apply>
-            </apply>
-          </lambda>
-        </math>
-      </functionDefinition>
-    </listOfFunctionDefinitions>
     <listOfUnitDefinitions>
       <unitDefinition id="substance" name="millimole">
         <listOfUnits>
@@ -247,19 +20,19 @@
           <unit kind="litre" exponent="-1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="mMpermin" name="mMpermin">
+      <unitDefinition id="mM_per_min" name="mM_per_min">
         <listOfUnits>
           <unit kind="mole" scale="-3"/>
           <unit kind="litre" exponent="-1"/>
           <unit kind="second" exponent="-1" multiplier="60"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="permin" name="permin">
+      <unitDefinition id="per_min" name="per_min">
         <listOfUnits>
           <unit kind="second" exponent="-1" multiplier="60"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="mmolepermin" name="mmolepermin">
+      <unitDefinition id="mmoleper_min" name="mmoleper_min">
         <listOfUnits>
           <unit kind="mole" scale="-3"/>
           <unit kind="second" exponent="-1" multiplier="60"/>
@@ -271,6 +44,7 @@
       <compartment id="cytosol" size="1" outside="extracellular"/>
     </listOfCompartments>
     <listOfSpecies>
+      <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
       <species id="GLCi" name="Glucose in Cytosol" compartment="cytosol" initialConcentration="0.087"/>
       <species id="G6P" name="Glucose 6 Phosphate" compartment="cytosol" initialConcentration="2.45"/>
       <species id="F6P" name="Fructose 6 Phosphate" compartment="cytosol" initialConcentration="0.62"/>
@@ -313,16 +87,14 @@
       <parameter id="KiPFKATP" value="0.65" units="mM"/>
       <parameter id="CPFKAMP" value="0.0845" units="dimensionless"/>
       <parameter id="KPFKAMP" value="0.0995" units="mM"/>
-      <parameter id="CPFKF26BP" value="0.0174" units="dimensionless"/>
-      <parameter id="KPFKF26BP" value="0.000682" units="mM"/>
       <parameter id="CPFKF16BP" value="0.397" units="dimensionless"/>
       <parameter id="KPFKF16BP" value="0.111" units="mM"/>
       <parameter id="CPFKATP" value="3" units="dimensionless"/>
       <parameter id="KeqAK" name="AK eq constant" value="0.45" units="dimensionless"/>
       <parameter id="KeqTPI" name="TPI eq constant" value="0.045" units="dimensionless"/>
-      <parameter id="toggle_vAK" value="1"/>
-      <parameter id="toggle_vATP" value="1"/>
-      <parameter id="toggle_vGLK" value="1"/>
+      <parameter id="toggle_vAK" value="1" units="dimensionless"/>
+      <parameter id="toggle_vATP" value="1" units="dimensionless"/>
+      <parameter id="toggle_vGLK" value="1" units="dimensionless"/>
       <parameter id="K_AMPK" value="1" units="dimensionless"/>
       <parameter id="kATP_decay" value="0.001" units="per_min"/>
     </listOfParameters>
@@ -358,15 +130,6 @@
           </apply>
         </math>
       </assignmentRule>
-      <rateRule variable="ATP">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <apply>
-            <minus/>
-            <ci> kATP_decay </ci>
-            <ci> ATP </ci>
-          </apply>
-        </math>
-      </rateRule>
     </listOfRules>
     <listOfReactions>
       <reaction id="vGLK" name="Hexokinase">
@@ -378,6 +141,9 @@
           <speciesReference species="G6P"/>
           <speciesReference species="ADP"/>
         </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="AMPK_active"/>
+        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -420,7 +186,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmGLK" value="5" units="mMpermin"/>
+            <parameter id="VmGLK" value="5" units="mM_per_min"/>
             <parameter id="KmGLKGLCi" value="0.08" units="mM"/>
             <parameter id="KmGLKATP" value="0.15" units="mM"/>
             <parameter id="Ki_G6P" value="0.2" units="mM"/>
@@ -476,7 +242,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmPGI_2" value="339.677" units="mMpermin"/>
+            <parameter id="VmPGI_2" value="339.677" units="mM_per_min"/>
             <parameter id="KmPGIG6P_2" value="1.4" units="mM"/>
             <parameter id="KeqPGI_2" value="0.314" units="dimensionless"/>
             <parameter id="KmPGIF6P_2" value="0.3" units="mM"/>
@@ -485,12 +251,16 @@
       </reaction>
       <reaction id="vGLYCO" name="Glycogen Synthase" reversible="false">
         <listOfReactants>
-          <speciesReference species="G6P" />
-          <speciesReference species="P" />
+          <speciesReference species="G6P"/>
+          <speciesReference species="P"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="Glyc" />
+          <speciesReference species="Glyc"/>
         </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="AMPK_active"/>
+          <modifierSpeciesReference species="Insulin"/>
+        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -536,7 +306,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="kcat_GLYCO" value="6" units="mMpermin" name="Max Glycogen Synthase Rate"/>
+            <parameter id="kcat_GLYCO" value="6" units="mM_per_min" name="Max Glycogen Synthase Rate"/>
             <parameter id="Km_G6P_GLYCO" value="0.1" units="mM" name="Km for G6P"/>
             <parameter id="Km_P_GLYCO" value="0.1" units="mM" name="Km for Phosphate"/>
             <parameter id="KGLYCO_Insulin" value="0.5" units="dimensionless" name="Activation Constant for Insulin"/>
@@ -552,6 +322,10 @@
         <listOfProducts>
           <speciesReference species="G1P"/>
         </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="AMPK_active"/>
+          <modifierSpeciesReference species="Insulin"/>
+        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -596,15 +370,15 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vm_GP" value="10" units="mM_per_min" name="Max GP Rate (Vm)" />
-            <parameter id="Km_Glyc" value="1.0" units="mM" name="Km for Glycogen" />
-            <parameter id="Km_P" value="0.5" units="mM" name="Km for Phosphate (Pi)" />
-            <parameter id="KGP_AMPK" value="0.5" units="dimensionless" name="AMPK Activation Constant" />
-            <parameter id="KGP_Insulin" value="0.5" units="dimensionless" name="Insulin Inhibition Constant" />
+            <parameter id="Vm_GP" value="10" units="mM_per_min" name="Max GP Rate (Vm)"/>
+            <parameter id="Km_Glyc" value="1.0" units="mM" name="Km for Glycogen"/>
+            <parameter id="Km_P" value="0.5" units="mM" name="Km for Phosphate (Pi)"/>
+            <parameter id="KGP_AMPK" value="0.5" units="dimensionless" name="AMPK Activation Constant"/>
+            <parameter id="KGP_Insulin" value="0.5" units="dimensionless" name="Insulin Inhibition Constant"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <reaction id="vPGM_G1P" name="Phosphoglucomutase" reversible="true">
         <listOfReactants>
           <speciesReference species="G1P"/>
@@ -646,7 +420,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmPGM_G1P" value="100" units="mMpermin"/>
+            <parameter id="VmPGM_G1P" value="100" units="mM_per_min"/>
             <parameter id="Km_G1P_PGM" value="0.15" units="mM"/>
             <parameter id="Km_G6P_PGM" value="0.15" units="mM"/>
             <parameter id="Keq_PGM_G1P" value="0.4" units="dimensionless"/>
@@ -688,7 +462,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="kcat_TREHA" value="2.4" units="mMpermin"/>
+            <parameter id="kcat_TREHA" value="2.4" units="mM_per_min"/>
             <parameter id="Km_G6P_TREHA" value="0.1" units="mM"/>
             <parameter id="Km_P_TREHA" value="0.1" units="mM"/>
           </listOfParameters>
@@ -707,6 +481,7 @@
           <modifierSpeciesReference species="AMP"/>
           <modifierSpeciesReference species="ATP"/>
           <modifierSpeciesReference species="F26BP"/>
+          <modifierSpeciesReference species="AMPK_active"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -734,7 +509,35 @@
                     </apply>
                   </apply>
                   <apply>
-                    <ci> R_PFK </ci>
+                    <!-- <ci> R_PFK </ci> -->
+                    <apply>
+                      <plus/>
+                      <cn>1</cn>
+                      <apply>
+                        <divide/>
+                        <ci>F6P</ci>
+                        <ci>KmPFKF6P</ci>
+                      </apply>
+                      <apply>
+                        <divide/>
+                        <ci>ATP</ci>
+                        <ci>KmPFKATP</ci>
+                      </apply>
+                      <apply>
+                        <times/>
+                        <ci>gR</ci>
+                        <apply>
+                          <divide/>
+                          <ci>F6P</ci>
+                          <ci>KmPFKF6P</ci>
+                        </apply>
+                        <apply>
+                          <divide/>
+                          <ci>ATP</ci>
+                          <ci>KmPFKATP</ci>
+                        </apply>
+                      </apply>
+                    </apply>
                     <ci> KmPFKF6P </ci>
                     <ci> KmPFKATP </ci>
                     <ci> gR </ci>
@@ -749,7 +552,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmPFK" value="182.903" units="mMpermin"/>
+            <parameter id="VmPFK" value="182.903" units="mM_per_min"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -787,8 +590,8 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="kf_AK" value="10" units="permin"/>
-            <parameter id="kr_AK" value="5" units="mMpermin"/>
+            <parameter id="kf_AK" value="10" units="per_min"/>
+            <parameter id="kr_AK" value="5" units="mM_per_min"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
@@ -802,6 +605,9 @@
           <speciesReference species="P"/>
           <speciesReference species="H"/>
         </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="AMPK_active"/>
+        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -987,7 +793,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmALD" value="322.258" units="mMpermin"/>
+            <parameter id="VmALD" value="322.258" units="mM_per_min"/>
             <parameter id="KmALDF16P" value="0.3" units="mM"/>
             <parameter id="KeqALD" value="0.069" units="dimensionless"/>
             <parameter id="KmALDGAP" value="2" units="mM"/>
@@ -1099,10 +905,10 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmGAPDHf" value="1184.52" units="mMpermin"/>
+            <parameter id="VmGAPDHf" value="1184.52" units="mM_per_min"/>
             <parameter id="KmGAPDHGAP" value="0.21" units="mM"/>
             <parameter id="KmGAPDHNAD" value="0.09" units="mM"/>
-            <parameter id="VmGAPDHr" value="6549.8" units="mMpermin"/>
+            <parameter id="VmGAPDHr" value="6549.8" units="mM_per_min"/>
             <parameter id="KmGAPDHBPG" value="0.0098" units="mM"/>
             <parameter id="KmGAPDHNADH" value="0.06" units="mM"/>
           </listOfParameters>
@@ -1188,7 +994,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmPGK" value="1306.45" units="mMpermin"/>
+            <parameter id="VmPGK" value="1306.45" units="mM_per_min"/>
             <parameter id="KmPGKP3G" value="0.53" units="mM"/>
             <parameter id="KmPGKATP" value="0.3" units="mM"/>
             <parameter id="KeqPGK" value="3200" units="dimensionless"/>
@@ -1246,7 +1052,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmPGM" value="2525.81" units="mMpermin"/>
+            <parameter id="VmPGM" value="2525.81" units="mM_per_min"/>
             <parameter id="KmPGMP3G" value="1.2" units="mM"/>
             <parameter id="KeqPGM" value="0.19" units="dimensionless"/>
             <parameter id="KmPGMP2G" value="0.08" units="mM"/>
@@ -1302,7 +1108,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmENO" value="365.806" units="mMpermin"/>
+            <parameter id="VmENO" value="365.806" units="mM_per_min"/>
             <parameter id="KmENOP2G" value="0.04" units="mM"/>
             <parameter id="KeqENO" value="6.7" units="dimensionless"/>
             <parameter id="KmENOPEP" value="0.5" units="mM"/>
@@ -1392,7 +1198,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmPYK" value="1088.71" units="mMpermin"/>
+            <parameter id="VmPYK" value="1088.71" units="mM_per_min"/>
             <parameter id="KmPYKPEP" value="0.14" units="mM"/>
             <parameter id="KmPYKADP" value="0.53" units="mM"/>
             <parameter id="KeqPYK" value="6500" units="dimensionless"/>
@@ -1451,7 +1257,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmPDC" value="174.194" units="mMpermin"/>
+            <parameter id="VmPDC" value="174.194" units="mM_per_min"/>
             <parameter id="nPDC" value="1.9" units="dimensionless"/>
             <parameter id="KmPDCPYR" value="4.33" units="mM"/>
           </listOfParameters>
@@ -1503,7 +1309,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="KSUCC" value="21.4"/>
+            <parameter id="KSUCC" value="21.4" units="mM_per_min"/>
             <parameter id="Km_ACE_SUCC" value="0.1" units="mM"/>
             <parameter id="Km_NAD_SUCC" value="0.1" units="mM"/>
             <parameter id="Km_P_SUCC" value="0.1" units="mM"/>
@@ -1594,7 +1400,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmGLT" value="97.264" units="mmolepermin"/>
+            <parameter id="VmGLT" value="97.264" units="mmoleper_min"/>
             <parameter id="KmGLTGLCo" value="1.1918" units="mM"/>
             <parameter id="KeqGLT" value="1" units="mM"/>
             <parameter id="KmGLTGLCi" value="1.1918" units="mM"/>
@@ -1781,7 +1587,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmADH" value="50" units="mMpermin"/>
+            <parameter id="VmADH" value="50" units="mM_per_min"/>
             <parameter id="KiADHNAD" value="0.92" units="mM"/>
             <parameter id="KmADHETOH" value="17" units="mM"/>
             <parameter id="KeqADH" value="6.9e-05" units="dimensionless"/>
@@ -1895,7 +1701,7 @@
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="VmG3PDH" value="70.15" units="mMpermin"/>
+            <parameter id="VmG3PDH" value="70.15" units="mM_per_min"/>
             <parameter id="KmG3PDHDHAP" value="0.4" units="mM"/>
             <parameter id="KmG3PDHNADH" value="0.023" units="mM"/>
             <parameter id="KeqG3PDH" value="4300" units="dimensionless"/>

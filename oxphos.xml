@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sbml xmlns="http://www.sbml.org/sbml/level2/version4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sbml.org/sbml/level2/version4
-https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level-2.version-4.release-1.xsd" level="2" version="4">
+<sbml xmlns="http://www.sbml.org/sbml/level2/version5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sbml.org/sbml/level2/version5 https://sbml.org/documents/specifications/level-2/version-5/release-1/sbml.level-2.version-5.release-1.xsd"
+  level="2" version="5">
   <model id="OxPhos">
+    <listOfUnitDefinitions>
+      <unitDefinition id="mM" name="mM">
+        <listOfUnits>
+          <unit kind="mole" scale="-3"/>
+          <unit kind="litre" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mM_per_min" name="mM_per_min">
+        <listOfUnits>
+          <unit kind="mole" scale="-3"/>
+          <unit kind="litre" exponent="-1"/>
+          <unit kind="second" exponent="-1" multiplier="60"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_min" name="per_min">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" multiplier="60"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
     <!-- Compartments (reused from cleaned_model.xml) -->
     <listOfCompartments>
       <compartment id="cytosol" size="1" name="Cytosol"/>
       <compartment id="mitochondrion" name="Mitochondrial Matrix" size="1"/>
     </listOfCompartments>
-    
+
     <!-- Species (new mitochondrial species and reused existing ones) -->
     <listOfSpecies>
       <!-- New mitochondrial species for OxPhos -->
@@ -15,7 +36,9 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <species id="NADH_m" compartment="mitochondrion" initialConcentration="0.39" name="Nicotinamide Adenine Dinucleotide (reduced)"/>
       <species id="ATP_m" compartment="mitochondrion" initialConcentration="1.5" name="Adenosine Triphosphate (mitochondrial)"/>
       <species id="ADP_m" compartment="mitochondrion" initialConcentration="2.1" name="Adenosine Diphosphate (mitochondrial)"/>
-      
+      <species id="FADH2_m" compartment="mitochondrion" initialConcentration="0.05" name="Flavin Adenine Dinucleotide (reduced)"/>
+      <species id="FAD_m" compartment="mitochondrion" initialConcentration="0.5" name="Flavin Adenine Dinucleotide (oxidized)"/>
+
       <!-- Existing species from cleaned_model.xml reused -->
       <species id="ATP" compartment="cytosol" initialConcentration="3" name="Adenosine Triphosphate (cytosolic)"/>
       <species id="ADP" compartment="cytosol" initialConcentration="0.7" name="Adenosine Diphosphate (cytosolic)"/>
@@ -23,7 +46,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <species id="H_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton"/>
       <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
       <species id="H2O_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Water"/>
-      <species id="P" compartment="cytosol" initialConcentration="5" name="High energy phosphates" />
+      <species id="P" compartment="cytosol" initialConcentration="5" name="High energy phosphates"/>
       <species id="iP_m" compartment="mitochondrion" initialConcentration="5" name="Inorganic Phosphate"/>
       <species id="ROS_m" compartment="mitochondrion" initialConcentration="0.001"/>
     </listOfSpecies>
@@ -35,7 +58,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <parameter id="Km_FADH2_m" value="0.1" units="mM" name="Michaelis Constant for FADH2_m in ETC"/>
       <parameter id="Km_O2_FADH2" value="0.1" units="mM" name="Michaelis Constant for O2_m with FADH2"/>
     </listOfParameters>
-    
+
     <!-- Reactions for OxPhos -->
     <listOfReactions>
       <!-- Electron Transport Chain (ETC) -->
@@ -58,12 +81,20 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
               <apply>
                 <divide/>
                 <ci>NADH_m</ci>
-                <apply><plus/><ci>Km_NADH_m</ci><ci>NADH_m</ci></apply>
+                <apply>
+                  <plus/>
+                  <ci>Km_NADH_m</ci>
+                  <ci>NADH_m</ci>
+                </apply>
               </apply>
               <apply>
                 <divide/>
                 <ci>O2_m</ci>
-                <apply><plus/><ci>Km_O2_m</ci><ci>O2_m</ci></apply>
+                <apply>
+                  <plus/>
+                  <ci>Km_O2_m</ci>
+                  <ci>O2_m</ci>
+                </apply>
               </apply>
             </apply>
           </math>
@@ -90,18 +121,26 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
               <apply>
                 <divide/>
                 <ci>FADH2_m</ci>
-                <apply><plus/><ci>Km_FADH2_m</ci><ci>FADH2_m</ci></apply>
+                <apply>
+                  <plus/>
+                  <ci>Km_FADH2_m</ci>
+                  <ci>FADH2_m</ci>
+                </apply>
               </apply>
               <apply>
                 <divide/>
                 <ci>O2_m</ci>
-                <apply><plus/><ci>Km_O2_FADH2</ci><ci>O2_m</ci></apply>
+                <apply>
+                  <plus/>
+                  <ci>Km_O2_FADH2</ci>
+                  <ci>O2_m</ci>
+                </apply>
               </apply>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
-      
+
       <!-- ATP Synthase (Chemiosmosis) -->
       <reaction id="vATPsyn" name="ATP Synthase" reversible="false">
         <listOfReactants>
@@ -209,7 +248,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <reaction id="vPi_import" name="Cytosolic Pi Import" reversible="false">
         <listOfReactants>
           <speciesReference species="iP_m"/>
@@ -243,14 +282,14 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vm_Pi_import" value="1" units="mMpermin"/>
+            <parameter id="Vm_Pi_import" value="1" units="mM_per_min"/>
             <parameter id="Km_Pi_import" value="0.1" units="mM"/>
             <parameter id="Km_P" value="1.0" units="mM"/>
           </listOfParameters>
         </kineticLaw>
-        
+
       </reaction>
-      
+
       <!-- Adenine Nucleotide Translocator (ANT) -->
       <reaction id="vANT" reversible="true" name="Adenine Nucleotide Translocator">
         <listOfReactants>
@@ -312,8 +351,13 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       </reaction>
 
       <reaction id="vROS" name="ROS Production" reversible="false">
+        <listOfReactants>
+          <speciesReference species="NADH_m"/>
+          <speciesReference species="O2_m"/>
+        </listOfReactants>
         <listOfProducts>
-          <speciesReference species="ROS_m" stoichiometry="1"/>
+          <speciesReference species="NAD_m"/>
+          <speciesReference species="ROS_m"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -332,14 +376,14 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
               </apply>
               <apply>
                 <divide/>
-                <ci> Km_O2_m </ci> <!-- Inverted O2 dependence -->
+                <ci> O2_m </ci>
                 <apply>
                   <plus/>
                   <ci> Km_O2_m </ci>
                   <ci> O2_m </ci>
                 </apply>
               </apply>
-            </apply>            
+            </apply>
           </math>
           <listOfParameters>
             <parameter id="leakFactor" value="0.01" units="dimensionless"/>
@@ -360,12 +404,11 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="ROS_clearance" value="0.1" units="permin"/>
+            <parameter id="ROS_clearance" value="0.1" units="per_min"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
-      
+
     </listOfReactions>
   </model>
 </sbml>

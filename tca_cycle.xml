@@ -1,14 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sbml xmlns="http://www.sbml.org/sbml/level2/version4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sbml.org/sbml/level2/version4
-https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level-2.version-4.release-1.xsd" level="2" version="4">
+<sbml xmlns="http://www.sbml.org/sbml/level2/version5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sbml.org/sbml/level2/version5 https://sbml.org/documents/specifications/level-2/version-5/release-1/sbml.level-2.version-5.release-1.xsd"
+  level="2" version="5">
   <model id="TCA_Cycle">
+    <!-- Unit Definitions -->
+    <listOfUnitDefinitions>
+      <unitDefinition id="mM" name="mM">
+        <listOfUnits>
+          <unit kind="mole" scale="-3"/>
+          <unit kind="litre" exponent="-1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="mM_per_min" name="mM_per_min">
+        <listOfUnits>
+          <unit kind="mole" scale="-3"/>
+          <unit kind="litre" exponent="-1"/>
+          <unit kind="second" exponent="-1" multiplier="60"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_min" name="per_min">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" multiplier="60"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+
     <!-- Compartments (consistent with oxphos.xml) -->
     <listOfCompartments>
+      <compartment id="extracellular" size="1"/>
+      <compartment id="cytosol" size="1" outside="extracellular"/>
       <compartment id="mitochondrion" size="1" name="Mitochondrial Matrix"/>
     </listOfCompartments>
-    
+
     <!-- Species for TCA cycle in the mitochondrion -->
     <listOfSpecies>
+      <species id="NAD_m" compartment="mitochondrion" initialConcentration="1.2" name="Nicotinamide Adenine Dinucleotide (oxidized)"/>
+      <species id="NADH_m" compartment="mitochondrion" initialConcentration="0.39" name="Nicotinamide Adenine Dinucleotide (reduced)"/>
+      <species id="ATP_m" compartment="mitochondrion" initialConcentration="1.5" name="Adenosine Triphosphate (mitochondrial)"/>
+      <species id="ADP_m" compartment="mitochondrion" initialConcentration="2.1" name="Adenosine Diphosphate (mitochondrial)"/>
+      <species id="PYR" name="Pyruvate" compartment="cytosol" initialConcentration="1.85"/>
       <species id="PYR_m" compartment="mitochondrion" initialConcentration="0.1" name="Pyruvate"/>
       <species id="AcCoA_m" compartment="mitochondrion" initialConcentration="0.05" name="Acetyl-CoA"/>
       <species id="OAA_m" compartment="mitochondrion" initialConcentration="0.1" name="Oxaloacetate"/>
@@ -29,7 +59,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
       <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
       <species id="H2O_m" compartment="mitochondrion" initialConcentration="1" boundaryCondition="true" constant="true" name="Water"/>
     </listOfSpecies>
-    
+
     <!-- Reactions for TCA cycle -->
     <listOfReactions>
       <!-- Pyruvate transport from cytosol (glycolysis.xml) to mitochondrion -->
@@ -57,7 +87,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- Pyruvate dehydrogenase (PDH) -->
       <reaction id="vPDH" reversible="false" name="Pyruvate Dehydrogenase">
         <listOfReactants>
@@ -109,7 +139,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- Citrate synthase (CS) -->
       <reaction id="vCS" reversible="false" name="Citrate Synthase">
         <listOfReactants>
@@ -154,7 +184,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- Aconitase (Acon) -->
       <reaction id="vAcon" reversible="true" name="Aconitase">
         <listOfReactants>
@@ -185,7 +215,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- Isocitrate dehydrogenase (IDH) -->
       <reaction id="vIDH" reversible="false" name="Isocitrate Dehydrogenase">
         <listOfReactants>
@@ -229,7 +259,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- α-Ketoglutarate dehydrogenase (AKGDH) -->
       <reaction id="vAKGDH" reversible="false" name="Alpha-Ketoglutarate Dehydrogenase">
         <listOfReactants>
@@ -273,7 +303,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- Succinyl-CoA synthetase (SCS) -->
       <reaction id="vSCS" reversible="false" name="Succinyl-CoA Synthetase">
         <listOfReactants>
@@ -325,7 +355,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- Succinate dehydrogenase (SDH) -->
       <reaction id="vSDH" reversible="false" name="Succinate Dehydrogenase">
         <listOfReactants>
@@ -368,7 +398,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- Fumarase (FUM) -->
       <reaction id="vFUM" reversible="true" name="Fumarase">
         <listOfReactants>
@@ -399,7 +429,7 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
           </listOfParameters>
         </kineticLaw>
       </reaction>
-      
+
       <!-- Malate dehydrogenase (MDH) -->
       <reaction id="vMDH" reversible="true" name="Malate Dehydrogenase">
         <listOfReactants>
@@ -429,13 +459,13 @@ https://sbml.org/documents/specifications/level-2/version-4/release-1/sbml.level
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="kMDH_f" value="100" units="per_mM_per_min" name="Forward Rate Constant of MDH"/>
-            <parameter id="kMDH_r" value="10" units="per_mM_per_min" name="Reverse Rate Constant of MDH"/>
+            <parameter id="kMDH_f" value="100" units="mM_per_min" name="Forward Rate Constant of MDH"/>
+            <parameter id="kMDH_r" value="10" units="mM_per_min" name="Reverse Rate Constant of MDH"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>
 
-        <!-- Pyruvate Carboxylase (PC) -->
+      <!-- Pyruvate Carboxylase (PC) -->
       <reaction id="vPC" reversible="false" name="Pyruvate Carboxylase">
         <listOfReactants>
           <speciesReference species="PYR_m"/>

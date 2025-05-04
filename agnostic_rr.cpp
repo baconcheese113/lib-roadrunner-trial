@@ -39,12 +39,26 @@ std::string loadSBMLFromFile(const std::string& path) {
 // Function to validate SBML content
 bool validateSBML(const std::string& sbml) {
     auto document = libsbml::readSBMLFromString(sbml.c_str());
+    if (!document) {
+        std::cerr << "ERROR: SBML could not be parsed.\n";
+        return false;
+    }
+
     if (document->getNumErrors() > 0) {
+        std::cerr << "SBML Parsing Errors:\n";
         document->printErrors();
         return false;
     }
+
+    // if (document->checkConsistency() > 0) {
+    //     std::cerr << "SBML Validation Errors:\n";
+    //     document->printErrors();
+    //     return false;
+    // }
+
     return true;
 }
+
 
 std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
     auto speciesIds = rr.getFloatingSpeciesIds();
@@ -580,19 +594,23 @@ void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
 
     // Full stoichiometry matrix
     ls::DoubleMatrix S = rr.getFullStoichiometryMatrix();
+    std::vector<std::string> rowLabels = S.getRowNames();   // actual species names in matrix
+    std::vector<std::string> colLabels = S.getColNames();   // actual reaction ids in matrix
     std::cerr << "\n=== Biggest per-reaction contributor to each species ===\n";
-    for (size_t i = 0; i < speciesIds.size(); ++i) {
-        double maxContrib = 0.0;
-        std::string culprit;
-        for (size_t j = 0; j < reactionIds.size(); ++j) {
+    for (size_t i = 0; i < rowLabels.size(); ++i) {    
+      double maxContrib = 0.0;
+      std::string culprit = "-";
+        for (size_t j = 0; j < colLabels.size(); ++j) {
             double coeff = S(i, j);
-            double contrib = coeff * reactionRates[j];
-            if (std::abs(contrib) > std::abs(maxContrib)) {
-                maxContrib = contrib;
-                culprit = reactionIds[j];
+            if (coeff != 0.0) {
+                double contrib = coeff * reactionRates[j];
+                if (std::abs(contrib) > std::abs(maxContrib)) {
+                    maxContrib = contrib;
+                    culprit = colLabels[j];
+                }
             }
         }
-        std::cerr << std::setw(12) << speciesIds[i]
+        std::cerr << std::setw(12) << rowLabels[i]
                   << " <- " << std::setw(8) << culprit
                   << " (dXdt=" << maxContrib << ")\n";
     }
