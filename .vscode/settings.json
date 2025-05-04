@@ -79,5 +79,12 @@
         "xutility": "cpp",
         "numeric": "cpp",
         "regex": "cpp"
-    }
+    },
+    "xml.format.maxLineWidth": 180,
+    "xml.format.spaceBeforeEmptyCloseTag": false,
+    "editor.formatOnSave": true,
+    "C_Cpp.vcFormat.newLine.beforeElse": false,
+    "C_Cpp.vcFormat.newLine.beforeCatch": false,
+    "C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "sameLine",
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Chromium, ColumnLimit: 125, IndentWidth: 4}"
 }

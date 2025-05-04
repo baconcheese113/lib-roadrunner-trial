@@ -1,20 +1,18 @@
-#include <iostream>
 #include <conio.h>
-#include <iomanip>
+#include <rr/rrExecutableModel.h>
+#include <sbml/Model.h>
+#include <sbml/SBMLDocument.h>
+#include <sbml/SBMLReader.h>
+#include <sbml/SBMLWriter.h>
+#include <chrono>  // For performance timing
+#include <cmath>   // For std::abs
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <map>      // For tracking previous values
+#include <numeric>  // For std::iota
 #include "rr/rrRoadRunner.h"
-#include <sbml/SBMLReader.h>
-#include <sbml/SBMLDocument.h>
-#include <map> // For tracking previous values
-#include <numeric> // For std::iota
-#include <sbml/SBMLWriter.h>
-#include <sbml/SBMLReader.h>
-#include <sbml/SBMLDocument.h>
-#include <sbml/Model.h>
-#include <rr/rrExecutableModel.h>
-#include <cmath> // For std::abs
-#include <chrono> // For performance timing
 
 // Function to check if the file exists
 bool checkFileExists(const std::string& path) {
@@ -59,7 +57,6 @@ bool validateSBML(const std::string& sbml) {
     return true;
 }
 
-
 std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
     auto speciesIds = rr.getFloatingSpeciesIds();
     auto concentrations = rr.getFloatingSpeciesConcentrationsV();
@@ -86,8 +83,7 @@ std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
             if (compartment == "cytosol") {
                 osmoticPressureCytosol += concentrations[i];
                 includedCytosolSpecies.push_back(id);
-            }
-            else if (compartment == "mitochondrion") {
+            } else if (compartment == "mitochondrion") {
                 osmoticPressureMito += concentrations[i];
                 includedMitoSpecies.push_back(id);
             }
@@ -99,7 +95,8 @@ std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
         std::cout << "\033[34mCytosol species contributing to osmotic pressure: ";
         for (size_t i = 0; i < includedCytosolSpecies.size(); ++i) {
             std::cout << includedCytosolSpecies[i];
-            if (i < includedCytosolSpecies.size() - 1) std::cout << ", ";
+            if (i < includedCytosolSpecies.size() - 1)
+                std::cout << ", ";
         }
         std::cout << "\033[0m\n";
     }
@@ -107,7 +104,8 @@ std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
         std::cout << "\033[36mMitochondrion species contributing to osmotic pressure: ";
         for (size_t i = 0; i < includedMitoSpecies.size(); ++i) {
             std::cout << includedMitoSpecies[i];
-            if (i < includedMitoSpecies.size() - 1) std::cout << ", ";
+            if (i < includedMitoSpecies.size() - 1)
+                std::cout << ", ";
         }
         std::cout << "\033[0m\n";
     }
@@ -127,7 +125,7 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
     }
 
     std::cout << "Floating species concentrations:\n";
-    int columnCount = 0; // Track the number of columns printed
+    int columnCount = 0;  // Track the number of columns printed
     for (size_t i = 0; i < ids.size(); ++i) {
         const std::string& id = ids[i];
         double currentValue = concs[i];
@@ -146,22 +144,21 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
 
         if (std::abs(diff) >= 0.00005) {
             if (diff > 0) {
-                std::cout << "\033[32m"; // Green for increase
+                std::cout << "\033[32m";  // Green for increase
             } else {
-                std::cout << "\033[31m"; // Red for decrease
+                std::cout << "\033[31m";  // Red for decrease
             }
         } else {
-            std::cout << "\033[0m"; // Reset color
+            std::cout << "\033[0m";  // Reset color
         }
 
         std::ostringstream entry;
-        entry << id << " (" << compartment << "): "
-            << std::fixed << std::setprecision(4) << currentValue
-            << " (" << std::fixed << std::setprecision(4) << diff << ")";
+        entry << id << " (" << compartment << "): " << std::fixed << std::setprecision(4) << currentValue << " ("
+              << std::fixed << std::setprecision(4) << diff << ")";
 
         std::cout << std::left << std::setw(55) << entry.str() << "\033[0m";
 
-        previousValues[id] = currentValue; // Update previous value
+        previousValues[id] = currentValue;  // Update previous value
 
         // Print a newline after every 3 columns
         if (++columnCount % 3 == 0) {
@@ -169,31 +166,29 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
         }
     }
     if (columnCount % 3 != 0) {
-        std::cout << "\n"; // Ensure the last line ends with a newline
+        std::cout << "\n";  // Ensure the last line ends with a newline
     }
 
     // Log osmotic pressure with detailed calculation
     auto [osmoticPressureCytosol, osmoticPressureMito] = computeOsmoticPressure(rr);
-    double R = 0.0821; // L·atm·mol⁻¹·K⁻¹
-    double T = 298;    // Kelvin
+    double R = 0.0821;  // L·atm·mol⁻¹·K⁻¹
+    double T = 298;     // Kelvin
 
-    double c_cytosol = osmoticPressureCytosol / 1000; // mol/L
+    double c_cytosol = osmoticPressureCytosol / 1000;  // mol/L
     double pressure_cytosol = c_cytosol * R * T;
 
-    double c_mito = osmoticPressureMito / 1000; // mol/L
+    double c_mito = osmoticPressureMito / 1000;  // mol/L
     double pressure_mito = c_mito * R * T;
 
-    std::cout << "\033[34mOsmotic Pressure (Cytosol): " << std::fixed << std::setprecision(4)
-            << c_cytosol << " mol/L * " << R << " * " << T << " = "
-            << pressure_cytosol << " atm\033[0m\n";
+    std::cout << "\033[34mOsmotic Pressure (Cytosol): " << std::fixed << std::setprecision(4) << c_cytosol << " mol/L * "
+              << R << " * " << T << " = " << pressure_cytosol << " atm\033[0m\n";
 
-    std::cout << "\033[36mOsmotic Pressure (Mitochondrion): " << std::fixed << std::setprecision(4)
-            << c_mito << " mol/L * " << R << " * " << T << " = "
-            << pressure_mito << " atm\033[0m\n";
+    std::cout << "\033[36mOsmotic Pressure (Mitochondrion): " << std::fixed << std::setprecision(4) << c_mito << " mol/L * "
+              << R << " * " << T << " = " << pressure_mito << " atm\033[0m\n";
 
     auto boundaryIds = rr.getBoundarySpeciesIds();
     std::cout << "Boundary species concentrations:\n";
-    columnCount = 0; // Reset column count for boundary species
+    columnCount = 0;  // Reset column count for boundary species
     for (const auto& id : boundaryIds) {
         double currentValue = rr.getValue(id);
         double previousValue = previousValues[id];
@@ -211,22 +206,20 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
 
         if (std::abs(diff) >= 0.00005) {
             if (diff > 0) {
-                std::cout << "\033[32m"; // Green for increase
+                std::cout << "\033[32m";  // Green for increase
             } else {
-                std::cout << "\033[31m"; // Red for decrease
+                std::cout << "\033[31m";  // Red for decrease
             }
         } else {
-            std::cout << "\033[0m"; // Reset color
+            std::cout << "\033[0m";  // Reset color
         }
 
-        
         std::ostringstream entry;
-        entry << id << " (" << compartment << "): "
-            << std::fixed << std::setprecision(4) << currentValue;
+        entry << id << " (" << compartment << "): " << std::fixed << std::setprecision(4) << currentValue;
 
         std::cout << std::left << std::setw(55) << entry.str() << "\033[0m";
 
-        previousValues[id] = currentValue; // Update previous value
+        previousValues[id] = currentValue;  // Update previous value
 
         // Print a newline after every 3 columns
         if (++columnCount % 3 == 0) {
@@ -234,7 +227,7 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
         }
     }
     if (columnCount % 3 != 0) {
-        std::cout << "\n"; // Ensure the last line ends with a newline
+        std::cout << "\n";  // Ensure the last line ends with a newline
     }
 }
 
@@ -271,7 +264,7 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
         if (!model1->getUnitDefinition(unitDef->getIdAttribute())) {
             model1->addUnitDefinition(static_cast<libsbml::UnitDefinition*>(unitDef));
         } else {
-            delete unitDef; // Avoid memory leak
+            delete unitDef;  // Avoid memory leak
         }
     }
 
@@ -281,7 +274,7 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
         if (!model1->getCompartment(compartment->getIdAttribute())) {
             model1->addCompartment(static_cast<libsbml::Compartment*>(compartment));
         } else {
-            delete compartment; // Avoid memory leak
+            delete compartment;  // Avoid memory leak
         }
     }
 
@@ -291,7 +284,7 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
         if (!model1->getSpecies(species->getIdAttribute())) {
             model1->addSpecies(static_cast<libsbml::Species*>(species));
         } else {
-            delete species; // Avoid memory leak
+            delete species;  // Avoid memory leak
         }
     }
 
@@ -301,7 +294,7 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
         if (!model1->getReaction(reaction->getIdAttribute())) {
             model1->addReaction(static_cast<libsbml::Reaction*>(reaction));
         } else {
-            delete reaction; // Avoid memory leak
+            delete reaction;  // Avoid memory leak
         }
     }
 
@@ -311,7 +304,7 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
         if (!model1->getParameter(parameter->getIdAttribute())) {
             model1->addParameter(static_cast<libsbml::Parameter*>(parameter));
         } else {
-            delete parameter; // Avoid memory leak
+            delete parameter;  // Avoid memory leak
         }
     }
 
@@ -321,7 +314,7 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
         if (!model1->getInitialAssignment(initAssign->getSymbol())) {
             model1->addInitialAssignment(static_cast<libsbml::InitialAssignment*>(initAssign));
         } else {
-            delete initAssign; // Avoid memory leak
+            delete initAssign;  // Avoid memory leak
         }
     }
 
@@ -331,15 +324,15 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
         if (!model1->getRule(rule->getVariable())) {
             model1->addRule(static_cast<libsbml::Rule*>(rule));
         } else {
-            delete rule; // Avoid memory leak
+            delete rule;  // Avoid memory leak
         }
     }
 
     // Ensure all parameters in model1 have initial values
     for (unsigned int i = 0; i < model1->getNumParameters(); ++i) {
         auto parameter = model1->getParameter(i);
-        if (!parameter->isSetValue()) { // Check only if the value is set
-            parameter->setValue(0.0); // Assign a default value of 0.0
+        if (!parameter->isSetValue()) {  // Check only if the value is set
+            parameter->setValue(0.0);    // Assign a default value of 0.0
         }
     }
 
@@ -410,19 +403,19 @@ std::string cleanSBML(const std::string& sbml) {
                 kineticLaw->getParameter(j)->unsetMetaId();
             }
         }
-        for(unsigned int j = 0; j < reaction->getNumReactants(); ++j) {
+        for (unsigned int j = 0; j < reaction->getNumReactants(); ++j) {
             auto reactant = reaction->getReactant(j);
             reactant->unsetMetaId();
             reactant->unsetAnnotation();
             reactant->unsetNotes();
         }
-        for(unsigned int j = 0; j < reaction->getNumProducts(); ++j) {
+        for (unsigned int j = 0; j < reaction->getNumProducts(); ++j) {
             auto product = reaction->getProduct(j);
             product->unsetMetaId();
             product->unsetAnnotation();
             product->unsetNotes();
         }
-        for(unsigned int j = 0; j < reaction->getNumModifiers(); ++j) {
+        for (unsigned int j = 0; j < reaction->getNumModifiers(); ++j) {
             auto modifier = reaction->getModifier(j);
             modifier->unsetMetaId();
             modifier->unsetAnnotation();
@@ -514,8 +507,8 @@ void toggleReactionRate(rr::RoadRunner& rr, const std::string& reactionId) {
         double newValue = (currentValue == 0.0) ? 1.0 : 0.0;
         rr.setValue(toggleParamId, newValue);
 
-        std::cout << "Parameter " << toggleParamId << " set to " << newValue
-                  << " (" << (newValue == 1.0 ? "reaction enabled" : "reaction disabled") << ")." << std::endl;
+        std::cout << "Parameter " << toggleParamId << " set to " << newValue << " ("
+                  << (newValue == 1.0 ? "reaction enabled" : "reaction disabled") << ")." << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Error: Unable to toggle parameter for reaction " << reactionId << ": " << e.what() << std::endl;
     }
@@ -536,21 +529,18 @@ void checkDeathConditions(rr::RoadRunner& rr, bool& cellAlive, std::string& deat
             deathCause = "Energy collapse";
             cellAlive = false;
             return;
-        } 
-        else if (id == "P" && concentration > 25.0) { // Pi overload
+        } else if (id == "P" && concentration > 25.0) {  // Pi overload
             deathCause = "Osmotic lysis";
             cellAlive = false;
             return;
-        } 
-        if (id == "ROS_m" && concentration > 0.2) { // threshold can be tuned
+        }
+        if (id == "ROS_m" && concentration > 0.2) {  // threshold can be tuned
             deathCause = "Oxidative stress (ROS overload)";
             cellAlive = false;
             return;
-        }
-        else if (id == "NADH") {
+        } else if (id == "NADH") {
             NADH = concentration;
-        } 
-        else if (id == "NAD") {
+        } else if (id == "NAD") {
             NAD = concentration;
         }
     }
@@ -558,7 +548,7 @@ void checkDeathConditions(rr::RoadRunner& rr, bool& cellAlive, std::string& deat
     // Only check Redox collapse after scanning all species
     if (NAD >= 0 && NADH >= 0) {
         double total = NAD + NADH;
-        if (total > 0.0 && (NADH / total) > 0.9) { // Highly reduced state
+        if (total > 0.0 && (NADH / total) > 0.9) {  // Highly reduced state
             deathCause = "Redox collapse";
             cellAlive = false;
             return;
@@ -572,9 +562,8 @@ void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
     auto reactionRates = rr.getReactionRates();
     std::cerr << "=== Reaction fluxes ===\n";
     for (size_t i = 0; i < reactionIds.size(); ++i) {
-        std::cerr << std::setw(12) << reactionIds[i]
-                  << ": " << std::fixed << std::setprecision(4)
-                  << reactionRates[i] << "\n";
+        std::cerr << std::setw(12) << reactionIds[i] << ": " << std::fixed << std::setprecision(4) << reactionRates[i]
+                  << "\n";
     }
 
     // Species rates-of-change
@@ -583,23 +572,22 @@ void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
     auto speciesConcs = rr.getFloatingSpeciesConcentrationsV();
     std::cerr << "\n=== Species d[X]/dt ===\n";
     for (size_t i = 0; i < speciesIds.size(); ++i) {
-        double newConcentration = speciesConcs[i] + speciesRates[i] * dt; // Estimate next concentration
+        double newConcentration = speciesConcs[i] + speciesRates[i] * dt;  // Estimate next concentration
         if (newConcentration < 0) {
-            std::cerr << "\033[31m"; // Red color for negative concentration
+            std::cerr << "\033[31m";  // Red color for negative concentration
         }
-        std::cerr << std::setw(12) << speciesIds[i]
-                  << ": d[X]/dt = " << std::fixed << std::setprecision(4) << speciesRates[i]
-                  << ", [X] = " << speciesConcs[i] << "\033[0m\n"; // Reset color
+        std::cerr << std::setw(12) << speciesIds[i] << ": d[X]/dt = " << std::fixed << std::setprecision(4)
+                  << speciesRates[i] << ", [X] = " << speciesConcs[i] << "\033[0m\n";  // Reset color
     }
 
     // Full stoichiometry matrix
     ls::DoubleMatrix S = rr.getFullStoichiometryMatrix();
-    std::vector<std::string> rowLabels = S.getRowNames();   // actual species names in matrix
-    std::vector<std::string> colLabels = S.getColNames();   // actual reaction ids in matrix
+    std::vector<std::string> rowLabels = S.getRowNames();  // actual species names in matrix
+    std::vector<std::string> colLabels = S.getColNames();  // actual reaction ids in matrix
     std::cerr << "\n=== Biggest per-reaction contributor to each species ===\n";
-    for (size_t i = 0; i < rowLabels.size(); ++i) {    
-      double maxContrib = 0.0;
-      std::string culprit = "-";
+    for (size_t i = 0; i < rowLabels.size(); ++i) {
+        double maxContrib = 0.0;
+        std::string culprit = "-";
         for (size_t j = 0; j < colLabels.size(); ++j) {
             double coeff = S(i, j);
             if (coeff != 0.0) {
@@ -610,28 +598,24 @@ void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
                 }
             }
         }
-        std::cerr << std::setw(12) << rowLabels[i]
-                  << " <- " << std::setw(8) << culprit
-                  << " (dXdt=" << maxContrib << ")\n";
+        std::cerr << std::setw(12) << rowLabels[i] << " <- " << std::setw(8) << culprit << " (dXdt=" << maxContrib << ")\n";
     }
 
     // Largest flux and rate-of-change
     auto maxFluxIt = std::max_element(reactionRates.begin(), reactionRates.end(),
                                       [](double a, double b) { return std::abs(a) < std::abs(b); });
     size_t maxFluxIdx = std::distance(reactionRates.begin(), maxFluxIt);
-    std::cerr << "\n>> Largest single flux: "
-              << reactionIds[maxFluxIdx] << " = " << *maxFluxIt << "\n";
+    std::cerr << "\n>> Largest single flux: " << reactionIds[maxFluxIdx] << " = " << *maxFluxIt << "\n";
 
     auto maxRateIt = std::max_element(speciesRates.begin(), speciesRates.end(),
                                       [](double a, double b) { return std::abs(a) < std::abs(b); });
     size_t maxRateIdx = std::distance(speciesRates.begin(), maxRateIt);
-    std::cerr << ">> Largest |dX/dt|: "
-              << speciesIds[maxRateIdx] << " = " << *maxRateIt << "\n";
+    std::cerr << ">> Largest |dX/dt|: " << speciesIds[maxRateIdx] << " = " << *maxRateIt << "\n";
 }
 
 // Function to simulate lookahead and predict crash time
 double simulateLookahead(rr::RoadRunner& rr, double currentTime, double lookaheadTime, double dt) {
-    rr::RoadRunner rrLookahead = rr; // Clone the current RoadRunner instance
+    rr::RoadRunner rrLookahead = rr;  // Clone the current RoadRunner instance
     double t = currentTime;
     bool cellAlive = true;
     std::string deathCause;
@@ -644,14 +628,12 @@ double simulateLookahead(rr::RoadRunner& rr, double currentTime, double lookahea
             // Check death conditions
             checkDeathConditions(rrLookahead, cellAlive, deathCause);
             if (!cellAlive) {
-                std::cout << "->> Predicting death at t = " << t
-                          << " (relative to current time: " << t - currentTime << ")"
+                std::cout << "->> Predicting death at t = " << t << " (relative to current time: " << t - currentTime << ")"
                           << " due to: " << deathCause << std::endl;
-                return t; // Return the predicted crash time
+                return t;  // Return the predicted crash time
             }
         } catch (const std::exception& e) {
-            std::cerr << "->> Predicting crash at t = " << t
-                      << " (relative to current time: " << t - currentTime << ")"
+            std::cerr << "->> Predicting crash at t = " << t << " (relative to current time: " << t - currentTime << ")"
                       << " with dt = " << dt << "\n"
                       << "Error: " << e.what() << "\n";
             return t;
@@ -659,7 +641,7 @@ double simulateLookahead(rr::RoadRunner& rr, double currentTime, double lookahea
     }
 
     std::cout << "->> No crash predicted within the next " << lookaheadTime << " time units.\n";
-    return -1.0; // Indicate no crash predicted
+    return -1.0;  // Indicate no crash predicted
 }
 
 int main() {
@@ -668,7 +650,8 @@ int main() {
     const std::string oxphosPath = "oxphos.xml";
     const std::string pppPath = "ppp.xml";
 
-    if (!checkFileExists(glyPath) || !checkFileExists(tcaPath) || !checkFileExists(oxphosPath) || !checkFileExists(pppPath)) {
+    if (!checkFileExists(glyPath) || !checkFileExists(tcaPath) || !checkFileExists(oxphosPath) ||
+        !checkFileExists(pppPath)) {
         return 1;
     }
 
@@ -724,8 +707,8 @@ int main() {
 
         double t = 0.0;
         double dt = 0.05;
-        bool isPlaying = false; // Play/pause toggle
-        bool logAllSpecies = true; // Flag to toggle between logging all species and non-zero species
+        bool isPlaying = false;     // Play/pause toggle
+        bool logAllSpecies = true;  // Flag to toggle between logging all species and non-zero species
 
         // Dynamically set selections to include all floating species
         auto floatingSpeciesIds = rr.getFloatingSpeciesIds();
@@ -733,19 +716,19 @@ int main() {
         selections.insert(selections.end(), floatingSpeciesIds.begin(), floatingSpeciesIds.end());
         rr.setSelections(selections);
 
-        std::map<std::string, double> previousValues; // Map to track previous values
+        std::map<std::string, double> previousValues;  // Map to track previous values
         for (const auto& id : floatingSpeciesIds) {
-            previousValues[id] = rr.getValue(id); // Initialize with current values
+            previousValues[id] = rr.getValue(id);  // Initialize with current values
         }
         for (const auto& id : rr.getBoundarySpeciesIds()) {
-            previousValues[id] = rr.getValue(id); // Initialize with current values
+            previousValues[id] = rr.getValue(id);  // Initialize with current values
         }
 
         bool cellAlive = true;
         std::string deathCause;
 
-        double lookaheadTime = 1.0; // Time units to look ahead
-        double lookaheadDt = dt;  // Time step for lookahead simulation
+        double lookaheadTime = 1.0;  // Time units to look ahead
+        double lookaheadDt = dt;     // Time step for lookahead simulation
 
         while (true) {
             if (_kbhit()) {
@@ -755,7 +738,7 @@ int main() {
                     std::cout << "Exiting simulation.\n";
                     break;
                 } else if (ch == 'p' || ch == 'P') {
-                    isPlaying = !isPlaying; // Toggle play/pause
+                    isPlaying = !isPlaying;  // Toggle play/pause
                 } else if (ch == 'r' || ch == 'R') {
                     rr.reset(rr::SelectionRecord::ALL);
                 } else if (ch == 's' || ch == 'S') {
@@ -768,11 +751,11 @@ int main() {
                     increaseSpecies(rr, speciesId, increment);
                 } else if (ch == 't' || ch == 'T') {
                     std::cout << "Enter reaction ID to toggle: ";
-                    std::string reactionId; // = "vAK";
+                    std::string reactionId;  // = "vAK";
                     std::cin >> reactionId;
                     toggleReactionRate(rr, reactionId);
                 } else if (ch == 'v' || ch == 'V') {
-                    logAllSpecies = !logAllSpecies; // Toggle logging mode
+                    logAllSpecies = !logAllSpecies;  // Toggle logging mode
                     std::cout << "Logging mode: " << (logAllSpecies ? "All species" : "Non-zero species") << std::endl;
                 } else if (ch == 'l') {
                     logDebugInfo(rr, t, dt);
@@ -784,23 +767,22 @@ int main() {
 
             if (isPlaying) {
                 try {
-                    
                     // Start performance timer
                     auto start = std::chrono::high_resolution_clock::now();
-                    
+
                     rr.oneStep(t, dt);
-                    
+
                     // Stop performance timer
                     auto end = std::chrono::high_resolution_clock::now();
                     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-                    
-                    std::cout << "\033[2J\033[H"; // ANSI escape codes to clear screen and move cursor to top
+
+                    std::cout << "\033[2J\033[H";  // ANSI escape codes to clear screen and move cursor to top
                     // Log time taken for oneStep
-                    std::cout << "Time taken for oneStep: " << (double)duration / 1000.0 << " milliseconds. Current time: " << t << "\n";
+                    std::cout << "Time taken for oneStep: " << (double)duration / 1000.0
+                              << " milliseconds. Current time: " << t << "\n";
                     t += dt;
                 } catch (const std::exception& e) {
-                    std::cerr << "⚠️ CVODE failed at t = " << t
-                              << " with dt = " << dt << "\n"
+                    std::cerr << "⚠️ CVODE failed at t = " << t << " with dt = " << dt << "\n"
                               << "Error: " << e.what() << "\n\n";
                     logDebugInfo(rr, t, dt);
                     dt = std::max(dt * 0.5, 1e-6);
@@ -819,13 +801,13 @@ int main() {
                 checkDeathConditions(rr, cellAlive, deathCause);
 
                 if (!cellAlive) {
-                    logDebugInfo(rr, t, dt);                    
-                    std::cout << "Simulation ended. Death condition met: " << deathCause << std::endl;           
+                    logDebugInfo(rr, t, dt);
+                    std::cout << "Simulation ended. Death condition met: " << deathCause << std::endl;
                     isPlaying = false;
                     break;
                 }
 
-                std::this_thread::sleep_for(std::chrono::milliseconds((long)(dt * 1000))); // Adjust for desired update rate
+                std::this_thread::sleep_for(std::chrono::milliseconds((long)(dt * 1000)));  // Adjust for desired update rate
             }
         }
     } catch (const std::exception& e) {
