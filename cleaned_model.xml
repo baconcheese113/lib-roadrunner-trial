@@ -1746,12 +1746,15 @@
           <speciesReference species="IMP"/>
           <speciesReference species="NH4"/>
         </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="ATP"/>
+        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> cytosol </ci>
-              <ci> Vm_AMPD </ci>
+              <ci> Vm_AMPD_max </ci>
               <apply>
                 <divide/>
                 <apply>
@@ -1773,12 +1776,26 @@
                   </apply>
                 </apply>
               </apply>
+              <apply>
+                <divide/>
+                <cn> 1 </cn>
+                <apply>
+                  <plus/>
+                  <cn> 1 </cn>
+                  <apply>
+                    <divide/>
+                    <ci> ATP </ci>
+                    <ci> Ki_ATP_AMPD </ci>
+                  </apply>
+                </apply>
+              </apply>
             </apply>
           </math>
           <listOfParameters>
-            <parameter id="Vm_AMPD" value="5" units="mM_per_min"/>
-            <parameter id="Km_AMP" value="1" units="mM"/>
-            <parameter id="n_AMPD" value="3" units="dimensionless"/>
+            <parameter id="Vm_AMPD_max" value="0.5" units="mM_per_min"/>
+            <parameter id="Km_AMP" value="0.1" units="mM"/>
+            <parameter id="n_AMPD" value="2" units="dimensionless"/>
+            <parameter id="Ki_ATP_AMPD" value="1" units="mM"/>
           </listOfParameters>
         </kineticLaw>
       </reaction>

@@ -36,7 +36,7 @@ std::string loadSBMLFromFile(const std::string& path) {
 
 // Function to validate SBML content
 bool validateSBML(const std::string& sbml) {
-    auto document = libsbml::readSBMLFromString(sbml.c_str());
+    libsbml::SBMLDocument* document = libsbml::readSBMLFromString(sbml.c_str());
     if (!document) {
         std::cerr << "ERROR: SBML could not be parsed.\n";
         return false;
@@ -58,8 +58,8 @@ bool validateSBML(const std::string& sbml) {
 }
 
 std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
-    auto speciesIds = rr.getFloatingSpeciesIds();
-    auto concentrations = rr.getFloatingSpeciesConcentrationsV();
+    std::vector<std::string> speciesIds = rr.getFloatingSpeciesIds();
+    std::vector<double> concentrations = rr.getFloatingSpeciesConcentrationsV();
 
     double osmoticPressureCytosol = 0.0;
     double osmoticPressureMito = 0.0;
@@ -68,7 +68,7 @@ std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
 
     std::set<std::string> excludedSpecies = {"CO2", "He", "ETOH", "SUM_P"};
 
-    auto* executableModel = rr.getModel();
+    rr::ExecutableModel* executableModel = rr.getModel();
     if (!executableModel) {
         throw std::runtime_error("No model loaded in RoadRunner.");
     }
@@ -115,11 +115,11 @@ std::pair<double, double> computeOsmoticPressure(rr::RoadRunner& rr) {
 
 // Function to log all species and their concentrations with color coding
 void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& previousValues, bool logAllSpecies) {
-    auto ids = rr.getFloatingSpeciesIds();
-    auto concs = rr.getFloatingSpeciesConcentrationsV();
+    std::vector<std::string> ids = rr.getFloatingSpeciesIds();
+    std::vector<double> concs = rr.getFloatingSpeciesConcentrationsV();
 
     // Access the ExecutableModel from RoadRunner
-    auto* executableModel = rr.getModel();
+    rr::ExecutableModel* executableModel = rr.getModel();
     if (!executableModel) {
         throw std::runtime_error("No model loaded in RoadRunner.");
     }
@@ -186,10 +186,10 @@ void logSpeciesWithColor(rr::RoadRunner& rr, std::map<std::string, double>& prev
     std::cout << "\033[36mOsmotic Pressure (Mitochondrion): " << std::fixed << std::setprecision(4) << c_mito << " mol/L * "
               << R << " * " << T << " = " << pressure_mito << " atm\033[0m\n";
 
-    auto boundaryIds = rr.getBoundarySpeciesIds();
+    std::vector<std::string> boundaryIds = rr.getBoundarySpeciesIds();
     std::cout << "Boundary species concentrations:\n";
     columnCount = 0;  // Reset column count for boundary species
-    for (const auto& id : boundaryIds) {
+    for (const std::string& id : boundaryIds) {
         double currentValue = rr.getValue(id);
         double previousValue = previousValues[id];
         double diff = currentValue - previousValue;
@@ -244,15 +244,15 @@ void increaseSpecies(rr::RoadRunner& rr, const std::string& speciesId, double in
 
 // Function to merge two SBML models
 std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) {
-    auto doc1 = libsbml::readSBMLFromString(sbml1.c_str());
-    auto doc2 = libsbml::readSBMLFromString(sbml2.c_str());
+    libsbml::SBMLDocument* doc1 = libsbml::readSBMLFromString(sbml1.c_str());
+    libsbml::SBMLDocument* doc2 = libsbml::readSBMLFromString(sbml2.c_str());
 
     if (!doc1 || !doc2) {
         throw std::runtime_error("Error reading SBML documents.");
     }
 
-    auto model1 = doc1->getModel();
-    auto model2 = doc2->getModel();
+    libsbml::Model* model1 = doc1->getModel();
+    libsbml::Model* model2 = doc2->getModel();
 
     if (!model1 || !model2) {
         throw std::runtime_error("Error retrieving models from SBML documents.");
@@ -349,12 +349,12 @@ std::string mergeSBMLModels(const std::string& sbml1, const std::string& sbml2) 
 
 // Function to clean up SBML content using libSBML
 std::string cleanSBML(const std::string& sbml) {
-    auto document = libsbml::readSBMLFromString(sbml.c_str());
+    libsbml::SBMLDocument* document = libsbml::readSBMLFromString(sbml.c_str());
     if (!document || document->getNumErrors() > 0) {
         throw std::runtime_error("Error reading SBML document.");
     }
 
-    auto model = document->getModel();
+    libsbml::Model* model = document->getModel();
     if (!model) {
         throw std::runtime_error("No model found in SBML document.");
     }
@@ -515,8 +515,8 @@ void toggleReactionRate(rr::RoadRunner& rr, const std::string& reactionId) {
 }
 
 void checkDeathConditions(rr::RoadRunner& rr, bool& cellAlive, std::string& deathCause) {
-    auto speciesIds = rr.getFloatingSpeciesIds();
-    auto concentrations = rr.getFloatingSpeciesConcentrationsV();
+    std::vector<std::string> speciesIds = rr.getFloatingSpeciesIds();
+    std::vector<double> concentrations = rr.getFloatingSpeciesConcentrationsV();
 
     double NADH = -1.0;
     double NAD = -1.0;
@@ -558,8 +558,8 @@ void checkDeathConditions(rr::RoadRunner& rr, bool& cellAlive, std::string& deat
 
 void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
     // Reaction fluxes
-    auto reactionIds = rr.getReactionIds();
-    auto reactionRates = rr.getReactionRates();
+    std::vector<std::string> reactionIds = rr.getReactionIds();
+    std::vector<double> reactionRates = rr.getReactionRates();
     std::cerr << "=== Reaction fluxes ===\n";
     for (size_t i = 0; i < reactionIds.size(); ++i) {
         std::cerr << std::setw(12) << reactionIds[i] << ": " << std::fixed << std::setprecision(4) << reactionRates[i]
@@ -567,9 +567,9 @@ void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
     }
 
     // Species rates-of-change
-    auto speciesIds = rr.getFloatingSpeciesIds();
-    auto speciesRates = rr.getRatesOfChange();
-    auto speciesConcs = rr.getFloatingSpeciesConcentrationsV();
+    std::vector<std::string> speciesIds = rr.getFloatingSpeciesIds();
+    std::vector<double> speciesRates = rr.getRatesOfChange();
+    std::vector<double> speciesConcs = rr.getFloatingSpeciesConcentrationsV();
     std::cerr << "\n=== Species d[X]/dt ===\n";
     for (size_t i = 0; i < speciesIds.size(); ++i) {
         double newConcentration = speciesConcs[i] + speciesRates[i] * dt;  // Estimate next concentration
@@ -592,6 +592,12 @@ void logDebugInfo(rr::RoadRunner& rr, double t, double dt) {
             double coeff = S(i, j);
             if (coeff != 0.0) {
                 double contrib = coeff * reactionRates[j];
+                // Log all contributors for iP_m species
+                if (rowLabels[i] == "iP_m" || rowLabels[i] == "P" || rowLabels[i] == "ATP" || rowLabels[i] == "ADP" ||
+                    rowLabels[i] == "AMP") {
+                    std::cerr << "\t\tFor " << rowLabels[i] << "->" << std::setw(25) << colLabels[j] << ": " << std::fixed
+                              << std::setprecision(4) << contrib << "\n";
+                }
                 if (std::abs(contrib) > std::abs(maxContrib)) {
                     maxContrib = contrib;
                     culprit = colLabels[j];
@@ -711,7 +717,7 @@ int main() {
         bool logAllSpecies = true;  // Flag to toggle between logging all species and non-zero species
 
         // Dynamically set selections to include all floating species
-        auto floatingSpeciesIds = rr.getFloatingSpeciesIds();
+        std::vector<std::string> floatingSpeciesIds = rr.getFloatingSpeciesIds();
         std::vector<std::string> selections = {"time"};
         selections.insert(selections.end(), floatingSpeciesIds.begin(), floatingSpeciesIds.end());
         rr.setSelections(selections);
