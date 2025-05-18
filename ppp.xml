@@ -34,6 +34,9 @@
       <species id="P6GL" name="6-Phosphogluconolactone" compartment="cytosol" initialConcentration="0.1"/>
       <species id="H" compartment="cytosol" initialConcentration="1" boundaryCondition="true" constant="true" name="Proton (cytosolic)"/>
     </listOfSpecies>
+    <listOfParameters>
+      <parameter id="toggle_vG6PDH" value="1" units="dimensionless"/>
+    </listOfParameters>
     <listOfReactions>
       <!-- Retain only the G6PDH reaction with reduced Vmax -->
       <reaction id="vG6PDH" name="Glucose-6-phosphate Dehydrogenase" reversible="false">
@@ -50,6 +53,7 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci>toggle_vG6PDH</ci>
               <ci>VmG6PDH</ci>
               <apply>
                 <divide/>

@@ -57,6 +57,7 @@
       <parameter id="kETC_FADH2" value="30" units="per_min" name="Electron Transport Chain Rate Constant (FADH2)"/>
       <parameter id="Km_FADH2_m" value="0.1" units="mM" name="Michaelis Constant for FADH2_m in ETC"/>
       <parameter id="Km_O2_FADH2" value="0.1" units="mM" name="Michaelis Constant for O2_m with FADH2"/>
+      <parameter id="toggle_ROS_m" value="1" units="dimensionless" name="Toggle for ROS production"/>
     </listOfParameters>
 
     <!-- Reactions for OxPhos -->
@@ -363,6 +364,7 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_ROS_m </ci>
               <ci> leakFactor </ci>
               <ci> kETC </ci>
               <apply>

@@ -59,7 +59,6 @@
       <species id="P" name="High energy phosphates" compartment="cytosol" initialConcentration="5"/>
       <species id="NAD" name="NAD" compartment="cytosol" initialConcentration="1.2"/>
       <species id="NADH" name="NADH" compartment="cytosol" initialConcentration="0.39"/>
-      <species id="AMPK_active" compartment="cytosol" initialConcentration="0.001"/>
       <species id="Glyc" name="Glycogen" compartment="cytosol" initialConcentration="0.1"/>
       <species id="Trh" name="Trehalose" compartment="cytosol" initialConcentration="0.1"/>
       <species id="CO2" name="CO2" compartment="cytosol" initialConcentration="1" boundaryCondition="true"/>
@@ -79,6 +78,7 @@
       <species id="G1P" name="Glucose 1 Phosphate" compartment="cytosol" initialConcentration="0.01"/>
     </listOfSpecies>
     <listOfParameters>
+      <parameter id="AMPK_active" value="0.001" units="mM" constant="false"/>
       <parameter id="gR" value="5.12" units="dimensionless"/>
       <parameter id="KmPFKF6P" value="0.1" units="mM"/>
       <parameter id="KmPFKATP" value="0.71" units="mM"/>
@@ -95,6 +95,10 @@
       <parameter id="toggle_vAK" value="1" units="dimensionless"/>
       <parameter id="toggle_vATP" value="1" units="dimensionless"/>
       <parameter id="toggle_vGLK" value="1" units="dimensionless"/>
+      <parameter id="toggle_vPFK" value="1" units="dimensionless"/>
+      <parameter id="toggle_vGLYCO" value="1" units="dimensionless"/>
+      <parameter id="toggle_vGP" value="1" units="dimensionless"/>
+      <parameter id="toggle_vATPsink" value="1" units="dimensionless"/>
       <parameter id="K_AMPK" value="1" units="dimensionless"/>
       <parameter id="kATP_decay" value="0.001" units="per_min"/>
     </listOfParameters>
@@ -141,9 +145,6 @@
           <speciesReference species="G6P"/>
           <speciesReference species="ADP"/>
         </listOfProducts>
-        <listOfModifiers>
-          <modifierSpeciesReference species="AMPK_active"/>
-        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -258,13 +259,13 @@
           <speciesReference species="Glyc"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="AMPK_active"/>
           <modifierSpeciesReference species="Insulin"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vGLYCO </ci>
               <ci> cytosol </ci>
               <ci> kcat_GLYCO </ci>
               <apply>
@@ -323,13 +324,13 @@
           <speciesReference species="G1P"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="AMPK_active"/>
           <modifierSpeciesReference species="Insulin"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vGP </ci>
               <ci> Vm_GP </ci>
               <apply>
                 <divide/>
@@ -481,12 +482,12 @@
           <modifierSpeciesReference species="AMP"/>
           <modifierSpeciesReference species="ATP"/>
           <modifierSpeciesReference species="F26BP"/>
-          <modifierSpeciesReference species="AMPK_active"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vPFK </ci>
               <apply>
                 <divide/>
                 <apply>
@@ -605,13 +606,11 @@
           <speciesReference species="P"/>
           <speciesReference species="H"/>
         </listOfProducts>
-        <listOfModifiers>
-          <modifierSpeciesReference species="AMPK_active"/>
-        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vATPsink </ci>
               <ci> cytosol </ci>
               <ci> Vm_ATPsink </ci>
               <apply>

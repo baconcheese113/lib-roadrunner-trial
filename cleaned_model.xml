@@ -58,7 +58,6 @@
       <species id="P" name="High energy phosphates" compartment="cytosol" initialConcentration="5"/>
       <species id="NAD" name="NAD" compartment="cytosol" initialConcentration="1.2"/>
       <species id="NADH" name="NADH" compartment="cytosol" initialConcentration="0.39"/>
-      <species id="AMPK_active" compartment="cytosol" initialConcentration="0.001"/>
       <species id="Glyc" name="Glycogen" compartment="cytosol" initialConcentration="0.1"/>
       <species id="Trh" name="Trehalose" compartment="cytosol" initialConcentration="0.1"/>
       <species id="CO2" name="CO2" compartment="cytosol" initialConcentration="1" boundaryCondition="true"/>
@@ -104,6 +103,7 @@
       <species id="P6GL" name="6-Phosphogluconolactone" compartment="cytosol" initialConcentration="0.1"/>
     </listOfSpecies>
     <listOfParameters>
+      <parameter id="AMPK_active" value="0.001" units="mM" constant="false"/>
       <parameter id="gR" value="5.12" units="dimensionless"/>
       <parameter id="KmPFKF6P" value="0.1" units="mM"/>
       <parameter id="KmPFKATP" value="0.71" units="mM"/>
@@ -120,6 +120,10 @@
       <parameter id="toggle_vAK" value="1" units="dimensionless"/>
       <parameter id="toggle_vATP" value="1" units="dimensionless"/>
       <parameter id="toggle_vGLK" value="1" units="dimensionless"/>
+      <parameter id="toggle_vPFK" value="1" units="dimensionless"/>
+      <parameter id="toggle_vGLYCO" value="1" units="dimensionless"/>
+      <parameter id="toggle_vGP" value="1" units="dimensionless"/>
+      <parameter id="toggle_vATPsink" value="1" units="dimensionless"/>
       <parameter id="K_AMPK" value="1" units="dimensionless"/>
       <parameter id="kATP_decay" value="0.001" units="per_min"/>
       <parameter id="kETC" name="Electron Transport Chain Rate Constant (NADH)" value="30" units="per_min"/>
@@ -128,6 +132,8 @@
       <parameter id="kETC_FADH2" name="Electron Transport Chain Rate Constant (FADH2)" value="30" units="per_min"/>
       <parameter id="Km_FADH2_m" name="Michaelis Constant for FADH2_m in ETC" value="0.1" units="mM"/>
       <parameter id="Km_O2_FADH2" name="Michaelis Constant for O2_m with FADH2" value="0.1" units="mM"/>
+      <parameter id="toggle_ROS_m" name="Toggle for ROS production" value="1" units="dimensionless"/>
+      <parameter id="toggle_vG6PDH" value="1" units="dimensionless"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="SUM_P">
@@ -172,9 +178,6 @@
           <speciesReference species="G6P"/>
           <speciesReference species="ADP"/>
         </listOfProducts>
-        <listOfModifiers>
-          <modifierSpeciesReference species="AMPK_active"/>
-        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
@@ -289,13 +292,13 @@
           <speciesReference species="Glyc"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="AMPK_active"/>
           <modifierSpeciesReference species="Insulin"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vGLYCO </ci>
               <ci> cytosol </ci>
               <ci> kcat_GLYCO </ci>
               <apply>
@@ -354,13 +357,13 @@
           <speciesReference species="G1P"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="AMPK_active"/>
           <modifierSpeciesReference species="Insulin"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vGP </ci>
               <ci> Vm_GP </ci>
               <apply>
                 <divide/>
@@ -511,12 +514,12 @@
           <modifierSpeciesReference species="AMP"/>
           <modifierSpeciesReference species="ATP"/>
           <modifierSpeciesReference species="F26BP"/>
-          <modifierSpeciesReference species="AMPK_active"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vPFK </ci>
               <apply>
                 <divide/>
                 <apply>
@@ -632,13 +635,11 @@
           <speciesReference species="P"/>
           <speciesReference species="H"/>
         </listOfProducts>
-        <listOfModifiers>
-          <modifierSpeciesReference species="AMPK_active"/>
-        </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vATPsink </ci>
               <ci> cytosol </ci>
               <ci> Vm_ATPsink </ci>
               <apply>
@@ -2523,6 +2524,7 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_ROS_m </ci>
               <ci> leakFactor </ci>
               <ci> kETC </ci>
               <apply>
@@ -2581,6 +2583,7 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> toggle_vG6PDH </ci>
               <ci> VmG6PDH </ci>
               <apply>
                 <divide/>
