@@ -1,5 +1,7 @@
 # Test project for libRoadRunner sim
 
+<video src="demo.mp4" controls></video>
+
 ## Overview
 
 This project demonstrates real-time biochemical pathway simulation using the libRoadRunner library, a high-performance SBML (Systems Biology Markup Language) simulation engine. The application models cellular metabolism by integrating multiple interconnected metabolic pathways including glycolysis, the TCA cycle, oxidative phosphorylation, and the pentose phosphate pathway.
