@@ -709,7 +709,9 @@ int main() {
         // integrator->setValue("maximum_num_steps", 10000);  // default is 500
         integrator->setValue("minimum_time_step", 1e-10);
 
-        std::cout << "Running real-time simulation. Press 'p' to play/pause, 'q' to quit.\n";
+        const std::string controls =
+            "[P]lay/Pause [Q]uit [R]eset [S]et species [T]oggle reaction [V]iew mode [L]og debug [F]orecast";
+        std::cout << "Controls: " << controls << "\n";
 
         double t = 0.0;
         double dt = 0.05;
@@ -745,6 +747,9 @@ int main() {
                     break;
                 } else if (ch == 'p' || ch == 'P') {
                     isPlaying = !isPlaying;  // Toggle play/pause
+                    if (!isPlaying) {
+                        std::cout << "\n[PAUSED] Controls: " << controls << "\n";
+                    }
                 } else if (ch == 'r' || ch == 'R') {
                     rr.reset(rr::SelectionRecord::ALL);
                 } else if (ch == 's' || ch == 'S') {
